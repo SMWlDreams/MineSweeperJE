@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="NewGameController">
+   <children>
+      <RadioButton fx:id="easy" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefWidth="204.0" selected="true" text="Easy" textAlignment="CENTER">
+         <toggleGroup>
+            <ToggleGroup fx:id="buttons" />
+         </toggleGroup></RadioButton>
+      <RadioButton fx:id="intermediate" mnemonicParsing="false" text="Intermediate" toggleGroup="$buttons" />
+      <RadioButton fx:id="expert" mnemonicParsing="false" text="Expert" toggleGroup="$buttons" />
+      <RadioButton fx:id="custom" mnemonicParsing="false" selected="true" text="Custom" toggleGroup="$buttons" />
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Desired width, height, and number of mines" textAlignment="CENTER" wrappingWidth="256.53667068481445" />
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Leave number of mines empty to auto generate" textAlignment="CENTER" wrappingWidth="256.5366859436035" />
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="the number of mines in this game." textAlignment="CENTER" wrappingWidth="257.33667373657227" />
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Settings apply only to custom games." textAlignment="CENTER" wrappingWidth="257.33667373657227" />
+      <HBox>
+         <children>
+            <TextField fx:id="width" prefWidth="75.0" promptText="Width" />
+            <TextField fx:id="height" prefWidth="75.0" promptText="Height" />
+            <TextField fx:id="numMines" prefWidth="108.0" promptText="Number of Mines" />
+         </children>
+      </HBox>
+      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#begin" text="Begin!" />
+   </children>
+</VBox>

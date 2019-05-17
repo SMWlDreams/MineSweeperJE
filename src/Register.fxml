@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="RegisterHighScores">
+   <children>
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Congralturations! You got a new high score!" textAlignment="CENTER" wrappingWidth="240.0" />
+      <TextField fx:id="field" maxWidth="-Infinity" prefWidth="240.0" promptText="Enter your name" />
+      <Text fx:id="score" strokeType="OUTSIDE" strokeWidth="0.0" text="Your Score: " textAlignment="CENTER" wrappingWidth="240.0" />
+      <Text fx:id="rank" strokeType="OUTSIDE" strokeWidth="0.0" text="Your rank for difficulty: " textAlignment="CENTER" wrappingWidth="240.0" />
+      <GridPane>
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#register" text="Register" GridPane.columnIndex="1" />
+         </children>
+      </GridPane>
+   </children>
+</VBox>

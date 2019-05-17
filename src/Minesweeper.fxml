@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.CheckMenuItem?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<GridPane fx:id="grid" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="330.0" prefWidth="540.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+  </rowConstraints>
+   <children>
+      <VBox>
+         <children>
+            <MenuBar>
+              <menus>
+                <Menu fx:id="file" mnemonicParsing="false" text="File">
+                  <items>
+                        <MenuItem mnemonicParsing="false" onAction="#start" text="New Game" />
+                        <MenuItem mnemonicParsing="false" onAction="#setSeed" text="Set RNG Seed" />
+                        <CheckMenuItem fx:id="log" mnemonicParsing="false" onAction="#generateLog" text="Generate Log File" />
+                    <MenuItem mnemonicParsing="false" onAction="#close" text="Close" />
+                  </items>
+                </Menu>
+                <Menu fx:id="game" mnemonicParsing="false" text="Game">
+                  <items>
+                    <MenuItem fx:id="restart" disable="true" mnemonicParsing="false" onAction="#restart" text="Restart" />
+                        <MenuItem fx:id="pause" disable="true" mnemonicParsing="false" onAction="#pause" text="Pause" />
+                        <MenuItem fx:id="highScore" mnemonicParsing="false" onAction="#showHighScores" text="High Scores" />
+                  </items>
+                </Menu>
+                <Menu fx:id="help" mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" onAction="#showAboutMenu" text="About" />
+                        <MenuItem mnemonicParsing="false" onAction="#showHelpWindow" text="Help" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+            <FlowPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" onMousePressed="#onClick" prefHeight="269.6" />
+            <HBox>
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Flags Remaining:     " textAlignment="RIGHT" wrappingWidth="148.53668212890625" />
+                  <Text fx:id="flags" strokeType="OUTSIDE" strokeWidth="0.0" text="     Not Started" wrappingWidth="122.13665390014648" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total Mines:     " textAlignment="RIGHT" wrappingWidth="105.336669921875" />
+                  <Text fx:id="mines" strokeType="OUTSIDE" strokeWidth="0.0" text="     Not Started" wrappingWidth="125.33673477172852" />
+               </children>
+            </HBox>
+            <HBox>
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total Time:     " textAlignment="RIGHT" wrappingWidth="148.53668212890625" />
+                  <Text fx:id="time" strokeType="OUTSIDE" strokeWidth="0.0" text="     0" wrappingWidth="122.13665390014648" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Difficulty:     " textAlignment="RIGHT" wrappingWidth="105.336669921875" />
+                  <Text fx:id="difficulty" strokeType="OUTSIDE" strokeWidth="0.0" text="     Not Started" wrappingWidth="125.33673477172852" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</GridPane>

@@ -1,0 +1,7 @@
+File seed and hash: 912005529478322t42430719
+Difficulty:      Custom
+Board width: 30
+Board height: 24
+Total number of mines: 719
+Primary click on tile: 26,16
+Final result: Won!
