@@ -34,6 +34,12 @@ public class Controller {
     @FXML
     MenuItem restart;
     @FXML
+    MenuItem newGame;
+    @FXML
+    MenuItem about;
+    @FXML
+    MenuItem helpMenu;
+    @FXML
     Text flags;
     @FXML
     Text mines;
@@ -73,6 +79,7 @@ public class Controller {
     private boolean keepLogs = false;
     private boolean showMines = false;
     private int logCount = 0;
+    private Hotkeys hotkeys = new Hotkeys();
 
     /**
      * Starts the main application on clicking new
@@ -90,7 +97,6 @@ public class Controller {
         newWindowStage.getIcons().add(new Image(new File(System.getProperty("user.dir") + "\\Images\\mine.png").toURI().toURL().toString()));
         newWindowStage.setOnCloseRequest(e -> closeNewWindow());
         newWindowStage.setResizable(false);
-        newWindowStage.setAlwaysOnTop(true);
         newWindowStage.setScene(scene);
         newWindowStage.setTitle("Start New Game");
         lockout(true);
@@ -111,7 +117,6 @@ public class Controller {
         SetSeed seed = loader.getController();
         String hashSeed = getSeed();
         newWindowStage = new Stage();
-        newWindowStage.setAlwaysOnTop(true);
         newWindowStage.setScene(scene);
         newWindowStage.getIcons().add(new Image(new File(System.getProperty("user.dir") + "\\Images\\mine.png").toURI().toURL().toString()));
         newWindowStage.setTitle("Set Custom Seed");
@@ -144,7 +149,31 @@ public class Controller {
         newWindowStage.setResizable(false);
         scores.setController(this);
         lockout(true);
-        newWindowStage.showAndWait();
+        newWindowStage.show();
+    }
+
+    /**
+     * Shows the hotkeys
+     * @param actionEvent   Event sent by javafx
+     * @throws IOException  If the FXML file is missing
+     */
+    public void showHotkeyWindow(ActionEvent actionEvent) throws IOException {
+        run = false;
+        timeline.stop();
+        FXMLLoader loader = new FXMLLoader();
+        Pane root = loader.load(getClass().getResource("Hotkeys.fxml").openStream());
+        Scene scene = new Scene(root);
+        Hotkeys hotkeys = loader.getController();
+        newWindowStage = new Stage();
+        newWindowStage.setScene(scene);
+        newWindowStage.getIcons().add(new Image(new File(System.getProperty("user.dir") + "\\Images\\mine.png").toURI().toURL().toString()));
+        newWindowStage.setTitle("Hotkeys");
+        newWindowStage.setOnShown(e -> hotkeys.generateHotKeys(true));
+        newWindowStage.setOnCloseRequest(e -> closeNewWindow());
+        newWindowStage.setResizable(false);
+        hotkeys.setController(this);
+        lockout(true);
+        newWindowStage.show();
     }
 
     /**
@@ -210,8 +239,8 @@ public class Controller {
                 alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText("Output Location");
                 alert.setTitle("Log Output");
-                alert.setContentText("Your log files can be found in the current directory as \n" +
-                        "\"Seed_Hash.txt\"\n" +
+                alert.setContentText("Your log files can be found at \n" +
+                        System.getProperty("user.dir") + "\\Logs\\\"Seed_Hash.txt\".\n" +
                         "Note: if you are using a set seed log files will be erased unless\n" +
                         "you selected the \"keep separate log files\" option.");
                 alert.showAndWait();
@@ -235,7 +264,13 @@ public class Controller {
     public void restart(ActionEvent actionEvent) throws IOException {
         if (setSeed) {
             setHashSeed(board.getSeed(), hash);
-        } else if (start && !run && !paused) { clear();
+        } else if (start && !run && !paused) {
+            clear();
+            if (board != null) {
+                if (board.outputLog()) {
+                    board.closeOutput("start new game");
+                }
+            }
             board = new Board(width, height, numMines, pane, scaleMultiplier);
             if (outputLog) {
                 board.generateLog(true, hash, width, height, numMines, difficulty.getText());
@@ -262,7 +297,17 @@ public class Controller {
                     pause(actionEvent);
                 }
                 clear();
+                if (board != null) {
+                    if (board.outputLog()) {
+                        board.closeOutput("start new game");
+                    }
+                }
                 board = new Board(width, height, numMines, pane, scaleMultiplier);
+                if (outputLog) {
+                    board.generateLog(true, hash, width, height, numMines, difficulty.getText());
+                } else {
+                    board.generateLog(false);
+                }
                 mines.setText("     " + Integer.toString(numMines));
                 flags.setText("     " + Integer.toString(numMines));
                 numFlags = numMines;
@@ -286,11 +331,13 @@ public class Controller {
             paused = true;
             timeline.stop();
             pause.setText("Resume");
+            partialLockout(true);
         } else if (start) {
             run = true;
             paused = false;
             timeline.play();
             pause.setText("Pause");
+            partialLockout(false);
         }
     }
 
@@ -327,6 +374,8 @@ public class Controller {
                 scaleMultiplier = 3;
                 generateHash();
                 this.difficulty.setText("     Easy");
+                timeline.stop();
+                timeline.play();
                 break;
             case 2:
                 height = 16;
@@ -335,6 +384,8 @@ public class Controller {
                 scaleMultiplier = 2;
                 generateHash();
                 this.difficulty.setText("     Intermediate");
+                timeline.stop();
+                timeline.play();
                 break;
             case 3:
                 height = 24;
@@ -343,6 +394,8 @@ public class Controller {
                 scaleMultiplier = 1;
                 generateHash();
                 this.difficulty.setText("     Expert");
+                timeline.stop();
+                timeline.play();
                 break;
         }
     }
@@ -358,15 +411,17 @@ public class Controller {
         this.width = width;
         this.height = height;
         this.numMines = numMines;
-        if (height <= 10 && width <= 10) {
+        if (height <= 10 && width <= 13) {
             scaleMultiplier = 3;
-        } else if (height <= 16 && width <= 16) {
+        } else if (height <= 16 && width <= 22) {
             scaleMultiplier = 2;
         } else {
             scaleMultiplier = 1;
         }
         generateHash();
         difficulty.setText("     Custom");
+        timeline.stop();
+        timeline.play();
     }
 
     /**
@@ -385,7 +440,17 @@ public class Controller {
      * Changes the size of the window to fit the game and starts it
      */
     public void begin() throws IOException {
+        if (board != null) {
+            if (board.outputLog()) {
+                board.closeOutput("new game");
+            }
+        }
         board = new Board(width, height, numMines, pane, scaleMultiplier);
+        if (outputLog) {
+            board.generateLog(true, hash, width, height, numMines, difficulty.getText());
+        } else {
+            board.generateLog(false);
+        }
         adjustBoard();
         restart.setDisable(false);
         pause.setDisable(false);
@@ -411,6 +476,7 @@ public class Controller {
      */
     public void initialGame() throws IOException {
         setDifficulty(1);
+        setHotkeyTexts();
         begin();
         startTimeUpdate();
     }
@@ -431,6 +497,13 @@ public class Controller {
         int mine = Integer.parseInt(hash.substring(6));
         customDimensions(height, width, mine);
         board.clear(pane);
+        if (outputLog && board != null) {
+            if (board.outputLog()) {
+                board.closeOutput("start new game");
+            }
+        } else if (board != null) {
+            board.generateLog(false);
+        }
         board = new Board(width, height, numMines, pane, scaleMultiplier, seed);
         if (outputLog) {
             if (keepLogs) {
@@ -478,6 +551,26 @@ public class Controller {
         timeline.getKeyFrames().remove(0);
         timeline.stop();
         Platform.exit();
+    }
+
+    public void parseInput(String character) {
+        try {
+            if (character.equalsIgnoreCase(hotkeys.getPauseKey()) && !pause.isDisable() && !game.isDisable()) {
+                pause(new ActionEvent());
+            } else if (character.equalsIgnoreCase(hotkeys.getRestartKey()) && !restart.isDisable() && !game.isDisable()) {
+                restart(new ActionEvent());
+            } else if (character.equalsIgnoreCase(hotkeys.getNewGameKey()) && !file.isDisable()) {
+                start(new ActionEvent());
+            } else if (character.equalsIgnoreCase(hotkeys.getHelpKey()) && !help.isDisable()) {
+                showHelpWindow(new ActionEvent());
+            } else if (character.equalsIgnoreCase(hotkeys.getHighScoreKey()) && !highScore.isDisable() && !game.isDisable()) {
+                showHighScores(new ActionEvent());
+            } else if (character.equalsIgnoreCase(hotkeys.getAboutKey()) && !help.isDisable()) {
+                showAboutMenu(new ActionEvent());
+            }
+        } catch (IOException e) {
+            System.out.println("F");
+        }
     }
 
     private String getSeed() {
@@ -579,9 +672,9 @@ public class Controller {
             if (difficulty.equalsIgnoreCase("easy")) {
                 newScore = score - (startTime * 10);
             } else if (difficulty.equalsIgnoreCase("intermediate")) {
-                newScore = score - (startTime * 5);
+                newScore = score - (startTime * 4);
             } else {
-                newScore = score - startTime;
+                newScore = score - (startTime / 2);
             }
             List<Scores<String>> scores = highScores.readScores(difficulty);
             int i = 1;
@@ -613,14 +706,14 @@ public class Controller {
         newWindowStage.setTitle("High Score");
         newWindowStage.setOnShown(e -> highScores.setInfo(score, rank, difficulty));
         newWindowStage.setOnCloseRequest(e -> closeRHSWindow());
-        newWindowStage.setAlwaysOnTop(true);
         newWindowStage.setResizable(false);
         lockout(true);
         newWindowStage.showAndWait();
     }
 
-    private void closeRHSWindow() {
+    public void closeRHSWindow() {
         try {
+            newWindowStage.close();
             showHighScores(new ActionEvent());
         } catch (IOException e) {
             System.out.println("oops");
@@ -652,5 +745,21 @@ public class Controller {
         file.setDisable(lock);
         game.setDisable(lock);
         help.setDisable(lock);
+    }
+
+    private void partialLockout(boolean lock) {
+        file.setDisable(lock);
+        restart.setDisable(lock);
+        help.setDisable(lock);
+        highScore.setDisable(lock);
+    }
+
+    private void setHotkeyTexts() {
+        newGame.setText("New Game  (" + hotkeys.getNewGameKey() + ")");
+        about.setText("About      (" + hotkeys.getAboutKey() + ")");
+        helpMenu.setText("Help         (" + hotkeys.getHelpKey() + ")");
+        highScore.setText("High Scores   (" + hotkeys.getHighScoreKey() + ")");
+        restart.setText("Restart          (" + hotkeys.getRestartKey() + ")");
+        pause.setText("Pause            (" + hotkeys.getPauseKey() + ")");
     }
 }

@@ -22,6 +22,7 @@ public class GUI extends Application {
         Controller controller = loader.getController();
         controller.setGui(this);
         Scene scene = new Scene(root);
+        scene.setOnKeyTyped(e -> controller.parseInput(e.getCharacter()));
         controller.initialGame();
         mainStage.setOnHidden(e -> controller.stopTimeline());
         mainStage.getIcons().add(new Image(new File(System.getProperty("user.dir") + "\\Images\\mine.png").toURI().toURL().toString()));

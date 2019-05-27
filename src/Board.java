@@ -238,8 +238,22 @@ public class Board {
         writer.close();
     }
 
+    public void closeOutput(String result) {
+        writer.write("Game ended early due to a " + result + " requested by the user.");
+        writer.close();
+    }
+
     public String getSeed() {
         return Long.toString(seed);
+    }
+
+    public boolean outputLog() {
+        try {
+            writer.write("");
+            return true;
+        } catch (NullPointerException e) {
+            return false;
+        }
     }
 
     private boolean parseBoard(int x, int y) {

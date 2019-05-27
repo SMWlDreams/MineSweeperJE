@@ -60,7 +60,7 @@ public class RegisterHighScores {
     }
 
     public void close(ActionEvent actionEvent) {
-        controller.closeNewWindow();
+        controller.closeRHSWindow();
     }
 
     public void setController(Controller controller) {

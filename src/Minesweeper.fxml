@@ -26,7 +26,7 @@
               <menus>
                 <Menu fx:id="file" mnemonicParsing="false" text="File">
                   <items>
-                        <MenuItem mnemonicParsing="false" onAction="#start" text="New Game" />
+                        <MenuItem fx:id="newGame" mnemonicParsing="false" onAction="#start" text="New Game" />
                         <MenuItem mnemonicParsing="false" onAction="#setSeed" text="Set RNG Seed" />
                         <CheckMenuItem fx:id="log" mnemonicParsing="false" onAction="#generateLog" text="Generate Log File" />
                     <MenuItem mnemonicParsing="false" onAction="#close" text="Close" />
@@ -41,8 +41,9 @@
                 </Menu>
                 <Menu fx:id="help" mnemonicParsing="false" text="Help">
                   <items>
-                    <MenuItem mnemonicParsing="false" onAction="#showAboutMenu" text="About" />
-                        <MenuItem mnemonicParsing="false" onAction="#showHelpWindow" text="Help" />
+                    <MenuItem fx:id="about" mnemonicParsing="false" onAction="#showAboutMenu" text="About" />
+                        <MenuItem fx:id="helpMenu" mnemonicParsing="false" onAction="#showHelpWindow" text="Help" />
+                        <MenuItem mnemonicParsing="false" onAction="#showHotkeyWindow" text="Hotkeys" />
                   </items>
                 </Menu>
               </menus>
