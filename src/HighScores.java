@@ -174,7 +174,7 @@ public class HighScores {
         alert.setTitle("Clear Scores");
         alert.setHeaderText("Clear Scores?");
         alert.setContentText("Are you sure you wish to reset the scores for all\n" +
-                "difficulties? All other scores will be erased!");
+                "difficulties? All scores will be erased!");
         alert.showAndWait();
         if (alert.getResult().equals(ButtonType.OK)) {
             ResetHighScores.ResetScores();

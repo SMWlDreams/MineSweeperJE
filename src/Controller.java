@@ -330,13 +330,13 @@ public class Controller {
             run = false;
             paused = true;
             timeline.stop();
-            pause.setText("Resume");
+            pause.setText("Resume         (" + hotkeys.getPauseKey() + ")");
             partialLockout(true);
         } else if (start) {
             run = true;
             paused = false;
             timeline.play();
-            pause.setText("Pause");
+            pause.setText("Pause            (" + hotkeys.getPauseKey() + ")");
             partialLockout(false);
         }
     }
@@ -428,6 +428,8 @@ public class Controller {
      * Closes the new game prompt window and starts the game
      */
     public void closeNewWindow() {
+        hotkeys = new Hotkeys();
+        setHotkeyTexts();
         newWindowStage.close();
         lockout(false);
         if (play) {
