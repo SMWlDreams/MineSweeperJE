@@ -94,7 +94,7 @@ These settings can be found under a new file called Settings.cfg
 
 ### Improvements
 
-Launch settings and hotkeys are now both found withing the Settings.cfg file. This file also is now output in standard XML format for you nerds out there. This means that you can now delete the Hotkeys.ini file as it is no longer used by any subset of the application.
+Launch settings and hotkeys are now both found within the Settings.cfg file. This file also is now output in standard XML format for you nerds out there. This means that you can now delete the Hotkeys.ini file as it is no longer used by any subset of the application.
 
 Updated the way that hotkey data is stored in the application so it will now only update if a change is made and saved rather than every time they were referenced.
 
