@@ -79,3 +79,56 @@ Pausing the game and resuming will no longer cause the hotkey for the pause butt
 Added the pause hotkey to the resume button in the menu as well to avoid any confusion regarding using that hotkey multiple times.
 
 Empty or invalid hotkeys will no longer show up as “(null)” in the menu unless manually edited by the user through the .ini file. A logical check for updating the hotkeys will be added with the next major code revision as it requires a full refactor of how hotkeys are loaded into the application.
+
+## Version 1.3.0
+
+Yes I know I skipped 1.2.0 I was just too lazy to update it here.
+
+### New Features
+
+#### Launch Settings
+
+Launch Settings added! You can now specify what settings the application loads with from the new launch settings window.
+
+These settings can be found under a new file called Settings.cfg
+
+### Improvements
+
+
+Launch settings and hotkeys are now both found withing the Settings.cfg file. This file also is now output in standard XML format for you nerds out there. This means that you can now delete the Hotkeys.ini file as it is no longer used by any subset of the application.
+
+Updated the way that hotkey data is stored in the application so it will now only update if a change is made and saved rather than every time they were referenced.
+
+Improved load times for different windows through optimized window handling.
+
+Moved all image files to be located inside of the jar instead of in a separate folder. This means no more custom images can be loaded unless you compile the code yourself.
+
+Changed the way the timer works by having it update every thousandth of a second so pausing and un-pausing can no longer be used to freeze the timer.
+
+The version number has been added to the title of the main GUI.
+
+Improved load times for the board through changing the way images are loaded.
+
+Many places that threw exceptions now properly handle them or removed them all together.
+
+Invalid settings or invalid hotkeys will not clear your saved settings for the other option.
+
+Improved responsiveness of hotkey menus by having hotkeys pre-loaded.
+
+Duplicate, null or blank hotkeys will no longer be accepted. Manually editing the file to create these will result in your hotkeys being reset.
+
+Added option to enable resizing of the board due to pixel counts being incorrect on certain screen resolutions (will be creating a hard fix later and removing this option at that point.) This new option can be found under the "Game" menu.
+
+Changed some text fields to just be text so the ugly highlighting is no longer there.
+
+Changed the choice box in the high scores menu to a combo box which allows it to show the currently selected difficulty there as well as in the header.
+
+The source code was finally commented properly! This means that you can finally understand what is going on inside of the application just by reading the comments.
+
+### Bug Fixes
+
+Restarting the game after winning or losing and opening a menu no longer places the game in an unplayable state until it is paused once.
+
+The restart hotkey is no longer bound to the pause hotkey and vice versa.
+
+Application no longer crashes when the Logs or Records folders do not exist.
