@@ -8,7 +8,7 @@ This is my personal adaptation of the famous DOS game MineSweeper. This game is 
 
 Note: Due to size restrictions the version on GitHub does not contain JavaFX libraries and will require you to have them preinstalled. In order to download the full jar with all libraries please go to the following:
 
-https://drive.google.com/open?id=1qQw8HX1wPl2jH6Tcsi7x__dfXw5_8s64
+https://drive.google.com/open?id=1cEJLSNZ9dgrWenye4fTbkacNUWk30l0B
 
 # Change log
 
@@ -84,6 +84,10 @@ Empty or invalid hotkeys will no longer show up as “(null)” in the menu unle
 
 Yes I know I skipped 1.2.0 I was just too lazy to update it here.
 
+### Jar change
+
+The jar file will no longer be updated on minor updates (I.E. 1.3.1). The information for minor updates will still be found in this readme. The source files will be updated for each minor change made.
+
 ### New Features
 
 #### Launch Settings
@@ -93,7 +97,6 @@ Launch Settings added! You can now specify what settings the application loads w
 These settings can be found under a new file called Settings.cfg
 
 ### Improvements
-
 
 Launch settings and hotkeys are now both found withing the Settings.cfg file. This file also is now output in standard XML format for you nerds out there. This means that you can now delete the Hotkeys.ini file as it is no longer used by any subset of the application.
 
