@@ -3,7 +3,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.text.Text;
 
 import java.io.DataInputStream;
@@ -19,7 +19,13 @@ import java.util.List;
 /**
  * Reads and writes scores to .mhs files
  */
-public class HighScores {
+public class HighScores implements Controllers {
+
+    /**
+     * Class properties to allow loading of the window
+     */
+    public static final String[] PROPERTIES = {"HighScores.fxml", "High Scores"};
+
     @FXML
     private Text difficulty;
     @FXML
@@ -43,7 +49,7 @@ public class HighScores {
     @FXML
     private Text name5;
     @FXML
-    private ChoiceBox<String> box;
+    private ComboBox<String> box;
 
     private Controller controller;
     private final Path path;
@@ -61,6 +67,7 @@ public class HighScores {
      */
     public void changeDifficulty(ActionEvent actionEvent) {
         getHighScores(box.getSelectionModel().getSelectedItem());
+        box.setValue(box.getSelectionModel().getSelectedItem());
     }
 
     /**
@@ -89,39 +96,43 @@ public class HighScores {
      * Reads the scores from the high score file for the specified difficulty
      * @param difficulty    Difficulty to get info from
      * @return              The top 5 scores for that difficulty
-     * @throws IOException  If the file cannot be found
      */
-    public List<Scores<String>> readScores(String difficulty) throws IOException {
-        DataInputStream inputStream = new
-                DataInputStream(new FileInputStream(path.toString() + "\\" + difficulty + ".mhs"));
-        List<Scores<String>> score = new ArrayList<>();
-        int i = 0;
-        while (i < 5) {
-            String in = inputStream.readUTF();
-            int i1;
-            int i2;
-            int i3;
-            for (i1 = 1; i1 < in.length(); i1++) {
-                if (in.charAt(i1) == '\n') {
-                    break;
+    public List<Scores<String>> readScores(String difficulty) {
+        try {
+            DataInputStream inputStream = new
+                    DataInputStream(new FileInputStream(path.toString() + "\\" + difficulty + ".mhs"));
+            List<Scores<String>> score = new ArrayList<>();
+            int i = 0;
+            while (i < 5) {
+                String in = inputStream.readUTF();
+                int i1;
+                int i2;
+                int i3;
+                for (i1 = 1; i1 < in.length(); i1++) {
+                    if (in.charAt(i1) == '\n') {
+                        break;
+                    }
                 }
-            }
-            for (i2 = i1 + 1; i2 < in.length(); i2++) {
-                if (in.charAt(i2) == '\n') {
-                    break;
+                for (i2 = i1 + 1; i2 < in.length(); i2++) {
+                    if (in.charAt(i2) == '\n') {
+                        break;
+                    }
                 }
-            }
-            for (i3 = i2 + 1; i3 < in.length(); i3++) {
-                if (in.charAt(i3) == '\n') {
-                    break;
+                for (i3 = i2 + 1; i3 < in.length(); i3++) {
+                    if (in.charAt(i3) == '\n') {
+                        break;
+                    }
                 }
+                score.add(new Scores<>(in.substring(1, i1), in.substring(i1 + 1, i2),
+                        in.substring(i2 + 1, i3)));
+                i++;
             }
-            score.add(new Scores<>(in.substring(1, i1), in.substring(i1 + 1, i2),
-                    in.substring(i2 + 1, i3)));
-            i++;
+            inputStream.close();
+            return score;
+        } catch (IOException e) {
+            ResetHighScores.verify();
+            return readScores(difficulty);
         }
-        inputStream.close();
-        return score;
     }
 
     public Path getPath() {
@@ -133,9 +144,8 @@ public class HighScores {
      * @param difficulty    The difficulty to pull data from
      */
     public void getHighScores(String difficulty) {
-        try {
             List<Scores<String>> scores = readScores(difficulty);
-            this.difficulty.setText("Difficulty: " + difficulty);
+            this.difficulty.setText(difficulty);
             name1.setText(scores.get(0).getValues().get(0));
             score1.setText(scores.get(0).getValues().get(1));
             name2.setText(scores.get(1).getValues().get(0));
@@ -147,20 +157,26 @@ public class HighScores {
             name5.setText(scores.get(4).getValues().get(0));
             score5.setText(scores.get(4).getValues().get(1));
             setChoiceBox();
-        } catch (IOException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Critical Error!");
-            alert.setHeaderText("Error!");
-            alert.setContentText("Error! The high score file cannot be found!");
-            alert.showAndWait();
-            controller.closeNewWindow();
-        }
     }
 
     public void close(ActionEvent actionEvent) {
         controller.closeNewWindow();
     }
 
+    /**
+     * Method that handles the launch settings for each new window
+     * @param string Any argument string that must be passed to the implemented method
+     */
+    @Override
+    public void launch(String string) {
+        getHighScores(string);
+    }
+
+    /**
+     * Sets the controller
+     * @param controller    The copy of the main GUI controller
+     */
+    @Override
     public void setController(Controller controller) {
         this.controller = controller;
     }
@@ -187,6 +203,7 @@ public class HighScores {
         choice.add("Easy");
         choice.add("Intermediate");
         choice.add("Expert");
+        box.setValue(difficulty.getText());
         box.setItems(FXCollections.observableArrayList(choice));
         box.setOnAction(this::changeDifficulty);
     }

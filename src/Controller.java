@@ -10,7 +10,8 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
@@ -20,7 +21,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -79,160 +79,103 @@ public class Controller {
     private boolean keepLogs = false;
     private boolean showMines = false;
     private int logCount = 0;
-    private Hotkeys hotkeys = new Hotkeys();
+    private int cycleCount = 0;
 
     /**
      * Starts the main application on clicking new
      * @param actionEvent   Event sent by clicking new
      */
-    public void start(ActionEvent actionEvent) throws IOException {
-        run = false;
-        setSeed = false;
-        FXMLLoader loader = new FXMLLoader();
-        Pane root = loader.load(getClass().getResource("NewGame.fxml").openStream());
-        NewGameController controller = loader.getController();
-        controller.setController(this);
-        Scene scene = new Scene(root);
-        newWindowStage = new Stage();
-        newWindowStage.getIcons().add(new Image(new File(System.getProperty("user.dir") + "\\Images\\mine.png").toURI().toURL().toString()));
-        newWindowStage.setOnCloseRequest(e -> closeNewWindow());
-        newWindowStage.setResizable(false);
-        newWindowStage.setScene(scene);
-        newWindowStage.setTitle("Start New Game");
-        lockout(true);
-        newWindowStage.showAndWait();
+    public void start(ActionEvent actionEvent) {
+        try {
+            launch(NewGame.PROPERTIES);
+        } catch (IOException e) {
+            System.out.println("APPLICATION IS CORRUPT! PLEASE RE-DOWNLOAD!");
+        }
     }
 
     /**
      * Opens the window to save a specified seed
      * @param actionEvent   Event sent by javafx
-     * @throws IOException  If the FXML file is missing
      */
-    public void setSeed(ActionEvent actionEvent) throws IOException {
-        run = false;
-        timeline.stop();
-        FXMLLoader loader = new FXMLLoader();
-        Pane root = loader.load(getClass().getResource("SetSeed.fxml").openStream());
-        Scene scene = new Scene(root);
-        SetSeed seed = loader.getController();
-        String hashSeed = getSeed();
-        newWindowStage = new Stage();
-        newWindowStage.setScene(scene);
-        newWindowStage.getIcons().add(new Image(new File(System.getProperty("user.dir") + "\\Images\\mine.png").toURI().toURL().toString()));
-        newWindowStage.setTitle("Set Custom Seed");
-        newWindowStage.setOnShown(e -> seed.setCurrentSeed(hashSeed));
-        newWindowStage.setOnCloseRequest(e -> closeNewWindow());
-        newWindowStage.setResizable(false);
-        seed.setController(this);
-        lockout(true);
-        newWindowStage.showAndWait();
+    public void setSeed(ActionEvent actionEvent) {
+        try {
+            launch(SetSeed.PROPERTIES);
+        } catch (IOException e) {
+            System.out.println("APPLICATION IS CORRUPT! PLEASE RE-DOWNLOAD!");
+        }
     }
 
     /**
      * Shows the high scores for the current difficulty
      * @param actionEvent   Event sent by javafx
-     * @throws IOException  If the FXML file is missing
      */
-    public void showHighScores(ActionEvent actionEvent) throws IOException {
-        run = false;
-        timeline.stop();
-        FXMLLoader loader = new FXMLLoader();
-        Pane root = loader.load(getClass().getResource("HighScores.fxml").openStream());
-        Scene scene = new Scene(root);
-        HighScores scores = loader.getController();
-        newWindowStage = new Stage();
-        newWindowStage.setScene(scene);
-        newWindowStage.getIcons().add(new Image(new File(System.getProperty("user.dir") + "\\Images\\mine.png").toURI().toURL().toString()));
-        newWindowStage.setTitle("High Scores");
-        newWindowStage.setOnShown(e -> scores.getHighScores(difficulty.getText().substring(5)));
-        newWindowStage.setOnCloseRequest(e -> closeNewWindow());
-        newWindowStage.setResizable(false);
-        scores.setController(this);
-        lockout(true);
-        newWindowStage.show();
+    public void showHighScores(ActionEvent actionEvent) {
+        try {
+            launch(HighScores.PROPERTIES);
+        } catch (IOException e) {
+            System.out.println("APPLICATION IS CORRUPT! PLEASE RE-DOWNLOAD!");
+        }
     }
 
     /**
      * Shows the hotkeys
      * @param actionEvent   Event sent by javafx
-     * @throws IOException  If the FXML file is missing
      */
-    public void showHotkeyWindow(ActionEvent actionEvent) throws IOException {
-        run = false;
-        timeline.stop();
-        FXMLLoader loader = new FXMLLoader();
-        Pane root = loader.load(getClass().getResource("Hotkeys.fxml").openStream());
-        Scene scene = new Scene(root);
-        Hotkeys hotkeys = loader.getController();
-        newWindowStage = new Stage();
-        newWindowStage.setScene(scene);
-        newWindowStage.getIcons().add(new Image(new File(System.getProperty("user.dir") + "\\Images\\mine.png").toURI().toURL().toString()));
-        newWindowStage.setTitle("Hotkeys");
-        newWindowStage.setOnShown(e -> hotkeys.generateHotKeys(true));
-        newWindowStage.setOnCloseRequest(e -> closeNewWindow());
-        newWindowStage.setResizable(false);
-        hotkeys.setController(this);
-        lockout(true);
-        newWindowStage.show();
+    public void showHotkeyWindow(ActionEvent actionEvent) {
+        try {
+            launch(Hotkeys.PROPERTIES);
+        } catch (IOException e) {
+            System.out.println("APPLICATION IS CORRUPT! PLEASE RE-DOWNLOAD!");
+        }
+    }
+
+    /**
+     * Shows the launch settings menu
+     * @param actionEvent   Event sent by javafx
+     */
+    public void showSettingsMenu(ActionEvent actionEvent) {
+        try {
+            launch(Settings.PROPERTIES);
+        } catch (IOException e) {
+            System.out.println("APPLICATION IS CORRUPT! PLEASE RE-DOWNLOAD!");
+        }
     }
 
     /**
      * Displays the about menu
      * @param actionEvent   Event sent by javafx
-     * @throws IOException  If the FXML file is missing
      */
-    public void showAboutMenu(ActionEvent actionEvent) throws IOException {
-        run = false;
-        timeline.stop();
-        FXMLLoader loader = new FXMLLoader();
-        Pane root = loader.load(getClass().getResource("About.fxml").openStream());
-        Scene scene = new Scene(root);
-        About about = loader.getController();
-        newWindowStage = new Stage();
-        newWindowStage.setScene(scene);
-        newWindowStage.getIcons().add(new Image(new File(System.getProperty("user.dir") + "\\Images\\mine.png").toURI().toURL().toString()));
-        newWindowStage.setTitle("About");
-        newWindowStage.setOnCloseRequest(e -> closeNewWindow());
-        newWindowStage.setResizable(false);
-        about.setController(this);
-        lockout(true);
-        newWindowStage.showAndWait();
+    public void showAboutMenu(ActionEvent actionEvent) {
+        try {
+            launch(About.PROPERTIES);
+        } catch (IOException e) {
+            System.out.println("APPLICATION IS CORRUPT! PLEASE RE-DOWNLOAD!");
+        }
     }
 
     /**
      * Displays the help window
      * @param actionEvent   Event sent by javafx
-     * @throws IOException  If the FXML file is missing
      */
-    public void showHelpWindow(ActionEvent actionEvent) throws IOException {
-        run = false;
-        timeline.stop();
-        FXMLLoader loader = new FXMLLoader();
-        Pane root = loader.load(getClass().getResource("Help.fxml").openStream());
-        Scene scene = new Scene(root);
-        Help help = loader.getController();
-        newWindowStage = new Stage();
-        newWindowStage.setScene(scene);
-        newWindowStage.getIcons().add(new Image(new File(System.getProperty("user.dir") + "\\Images\\mine.png").toURI().toURL().toString()));
-        newWindowStage.setTitle("Help");
-        newWindowStage.setOnShown(e -> help.setSeeds(getSeed()));
-        newWindowStage.setOnCloseRequest(e -> closeNewWindow());
-        newWindowStage.setResizable(false);
-        help.setController(this);
-        lockout(true);
-        newWindowStage.showAndWait();
+    public void showHelpWindow(ActionEvent actionEvent) {
+        try {
+            launch(Help.PROPERTIES);
+        } catch (IOException e) {
+            System.out.println("APPLICATION IS CORRUPT! PLEASE RE-DOWNLOAD!");
+        }
     }
 
     /**
      * Tells the board whether or not to generate a log file
      * @param actionEvent   The event sent by javafx
      */
-    public void generateLog(ActionEvent actionEvent) throws IOException {
+    public void generateLog(ActionEvent actionEvent) {
         log.setSelected(false);
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Restart");
         alert.setHeaderText("Restart?");
-        alert.setContentText("Generating a log file will require a restart. Continue?");
+        alert.setContentText("Changing log generation settings will require a restart.\n" +
+                "Continue?");
         alert.showAndWait();
         if (alert.getResult().equals(ButtonType.OK)) {
             if (!outputLog) {
@@ -261,7 +204,7 @@ public class Controller {
      * Restarts the game with a new board
      * @param actionEvent   The event sent by clicking restart
      */
-    public void restart(ActionEvent actionEvent) throws IOException {
+    public void restart(ActionEvent actionEvent) {
         if (setSeed) {
             setHashSeed(board.getSeed(), hash);
         } else if (start && !run && !paused) {
@@ -286,6 +229,7 @@ public class Controller {
             timeline.play();
             start = true;
             run = true;
+            play = true;
         } else {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Restart");
@@ -317,6 +261,7 @@ public class Controller {
                 timeline.play();
                 start = true;
                 run = true;
+                play = true;
             }
         }
     }
@@ -330,13 +275,13 @@ public class Controller {
             run = false;
             paused = true;
             timeline.stop();
-            pause.setText("Resume         (" + hotkeys.getPauseKey() + ")");
+            pause.setText("Resume         (" + LoadedSettings.getHotkeys()[1] + ")");
             partialLockout(true);
         } else if (start) {
             run = true;
             paused = false;
             timeline.play();
-            pause.setText("Pause            (" + hotkeys.getPauseKey() + ")");
+            pause.setText("Pause            (" + LoadedSettings.getHotkeys()[1] + ")");
             partialLockout(false);
         }
     }
@@ -428,7 +373,6 @@ public class Controller {
      * Closes the new game prompt window and starts the game
      */
     public void closeNewWindow() {
-        hotkeys = new Hotkeys();
         setHotkeyTexts();
         newWindowStage.close();
         lockout(false);
@@ -441,7 +385,7 @@ public class Controller {
     /**
      * Changes the size of the window to fit the game and starts it
      */
-    public void begin() throws IOException {
+    public void begin() {
         if (board != null) {
             if (board.outputLog()) {
                 board.closeOutput("new game");
@@ -457,10 +401,14 @@ public class Controller {
         restart.setDisable(false);
         pause.setDisable(false);
         startTime = 0;
+        cycleCount = 0;
         start = true;
         run = true;
     }
 
+    /**
+     * Clears the board
+     */
     public void clear() {
         board.clear(pane);
     }
@@ -469,22 +417,137 @@ public class Controller {
         this.gui = gui;
     }
 
+    /**
+     * Determines if the game has began or not
+     * @return  True if started, false otherwise
+     */
     public boolean began() {
         return start;
     }
 
     /**
-     * Creates the game on startup of the application
+     * Creates the initial game at launch based off of data found in the Settings.cfg file and
+     * sets any relevant settings
      */
-    public void initialGame() throws IOException {
-        setDifficulty(1);
-        setHotkeyTexts();
-        begin();
-        startTimeUpdate();
+    public void initialGame() {
+        try {
+            LoadedSettings.load();
+            String[] settings = LoadedSettings.getLaunchSettings();
+            if (settings[0].equalsIgnoreCase("Custom")) {
+                if (settings[1].equalsIgnoreCase("False")) {
+                    if (settings[4].equalsIgnoreCase("True")) {
+                        outputLog = true;
+                        keepLogs = true;
+                        log.setSelected(true);
+                    } else {
+                        outputLog = false;
+                        keepLogs = false;
+                        log.setSelected(false);
+                    }
+                    SetSeed seed = new SetSeed();
+                    seed.setController(this);
+                    if (settings[3].equalsIgnoreCase("Null")) {
+                        seed.generateSeed();
+                        seed.init();
+                    } else {
+                        seed.setSeed(settings[3]);
+                    }
+                    setHotkeyTexts();
+                    startTimeUpdate();
+                } else {
+                    String seed = settings[2];
+                    String hash = settings[3];
+                    if (settings[4].equalsIgnoreCase("True")) {
+                        outputLog = true;
+                        keepLogs = true;
+                        log.setSelected(true);
+                    } else {
+                        outputLog = false;
+                        keepLogs = false;
+                        log.setSelected(false);
+                    }
+                    SetSeed seeds = new SetSeed();
+                    seeds.setController(this);
+                    seeds.setSeed(seed, hash);
+                    setHotkeyTexts();
+                    startTimeUpdate();
+                }
+            } else {
+                switch (settings[0]) {
+                    case "Easy":
+                        setDifficulty(1);
+                        break;
+                    case "Intermediate":
+                        setDifficulty(2);
+                        break;
+                    case "Expert":
+                        setDifficulty(3);
+                        break;
+                }
+                if (settings[4].equalsIgnoreCase("True")) {
+                    outputLog = true;
+                    keepLogs = true;
+                    log.setSelected(true);
+                } else {
+                    outputLog = false;
+                    keepLogs = false;
+                    log.setSelected(false);
+                }
+                setHotkeyTexts();
+                begin();
+                startTimeUpdate();
+            }
+        } catch (IOException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Critical Error!");
+            alert.setHeaderText("Error!");
+            alert.setContentText("Error! The settings file cannot be found!\n" +
+                    "Generating a new file...");
+            alert.showAndWait();
+            GenerateSettings.xmlGeneration();
+            setDifficulty(1);
+            outputLog = false;
+            keepLogs = false;
+            setHotkeyTexts();
+            begin();
+            startTimeUpdate();
+        } catch (InvalidSettingsException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Critical Error!");
+            alert.setHeaderText("Error!");
+            alert.setContentText("Error! The settings file is corrupted!\n" +
+                    "Generating a new file...");
+            alert.showAndWait();
+            int errorLevel = GenerateSettings.getErrorLevel();
+            if (errorLevel == 1) {
+                GenerateSettings.updateSettings(GenerateSettings.DEFAULT_SETTINGS, LoadedSettings.getHotkeys());
+                setDifficulty(1);
+                outputLog = false;
+                keepLogs = false;
+                setHotkeyTexts();
+                begin();
+                startTimeUpdate();
+            } else if (errorLevel == 2) {
+                GenerateSettings.updateSettings(LoadedSettings.getLaunchSettings(), Hotkeys.DEFAULT_HOTKEYS);
+                initialGame();
+            } else {
+                GenerateSettings.xmlGeneration();
+                setDifficulty(1);
+                outputLog = false;
+                keepLogs = false;
+                setHotkeyTexts();
+                begin();
+                startTimeUpdate();
+            }
+        }
     }
 
+    /**
+     * Closes the application
+     * @param actionEvent   Event send by javafx
+     */
     public void close(ActionEvent actionEvent) {
-        gui.close();
+        Platform.exit();
     }
 
     /**
@@ -492,13 +555,15 @@ public class Controller {
      * @param seed  The seed to populate RNG
      * @param hash  The hash to build the board
      */
-    public void setHashSeed(String seed, String hash) throws IOException {
+    public void setHashSeed(String seed, String hash) {
         this.hash = hash;
         int height = Integer.parseInt(hash.substring(2, 4));
         int width = Integer.parseInt(hash.substring(4, 6));
         int mine = Integer.parseInt(hash.substring(6));
         customDimensions(height, width, mine);
-        board.clear(pane);
+        if (board != null) {
+            board.clear(pane);
+        }
         if (outputLog && board != null) {
             if (board.outputLog()) {
                 board.closeOutput("start new game");
@@ -513,7 +578,7 @@ public class Controller {
                         difficulty.getText());
             } else {
                 logCount = 0;
-                logCount = board.generateLog(true, hash, width, height, numMines, true, logCount,
+                logCount = board.generateLog(true, hash, width, height, numMines, false, logCount,
                         difficulty.getText());
             }
         } else {
@@ -522,10 +587,12 @@ public class Controller {
         adjustBoard();
         startTime = 0;
         timeline.stop();
+        cycleCount = 0;
         timeline.play();
         pause.setDisable(false);
         start = true;
         run = true;
+        play = true;
         setSeed = true;
     }
 
@@ -555,24 +622,105 @@ public class Controller {
         Platform.exit();
     }
 
-    public void parseInput(String character) {
-        try {
-            if (character.equalsIgnoreCase(hotkeys.getPauseKey()) && !pause.isDisable() && !game.isDisable()) {
-                pause(new ActionEvent());
-            } else if (character.equalsIgnoreCase(hotkeys.getRestartKey()) && !restart.isDisable() && !game.isDisable()) {
-                restart(new ActionEvent());
-            } else if (character.equalsIgnoreCase(hotkeys.getNewGameKey()) && !file.isDisable()) {
-                start(new ActionEvent());
-            } else if (character.equalsIgnoreCase(hotkeys.getHelpKey()) && !help.isDisable()) {
-                showHelpWindow(new ActionEvent());
-            } else if (character.equalsIgnoreCase(hotkeys.getHighScoreKey()) && !highScore.isDisable() && !game.isDisable()) {
-                showHighScores(new ActionEvent());
-            } else if (character.equalsIgnoreCase(hotkeys.getAboutKey()) && !help.isDisable()) {
-                showAboutMenu(new ActionEvent());
-            }
-        } catch (IOException e) {
-            System.out.println("F");
+    /**
+     * Handles all the code for creating new windows while running the application
+     * @param args          The individual PROPERTIES array from whichever class is being used as
+     *                     the controller for the new window
+     * @throws IOException  If the FXML File specified in the PROPERTIES array is missing
+     */
+    public void launch(String[] args) throws IOException {
+        run = false;
+        timeline.stop();
+        FXMLLoader loader = new FXMLLoader();
+        Pane root = loader.load(getClass().getResource(args[0]).openStream());
+        Scene scene = new Scene(root);
+        Controllers controller = loader.getController();
+        newWindowStage = new Stage();
+        newWindowStage.setScene(scene);
+        newWindowStage.getIcons().add(Tile.MINE_IMAGE);
+        newWindowStage.setTitle(args[1]);
+        String className = controller.getClass().getName();
+        if (className.equalsIgnoreCase("Help") || className.equalsIgnoreCase("SetSeed")
+                || className.equalsIgnoreCase("Settings")) {
+            newWindowStage.setOnShown(e -> controller.launch(getSeed()));
+        } else if (className.equalsIgnoreCase("HighScores")) {
+            newWindowStage.setOnShown(e -> controller.launch(difficulty.getText().substring(5)));
+        } else if (className.equalsIgnoreCase("Hotkeys")) {
+            newWindowStage.setOnShown(e -> controller.launch("true"));
+        } else if (className.equalsIgnoreCase("About")) {
+            newWindowStage.setOnShown(e -> controller.launch(About.VERSION_ID));
         }
+        newWindowStage.setOnCloseRequest(e -> closeNewWindow());
+        newWindowStage.setResizable(false);
+        controller.setController(this);
+        lockout(true);
+        if (className.equalsIgnoreCase("HighScores")) {
+            newWindowStage.show();
+        } else {
+            newWindowStage.showAndWait();
+        }
+    }
+
+    /**
+     * Parses user input to determine if they pressed a hotkey or not
+     * @param character The character string pressed by the user
+     */
+    public void parseInput(String character) {
+        String[] hotkeys = LoadedSettings.getHotkeys();
+        if (character.equalsIgnoreCase(hotkeys[0]) && !restart.isDisable() && !game.isDisable()) {
+            restart(new ActionEvent());
+        } else if (character.equalsIgnoreCase(hotkeys[1]) && !pause.isDisable() && !game.isDisable()) {
+            pause(new ActionEvent());
+        } else if (character.equalsIgnoreCase(hotkeys[2]) && !file.isDisable()) {
+            start(new ActionEvent());
+        } else if (character.equalsIgnoreCase(hotkeys[3]) && !help.isDisable()) {
+            showHelpWindow(new ActionEvent());
+        } else if (character.equalsIgnoreCase(hotkeys[4]) && !highScore.isDisable() && !game.isDisable()) {
+            showHighScores(new ActionEvent());
+        } else if (character.equalsIgnoreCase(hotkeys[5]) && !help.isDisable()) {
+            showAboutMenu(new ActionEvent());
+        }
+    }
+
+    /**
+     * Initial parsing of the input character in order to determine if the hard settings reset
+     * has been entered
+     * @param keyEvent  The key event sent from the main javafx window
+     */
+    public void parseInput(KeyEvent keyEvent) {
+        if (!(keyEvent.getCode().equals(KeyCode.CONTROL))) {
+            if (keyEvent.isControlDown() && keyEvent.getCode().equals(KeyCode.R)) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Reset Settings");
+                alert.setHeaderText("Reset Settings?");
+                alert.setContentText("Are you sure you want to hard-reset the launch settings?");
+                alert.showAndWait();
+                if (alert.getResult().equals(ButtonType.OK)) {
+                    GenerateSettings.updateSettings(GenerateSettings.DEFAULT_SETTINGS,
+                            LoadedSettings.getHotkeys());
+                    run = false;
+                    restart(new ActionEvent());
+                }
+            } else {
+                parseInput(keyEvent.getText());
+            }
+        }
+    }
+
+    /**
+     * Closes the register high scores window (note: this is different than every other window)
+     */
+    public void closeRHSWindow() {
+        newWindowStage.close();
+        showHighScores(new ActionEvent());
+    }
+
+    /**
+     * Changes the window to be manually resizable by the user
+     * @param actionEvent   Event sent by javafx
+     */
+    public void setResizable(ActionEvent actionEvent) {
+        gui.setResizable();
     }
 
     private String getSeed() {
@@ -605,7 +753,7 @@ public class Controller {
         grid.setPrefWidth((width * Tile.SCALE * scaleMultiplier + 14) > 460 ?
                 (width * Tile.SCALE * scaleMultiplier + 14) : 460);
         pane.setPrefHeight(height * Tile.SCALE * scaleMultiplier);
-        pane.setPrefWidth(width * Tile.SCALE * scaleMultiplier + 14);
+        pane.setPrefWidth(width * Tile.SCALE * scaleMultiplier);
         gui.setDimensions((width * Tile.SCALE * scaleMultiplier + 14) > 460 ?
                         (width * Tile.SCALE * scaleMultiplier + 14) : 460,
                 (height * Tile.SCALE * scaleMultiplier) + 100);
@@ -615,14 +763,18 @@ public class Controller {
     }
 
     private void startTimeUpdate() {
-        KeyFrame keyFrame = new KeyFrame(Duration.millis(1000), e -> updateTimeText());
+        KeyFrame keyFrame = new KeyFrame(Duration.millis(1), e -> updateTimeText());
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.getKeyFrames().add(keyFrame);
         timeline.play();
     }
 
     private void updateTimeText() {
-        time.setText("     " + Long.toString(++startTime) + " seconds");
+        cycleCount++;
+        if (cycleCount == 1000) {
+            time.setText("     " + Long.toString(++startTime) + " seconds");
+            cycleCount = 0;
+        }
     }
 
     private void win() {
@@ -674,7 +826,7 @@ public class Controller {
             if (difficulty.equalsIgnoreCase("easy")) {
                 newScore = score - (startTime * 10);
             } else if (difficulty.equalsIgnoreCase("intermediate")) {
-                newScore = score - (startTime * 4);
+                newScore = score - (startTime * 3);
             } else {
                 newScore = score - (startTime / 2);
             }
@@ -704,22 +856,13 @@ public class Controller {
         highScores.setController(this);
         newWindowStage = new Stage();
         newWindowStage.setScene(scene);
-        newWindowStage.getIcons().add(new Image(new File(System.getProperty("user.dir") + "\\Images\\mine.png").toURI().toURL().toString()));
+        newWindowStage.getIcons().add(Tile.MINE_IMAGE);
         newWindowStage.setTitle("High Score");
         newWindowStage.setOnShown(e -> highScores.setInfo(score, rank, difficulty));
         newWindowStage.setOnCloseRequest(e -> closeRHSWindow());
         newWindowStage.setResizable(false);
         lockout(true);
         newWindowStage.showAndWait();
-    }
-
-    public void closeRHSWindow() {
-        try {
-            newWindowStage.close();
-            showHighScores(new ActionEvent());
-        } catch (IOException e) {
-            System.out.println("oops");
-        }
     }
 
     private void generateHash() {
@@ -757,11 +900,12 @@ public class Controller {
     }
 
     private void setHotkeyTexts() {
-        newGame.setText("New Game  (" + hotkeys.getNewGameKey() + ")");
-        about.setText("About      (" + hotkeys.getAboutKey() + ")");
-        helpMenu.setText("Help         (" + hotkeys.getHelpKey() + ")");
-        highScore.setText("High Scores   (" + hotkeys.getHighScoreKey() + ")");
-        restart.setText("Restart          (" + hotkeys.getRestartKey() + ")");
-        pause.setText("Pause            (" + hotkeys.getPauseKey() + ")");
+        String[] hotkeys = LoadedSettings.getHotkeys();
+        restart.setText("Restart          (" + hotkeys[0] + ")");
+        pause.setText("Pause            (" + hotkeys[1] + ")");
+        newGame.setText("New Game  (" + hotkeys[2] + ")");
+        helpMenu.setText("Help         (" + hotkeys[3] + ")");
+        highScore.setText("High Scores   (" + hotkeys[4] + ")");
+        about.setText("About      (" + hotkeys[5] + ")");
     }
 }

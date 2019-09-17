@@ -2,8 +2,6 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -15,9 +13,17 @@ public class Tile extends Rectangle {
      */
     public static final int SCALE = 20;
 
+    /**
+     * The main image for the mines to be used for icons in other menus
+     */
+    public static final Image MINE_IMAGE = new Image("mine.png");
+
     private int scaleMultiplier;
-    private final Image beforeFlagged;
-    private final Image flag;
+    private final Image[] clickedImages = {new Image("zero.png"), new Image("one.png"), new Image(
+            "two.png"), new Image("three.png"), new Image("four.png"), new Image("five.png"),
+            new Image("six.png"), new Image("seven.png"), new Image("eight.png")};
+    private final Image beforeFlagged = new Image("default.png");
+    private final Image flag = new Image("flag.png");
     private Image afterClicked;
     private final int xcoord;
     private final int ycoord;
@@ -34,11 +40,7 @@ public class Tile extends Rectangle {
      * @param board         The board the tiles are placed in
      * @param multiplier    The multiplier for the scale based on board size
      */
-    public Tile(int x, int y, Board board, int multiplier) throws IOException {
-        beforeFlagged = new Image(new File(System.getProperty("user.dir") + "\\Images\\default" +
-                ".png").toURI().toURL().toString());
-        flag =
-                new Image(new File(System.getProperty("user.dir") + "\\Images\\flag.png").toURI().toURL().toString());
+    public Tile(int x, int y, Board board, int multiplier) {
         scaleMultiplier = multiplier;
         selected = false;
         this.board = board;
@@ -52,9 +54,10 @@ public class Tile extends Rectangle {
                 SCALE * scaleMultiplier, false));
     }
 
-    public void setMine() throws IOException {
+    public void setMine() {
         mine = true;
-        afterClicked = new Image(new File(System.getProperty("user.dir") + "\\Images\\mine.png").toURI().toURL().toString());
+//        afterClicked = new Image(new File(System.getProperty("user.dir") + "\\Images\\mine.png").toURI().toURL().toString());
+        afterClicked = MINE_IMAGE;
     }
 
     public boolean isMine() {
@@ -112,36 +115,36 @@ public class Tile extends Rectangle {
      * Determines how many mines are around this specific tile
      * @param tiles The list of tiles for this board
      */
-    public void determineNeighbors(List<List<Tile>> tiles) throws IOException {
+    public void determineNeighbors(List<List<Tile>> tiles) {
         neighborMines = 0;
         determineNeighbors(tiles, xcoord, ycoord);
         switch (neighborMines) {
             case 0:
-                afterClicked = new Image(new File(System.getProperty("user.dir") + "\\Images\\zero.png").toURI().toURL().toString());
+                afterClicked = clickedImages[0];
                 break;
             case 1:
-                afterClicked = new Image(new File(System.getProperty("user.dir") + "\\Images\\one.png").toURI().toURL().toString());
+                afterClicked = clickedImages[1];
                 break;
             case 2:
-                afterClicked = new Image(new File(System.getProperty("user.dir") + "\\Images\\two.png").toURI().toURL().toString());
+                afterClicked = clickedImages[2];
                 break;
             case 3:
-                afterClicked = new Image(new File(System.getProperty("user.dir") + "\\Images\\three.png").toURI().toURL().toString());
+                afterClicked = clickedImages[3];
                 break;
             case 4:
-                afterClicked = new Image(new File(System.getProperty("user.dir") + "\\Images\\four.png").toURI().toURL().toString());
+                afterClicked = clickedImages[4];
                 break;
             case 5:
-                afterClicked = new Image(new File(System.getProperty("user.dir") + "\\Images\\five.png").toURI().toURL().toString());
+                afterClicked = clickedImages[5];
                 break;
             case 6:
-                afterClicked = new Image(new File(System.getProperty("user.dir") + "\\Images\\six.png").toURI().toURL().toString());
+                afterClicked = clickedImages[6];
                 break;
             case 7:
-                afterClicked = new Image(new File(System.getProperty("user.dir") + "\\Images\\seven.png").toURI().toURL().toString());
+                afterClicked = clickedImages[7];
                 break;
             case 8:
-                afterClicked = new Image(new File(System.getProperty("user.dir") + "\\Images\\eight.png").toURI().toURL().toString());
+                afterClicked = clickedImages[8];
                 break;
         }
     }

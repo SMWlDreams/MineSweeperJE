@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -26,16 +25,20 @@
       </Text>
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Your score starts at 1000. Custom games are not scored." textAlignment="CENTER" wrappingWidth="400.0" />
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="For Easy: Lose 10 score per second" textAlignment="CENTER" wrappingWidth="400.0" />
-      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="For Intermediate: Lose 4 score per second" textAlignment="CENTER" wrappingWidth="400.0" />
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="For Intermediate: Lose 3 score per second" textAlignment="CENTER" wrappingWidth="400.0" />
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="For Expert: Lose 1 score every 2 seconds" textAlignment="CENTER" wrappingWidth="400.0" />
       <HBox>
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Current Seed " wrappingWidth="110.0">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Current Seed:" wrappingWidth="110.0">
                <font>
                   <Font size="18.0" />
                </font>
             </Text>
-            <TextField fx:id="seeds" editable="false" prefWidth="290.0" promptText="Seed" />
+            <Text fx:id="seeds" strokeType="OUTSIDE" strokeWidth="0.0" text="SEED" textAlignment="CENTER" wrappingWidth="300.0">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Text>
          </children>
       </HBox>
       <GridPane>

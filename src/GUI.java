@@ -1,11 +1,8 @@
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-
-import java.io.File;
 
 public class GUI extends Application {
     private Stage mainStage;
@@ -22,13 +19,14 @@ public class GUI extends Application {
         Controller controller = loader.getController();
         controller.setGui(this);
         Scene scene = new Scene(root);
-        scene.setOnKeyTyped(e -> controller.parseInput(e.getCharacter()));
+//        scene.setOnKeyTyped(e -> controller.parseInput(e));
+        scene.setOnKeyPressed(e -> controller.parseInput(e));
         controller.initialGame();
         mainStage.setOnHidden(e -> controller.stopTimeline());
-        mainStage.getIcons().add(new Image(new File(System.getProperty("user.dir") + "\\Images\\mine.png").toURI().toURL().toString()));
+        mainStage.getIcons().add(Tile.MINE_IMAGE);
         mainStage.setResizable(false);
         mainStage.setScene(scene);
-        mainStage.setTitle("Minesweeper");
+        mainStage.setTitle("Minesweeper " + About.VERSION_ID);
         mainStage.show();
     }
 
@@ -47,5 +45,16 @@ public class GUI extends Application {
      */
     public void close() {
         mainStage.close();
+    }
+
+    /**
+     * Enables or disables manual resizing of the window
+     */
+    public void setResizable() {
+        if (mainStage.isResizable()) {
+            mainStage.setResizable(false);
+        } else {
+            mainStage.setResizable(true);
+        }
     }
 }

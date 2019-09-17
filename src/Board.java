@@ -1,7 +1,9 @@
+import javafx.scene.control.Alert;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -32,7 +34,7 @@ public class Board {
      * @param pane          The pane to draw the mines to
      * @param multiplier    The value to multiply the scale of the images by
      */
-    public Board(int row, int col, int numMines, Pane pane, int multiplier) throws IOException {
+    public Board(int row, int col, int numMines, Pane pane, int multiplier) {
         this(row, col, numMines, pane, multiplier, "0");
     }
 
@@ -45,7 +47,7 @@ public class Board {
      * @param multiplier    The value to multiply the scale of the images by
      * @param seed          The seed to populate RNG with
      */
-    public Board(int row, int col, int numMines, Pane pane, int multiplier, String seed) throws IOException {
+    public Board(int row, int col, int numMines, Pane pane, int multiplier, String seed) {
         numClickedTiles = 0;
         scaleMultiplier = multiplier;
         numFlags = numMines;
@@ -183,11 +185,10 @@ public class Board {
                     logCount = 0;
                 }
                 if (keepLogs){
-                    logCount ++;
-                    writer = new PrintWriter( System.getProperty("user.dir") + "\\Logs\\" +
-                            seed + "_" + hash + "_attempt_" + logCount + ".txt");
+                    writer = new PrintWriter(System.getProperty("user.dir") + "\\Logs\\" +
+                            seed + "_" + hash + "_attempt_" + ++logCount + ".txt");
                     writer.write("File seed and hash: " + seed + hash + "\r\n");
-                    writer.write("Difficulty: " + difficulty + "\r\n");
+                    writer.write("Difficulty: " + difficulty.substring(5) + "\r\n");
                     writer.write("Board width: " + width + "\r\n");
                     writer.write("Board height: " + height + "\r\n");
                     writer.write("Total number of mines: " + numMines + "\r\n");
@@ -195,13 +196,23 @@ public class Board {
                     writer = new PrintWriter( System.getProperty("user.dir") + "\\Logs\\" +
                             + seed + "_" + hash + ".txt");
                     writer.write("File seed and hash: " + seed + hash + "\r\n");
-                    writer.write("Difficulty: " + difficulty + "\r\n");
+                    writer.write("Difficulty: " + difficulty.substring(5) + "\r\n");
                     writer.write("Board width: " + width + "\r\n");
                     writer.write("Board height: " + height + "\r\n");
                     writer.write("Total number of mines: " + numMines + "\r\n");
                 }
             } catch (IOException e) {
-                System.out.println("oops");
+                File dir = new File(System.getProperty("user.dir") + "\\Logs");
+                if (dir.mkdirs()) {
+                    generateLog(bool, hash, width, height, numMines, keepLogs, difficulty);
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Critical Error!");
+                    alert.setHeaderText("Error!");
+                    alert.setContentText("Error! The log files could not be created\n" +
+                            "due to an I/O error!");
+                    alert.showAndWait();
+                }
             }
         }
         return logCount;
@@ -238,6 +249,10 @@ public class Board {
         writer.close();
     }
 
+    /**
+     * Closes the log writer file when ended before a game has ended
+     * @param result    What action was done to end the game
+     */
     public void closeOutput(String result) {
         writer.write("Game ended early due to a " + result + " requested by the user.");
         writer.close();
@@ -247,6 +262,10 @@ public class Board {
         return Long.toString(seed);
     }
 
+    /**
+     * Determines if a writer is currently writing a log file
+     * @return  True if the writer exists, false otherwise
+     */
     public boolean outputLog() {
         try {
             writer.write("");
@@ -312,7 +331,7 @@ public class Board {
         }
     }
 
-    private void createBoard(int col, int row) throws IOException {
+    private void createBoard(int col, int row) {
         for (int i = 0; i < col; i++) {
             List<Tile> temp = new ArrayList<>();
             for (int j = 0; j < row; j++) {
@@ -322,7 +341,7 @@ public class Board {
         }
     }
 
-    private void initMines(int mines, String seed) throws IOException {
+    private void initMines(int mines, String seed) {
         int i = 0;
         if (Long.parseLong(seed) == 0) {
             this.seed = System.nanoTime();
@@ -343,7 +362,7 @@ public class Board {
         }
     }
 
-    private void setNeighbors() throws IOException {
+    private void setNeighbors() {
         for (int i = 0; i < tiles.size(); i++) {
             List<Tile> temp = tiles.get(i);
             for (int j = 0; j < temp.size(); j++) {

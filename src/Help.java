@@ -1,13 +1,19 @@
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
 
 /**
  * Opens help dialog
  */
-public class Help {
+public class Help implements Controllers {
+
+    /**
+     * Class properties to allow loading of the window
+     */
+    public static final String[] PROPERTIES = {"Help.fxml", "Help"};
+
     @FXML
-    private TextField seeds;
+    private Text seeds;
 
     private Controller controller;
 
@@ -19,12 +25,17 @@ public class Help {
         controller.closeNewWindow();
     }
 
-    public void setController(Controller controller) {
-        this.controller = controller;
+    /**
+     * Method that handles the launch settings for each new window
+     * @param string Any argument string that must be passed to the implemented method
+     */
+    @Override
+    public void launch(String string) {
+        seeds.setText(string);
     }
 
-
-    public void setSeeds(String seed) {
-        seeds.setText(seed);
+    @Override
+    public void setController(Controller controller) {
+        this.controller = controller;
     }
 }

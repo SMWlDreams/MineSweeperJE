@@ -27,6 +27,7 @@
                 <Menu fx:id="file" mnemonicParsing="false" text="File">
                   <items>
                         <MenuItem fx:id="newGame" mnemonicParsing="false" onAction="#start" text="New Game" />
+                        <MenuItem mnemonicParsing="false" onAction="#showSettingsMenu" text="Launch Settings" />
                         <MenuItem mnemonicParsing="false" onAction="#setSeed" text="Set RNG Seed" />
                         <CheckMenuItem fx:id="log" mnemonicParsing="false" onAction="#generateLog" text="Generate Log File" />
                     <MenuItem mnemonicParsing="false" onAction="#close" text="Close" />
@@ -37,6 +38,7 @@
                     <MenuItem fx:id="restart" disable="true" mnemonicParsing="false" onAction="#restart" text="Restart" />
                         <MenuItem fx:id="pause" disable="true" mnemonicParsing="false" onAction="#pause" text="Pause" />
                         <MenuItem fx:id="highScore" mnemonicParsing="false" onAction="#showHighScores" text="High Scores" />
+                        <CheckMenuItem mnemonicParsing="false" onAction="#setResizable" text="Enable Manual Window Resizing" />
                   </items>
                 </Menu>
                 <Menu fx:id="help" mnemonicParsing="false" text="Help">

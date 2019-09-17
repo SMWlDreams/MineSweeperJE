@@ -11,11 +11,11 @@ import java.io.IOException;
  */
 public class RegisterHighScores {
     @FXML
-    TextField field;
+    private TextField field;
     @FXML
-    Text score;
+    private Text score;
     @FXML
-    Text rank;
+    private Text rank;
 
     private String dif;
     private Controller controller;
