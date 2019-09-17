@@ -135,3 +135,17 @@ Restarting the game after winning or losing and opening a menu no longer places 
 The restart hotkey is no longer bound to the pause hotkey and vice versa.
 
 Application no longer crashes when the Logs or Records folders do not exist.
+
+## Version 1.3.1
+
+### Improvements
+
+Added a default hotkey to reset the settings file (hitting Ctrl + R will bring up a confirmation window to reset the settings then start a new game).
+
+### Bug Fixes
+
+Using a preset hash will no longer crash the application on startup when specified in launch settings.
+
+The settings verifier now properly sets the ERROR_LEVEL to 0 before verifying the file so it no longer things it is invalid after failing on startup.
+
+Using a preset hash and seed will no longer cause the board to be generated twice causing the board to overflow downward and the game to become unplayable.
