@@ -6,10 +6,6 @@
 
 This is my personal adaptation of the famous DOS game MineSweeper. This game is made entirely in the Java language and is meant to be a close imitation of Minesweeper for Windows XP. This project is fully open source and anyone may use the source files as long as I am credited in the final submission.
 
-Note: Due to size restrictions the version on GitHub does not contain JavaFX libraries and will require you to have them preinstalled. In order to download the full jar with all libraries please go to the following:
-
-https://drive.google.com/open?id=1cEJLSNZ9dgrWenye4fTbkacNUWk30l0B
-
 # Change log
 
 ## Version 1.0.1
@@ -86,7 +82,7 @@ Yes I know I skipped 1.2.0 I was just too lazy to update it here.
 
 ### Jar change
 
-The jar file will no longer be updated on minor updates (I.E. 1.3.1). The information for minor updates will still be found in this readme. The source files will be updated for each minor change made.
+The jar file containing JavaFX libraries will no longer be updated on minor updates (I.E. 1.3.1). The information for minor updates will still be found in this readme. The source files will be updated for each minor change made.
 
 ### New Features
 
