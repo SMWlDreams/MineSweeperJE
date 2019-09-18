@@ -140,6 +140,10 @@ Added a default hotkey to reset the settings file (hitting Ctrl + R will bring u
 
 You can now view high scores even while playing a game with a custom board. The selection model will default to easy.
 
+When entering new hotkeys you can once again leave fields blank to keep the ones that are currently saved.
+
+Saving new hotkeys will now clear the associated field so attempting to edit them again without closing the window will not leave the hotkeys sitting there
+
 ### Bug Fixes
 
 Using a preset hash will no longer crash the application on startup when specified in launch settings.

@@ -6,6 +6,9 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 
+/**
+ * Information for displaying and entering new user specified hotkeys
+ */
 public class Hotkeys implements Controllers {
 
     /**
@@ -54,6 +57,10 @@ public class Hotkeys implements Controllers {
     private Controller controller;
     private boolean edit = false;
 
+    /**
+     * Closes the window and re-enables gameplay
+     * @param actionEvent   JavaFX event
+     */
     public void close(ActionEvent actionEvent) {
         controller.closeNewWindow();
     }
@@ -71,10 +78,18 @@ public class Hotkeys implements Controllers {
         about.setText(hotkeys[5]);
     }
 
+    /**
+     * Changes the gui layout to ENTER_HOTKEY_MODE from DISPLAY_HOTKEY_MODE
+     * @param actionEvent   JavaFX Event
+     */
     public void changeHotKeys(ActionEvent actionEvent) {
         setGuiLayout();
     }
 
+    /**
+     * Changes the gui layout from ENTER_HOTKEY_MODE to DISPLAY_HOTKEY_MODE without saving the
+     * user-entered hotkeys
+     */
     public void cancel() {
         setGuiLayout();
     }
@@ -115,13 +130,38 @@ public class Hotkeys implements Controllers {
      */
     public void saveNewHotkeys() {
         try {
-            String[] hotkeys = new String[6];
-            hotkeys[0] = setRestart.getText().substring(0, 1);
-            hotkeys[1] = setPause.getText().substring(0, 1);
-            hotkeys[2] = setNewGame.getText().substring(0, 1);
-            hotkeys[3] = setHelp.getText().substring(0, 1);
-            hotkeys[4] = setHighScores.getText().substring(0, 1);
-            hotkeys[5] = setAbout.getText().substring(0, 1);
+            String[] hotkeys = new String[DEFAULT_HOTKEYS.length];
+            String[] oldKeys = LoadedSettings.getHotkeys();
+            if (!(setRestart.getText().length() == 0)) {
+                hotkeys[0] = setRestart.getText().substring(0, 1);
+            } else {
+                hotkeys[0] = oldKeys[0];
+            }
+            if (!(setPause.getText().length() == 0)) {
+                hotkeys[1] = setPause.getText().substring(0, 1);
+            } else {
+                hotkeys[1] = oldKeys[1];
+            }
+            if (!(setNewGame.getText().length() == 0)) {
+                hotkeys[2] = setNewGame.getText().substring(0, 1);
+            } else {
+                hotkeys[2] = oldKeys[2];
+            }
+            if (!(setHelp.getText().length() == 0)) {
+                hotkeys[3] = setHelp.getText().substring(0, 1);
+            } else {
+                hotkeys[3] = oldKeys[3];
+            }
+            if (!(setHighScores.getText().length() == 0)) {
+                hotkeys[4] = setHighScores.getText().substring(0, 1);
+            } else {
+                hotkeys[4] = oldKeys[4];
+            }
+            if (!(setAbout.getText().length() == 0)) {
+                hotkeys[5] = setAbout.getText().substring(0, 1);
+            } else {
+                hotkeys[5] = oldKeys[5];
+            }
             verify(hotkeys);
             setGuiLayout();
         } catch (StringIndexOutOfBoundsException e) {
@@ -135,10 +175,16 @@ public class Hotkeys implements Controllers {
         }
     }
 
+    /**
+     * Resets to the default hotkey settings keeping the user specified launch settings
+     */
     private void reset() {
         GenerateSettings.updateSettings(LoadedSettings.getLaunchSettings(), DEFAULT_HOTKEYS);
     }
 
+    /**
+     * Updates the GUI layout based on whether we are in ENTER_HOTKEY_MODE or DISPLAY_HOTKEY_MODE
+     */
     private void setGuiLayout() {
         if (!edit) {
             restart.setVisible(false);
@@ -169,11 +215,17 @@ public class Hotkeys implements Controllers {
             pause.setVisible(true);
             highScore.setVisible(true);
             setAbout.setVisible(false);
+            setAbout.clear();
             setHelp.setVisible(false);
+            setHelp.clear();
             setHighScores.setVisible(false);
+            setHighScores.clear();
             setNewGame.setVisible(false);
+            setNewGame.clear();
             setPause.setVisible(false);
+            setPause.clear();
             setRestart.setVisible(false);
+            setRestart.clear();
             hotkeyChange.setText("Click here to change hotkey keybinds");
             hotkeyChange.setOnAction(this::changeHotKeys);
             infoText.setText("The following hotkeys can be used");
@@ -186,6 +238,11 @@ public class Hotkeys implements Controllers {
         }
     }
 
+    /**
+     * Verifies that the hotkeys entered by the user fit the requirements set forth by the
+     * application in the verify(String[], int) method
+     * @param hotkeys   The String[] containing the newly entered user hotkeys
+     */
     private void verify(String[] hotkeys) {
         if (verify(hotkeys, 0)) {
             GenerateSettings.updateSettings(LoadedSettings.getLaunchSettings(), hotkeys);
@@ -194,6 +251,17 @@ public class Hotkeys implements Controllers {
         }
     }
 
+    /**
+     * Determines the validity of the user-specified hotkeys before saving them
+     * In order for the hotkeys to be valid it must follow the following rules:
+     *      There must be NO duplicate hotkeys present
+     *      All hotkeys must be assigned a valid value (note: any fields left blank will simply
+     *      be updated with whatever was present before)
+     *      No hotkey can have the character ' ' assigned to it
+     * @param hotkeys       String[] containing the new hotkeys
+     * @param searchIndex   0 to point to the start of the array
+     * @return              True if and only if ALL the new hotkeys are valid
+     */
     private boolean verify(String[] hotkeys, int searchIndex) {
         String s = hotkeys[searchIndex];
         if (s.equalsIgnoreCase(" ")) {
