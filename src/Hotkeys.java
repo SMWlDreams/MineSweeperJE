@@ -51,18 +51,8 @@ public class Hotkeys implements Controllers {
     @FXML
     private Button resetClear;
 
-    private String restartKey;
-    private String pauseKey;
-    private String newGameKey;
-    private String highScoreKey;
-    private String helpKey;
-    private String aboutKey;
     private Controller controller;
     private boolean edit = false;
-
-    public Hotkeys() {
-        generateHotKeys(false);
-    }
 
     public void close(ActionEvent actionEvent) {
         controller.closeNewWindow();
@@ -70,31 +60,15 @@ public class Hotkeys implements Controllers {
 
     /**
      * Reads the hotkeys currently loaded in the LoadedSettings class
-     * @param window    Whether or not the window contents should be updated
      */
-    public void generateHotKeys(boolean window) {
+    public void generateHotKeys() {
         String[] hotkeys = LoadedSettings.getHotkeys();
-        if (window) {
-            restartKey = hotkeys[0];
-            restart.setText(restartKey);
-            pauseKey = hotkeys[1];
-            pause.setText(pauseKey);
-            newGameKey = hotkeys[2];
-            newGame.setText(newGameKey);
-            helpKey = hotkeys[3];
-            help.setText(helpKey);
-            highScoreKey = hotkeys[4];
-            highScore.setText(highScoreKey);
-            aboutKey = hotkeys[5];
-            about.setText(aboutKey);
-        } else {
-            restartKey = hotkeys[0];
-            pauseKey = hotkeys[1];
-            newGameKey = hotkeys[2];
-            helpKey = hotkeys[3];
-            highScoreKey = hotkeys[4];
-            aboutKey = hotkeys[5];
-        }
+        restart.setText(hotkeys[0]);
+        pause.setText(hotkeys[1]);
+        newGame.setText(hotkeys[2]);
+        help.setText(hotkeys[3]);
+        highScore.setText(hotkeys[4]);
+        about.setText(hotkeys[5]);
     }
 
     public void changeHotKeys(ActionEvent actionEvent) {
@@ -117,7 +91,7 @@ public class Hotkeys implements Controllers {
         alert.showAndWait();
         if (alert.getResult().equals(ButtonType.OK)) {
             reset();
-            generateHotKeys(true);
+            generateHotKeys();
         }
     }
 
@@ -128,11 +102,7 @@ public class Hotkeys implements Controllers {
      */
     @Override
     public void launch(String string) {
-        if (string.equalsIgnoreCase("True")) {
-            generateHotKeys(true);
-        } else {
-            generateHotKeys(false);
-        }
+        generateHotKeys();
     }
 
     @Override
@@ -212,7 +182,7 @@ public class Hotkeys implements Controllers {
             resetClear.setText("Reset");
             resetClear.setOnAction(this::reset);
             edit = false;
-            generateHotKeys(true);
+            generateHotKeys();
         }
     }
 
