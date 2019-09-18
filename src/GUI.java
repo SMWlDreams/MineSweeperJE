@@ -19,12 +19,10 @@ public class GUI extends Application {
         Controller controller = loader.getController();
         controller.setGui(this);
         Scene scene = new Scene(root);
-//        scene.setOnKeyTyped(e -> controller.parseInput(e));
         scene.setOnKeyPressed(e -> controller.parseInput(e));
         controller.initialGame();
         mainStage.setOnHidden(e -> controller.stopTimeline());
         mainStage.getIcons().add(Tile.MINE_IMAGE);
-        mainStage.setResizable(false);
         mainStage.setScene(scene);
         mainStage.setTitle("Minesweeper " + About.VERSION_ID);
         mainStage.show();
