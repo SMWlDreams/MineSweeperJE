@@ -82,7 +82,7 @@ Yes I know I skipped 1.2.0 I was just too lazy to update it here.
 
 ### Jar change
 
-The jar file containing JavaFX libraries will no longer be updated on minor updates (I.E. 1.3.1). The information for minor updates will still be found in this readme. The source files will be updated for each minor change made.
+The jar file containing JavaFX libraries will no longer be updated on minor updates until the update is completed (I.E. 1.3.1 A). The information for minor updates will still be found in this readme. The source files will be updated for each minor change made.
 
 ### New Features
 
@@ -132,7 +132,7 @@ The restart hotkey is no longer bound to the pause hotkey and vice versa.
 
 Application no longer crashes when the Logs or Records folders do not exist.
 
-## Version 1.3.1
+## Version 1.3.1 A
 
 ### Improvements
 
@@ -148,7 +148,7 @@ Saving new hotkeys will now clear the associated field so attempting to edit the
 
 Using a preset hash will no longer crash the application on startup when specified in launch settings.
 
-The settings verifier now properly sets the ERROR_LEVEL to 0 before verifying the file so it no longer things it is invalid after failing on startup.
+The settings verifier now properly sets the ERROR_LEVEL to 0 before verifying the file so it no longer thinks it is invalid after failing on startup.
 
 Using a preset hash and seed will no longer cause the board to be generated twice causing the board to overflow downward and the game to become unplayable.
 
