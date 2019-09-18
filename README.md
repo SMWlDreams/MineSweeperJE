@@ -138,6 +138,8 @@ Application no longer crashes when the Logs or Records folders do not exist.
 
 Added a default hotkey to reset the settings file (hitting Ctrl + R will bring up a confirmation window to reset the settings then start a new game).
 
+You can now view high scores even while playing a game with a custom board. The selection model will default to easy.
+
 ### Bug Fixes
 
 Using a preset hash will no longer crash the application on startup when specified in launch settings.
@@ -145,3 +147,5 @@ Using a preset hash will no longer crash the application on startup when specifi
 The settings verifier now properly sets the ERROR_LEVEL to 0 before verifying the file so it no longer things it is invalid after failing on startup.
 
 Using a preset hash and seed will no longer cause the board to be generated twice causing the board to overflow downward and the game to become unplayable.
+
+Loading a game using the set seed parameter will no longer disable the restart function.

@@ -130,8 +130,12 @@ public class HighScores implements Controllers {
             inputStream.close();
             return score;
         } catch (IOException e) {
-            ResetHighScores.verify();
-            return readScores(difficulty);
+            if (difficulty.equalsIgnoreCase("Custom")) {
+                return readScores("Easy");
+            } else {
+                ResetHighScores.verify();
+                return readScores(difficulty);
+            }
         }
     }
 
@@ -145,7 +149,7 @@ public class HighScores implements Controllers {
      */
     public void getHighScores(String difficulty) {
             List<Scores<String>> scores = readScores(difficulty);
-            this.difficulty.setText(difficulty);
+            this.difficulty.setText(scores.get(0).getValues().get(2));
             name1.setText(scores.get(0).getValues().get(0));
             score1.setText(scores.get(0).getValues().get(1));
             name2.setText(scores.get(1).getValues().get(0));

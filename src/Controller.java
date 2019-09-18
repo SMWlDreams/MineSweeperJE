@@ -208,28 +208,7 @@ public class Controller {
         if (setSeed) {
             setHashSeed(board.getSeed(), hash);
         } else if (start && !run && !paused) {
-            clear();
-            if (board != null) {
-                if (board.outputLog()) {
-                    board.closeOutput("start new game");
-                }
-            }
-            board = new Board(width, height, numMines, pane, scaleMultiplier);
-            if (outputLog) {
-                board.generateLog(true, hash, width, height, numMines, difficulty.getText());
-            } else {
-                board.generateLog(false);
-            }
-            mines.setText("     " + Integer.toString(numMines));
-            flags.setText("     " + Integer.toString(numMines));
-            numFlags = numMines;
-            pause.setDisable(false);
-            startTime = 0;
-            timeline.stop();
-            timeline.play();
-            start = true;
-            run = true;
-            play = true;
+            restartGame();
         } else {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Restart");
@@ -240,28 +219,7 @@ public class Controller {
                 if (paused) {
                     pause(actionEvent);
                 }
-                clear();
-                if (board != null) {
-                    if (board.outputLog()) {
-                        board.closeOutput("start new game");
-                    }
-                }
-                board = new Board(width, height, numMines, pane, scaleMultiplier);
-                if (outputLog) {
-                    board.generateLog(true, hash, width, height, numMines, difficulty.getText());
-                } else {
-                    board.generateLog(false);
-                }
-                mines.setText("     " + Integer.toString(numMines));
-                flags.setText("     " + Integer.toString(numMines));
-                numFlags = numMines;
-                pause.setDisable(false);
-                startTime = 0;
-                timeline.stop();
-                timeline.play();
-                start = true;
-                run = true;
-                play = true;
+                restartGame();
             }
         }
     }
@@ -294,7 +252,7 @@ public class Controller {
         if (start && run) {
             if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
                 numFlags = board.setFlagged(mouseEvent);
-                flags.setText("     " + Integer.toString(numFlags));
+                flags.setText("     " + numFlags);
             } else if (!board.onClick(mouseEvent)) {
                 loss();
             } else if (board.getNumClickedTiles() == width * height - numMines) {
@@ -352,7 +310,6 @@ public class Controller {
      * @param numMines  The desired number of mines on the board
      */
     public void customDimensions(int height, int width, int numMines) {
-        highScore.setDisable(true);
         this.width = width;
         this.height = height;
         this.numMines = numMines;
@@ -590,6 +547,7 @@ public class Controller {
         cycleCount = 0;
         timeline.play();
         pause.setDisable(false);
+        restart.setDisable(false);
         start = true;
         run = true;
         play = true;
@@ -698,6 +656,11 @@ public class Controller {
                 if (alert.getResult().equals(ButtonType.OK)) {
                     GenerateSettings.updateSettings(GenerateSettings.DEFAULT_SETTINGS,
                             LoadedSettings.getHotkeys());
+                    try {
+                        LoadedSettings.load();
+                    } catch (IOException e) {
+                        System.out.println("F");
+                    }
                     run = false;
                     restart(new ActionEvent());
                 }
@@ -727,19 +690,19 @@ public class Controller {
         String temp = board.getSeed();
         temp += "t4";
         if (height < 10) {
-            temp += "0" + Integer.toString(height);
+            temp += "0" + height;
         } else {
             temp += Integer.toString(height);
         }
         if (width < 10) {
-            temp += "0" + Integer.toString(width);
+            temp += "0" + width;
         } else {
             temp += Integer.toString(width);
         }
         if (numMines < 10) {
-            temp += "00" + Integer.toString(numMines);
+            temp += "00" + numMines;
         } else if (numMines < 100) {
-            temp += "0" + Integer.toString(numMines);
+            temp += "0" + numMines;
         } else {
             temp += Integer.toString(numMines);
         }
@@ -757,8 +720,8 @@ public class Controller {
         gui.setDimensions((width * Tile.SCALE * scaleMultiplier + 14) > 460 ?
                         (width * Tile.SCALE * scaleMultiplier + 14) : 460,
                 (height * Tile.SCALE * scaleMultiplier) + 100);
-        mines.setText("     " + Integer.toString(numMines));
-        flags.setText("     " + Integer.toString(numMines));
+        mines.setText("     " + numMines);
+        flags.setText("     " + numMines);
         numFlags = numMines;
     }
 
@@ -772,7 +735,7 @@ public class Controller {
     private void updateTimeText() {
         cycleCount++;
         if (cycleCount == 1000) {
-            time.setText("     " + Long.toString(++startTime) + " seconds");
+            time.setText("     " + ++startTime + " seconds");
             cycleCount = 0;
         }
     }
@@ -907,5 +870,30 @@ public class Controller {
         helpMenu.setText("Help         (" + hotkeys[3] + ")");
         highScore.setText("High Scores   (" + hotkeys[4] + ")");
         about.setText("About      (" + hotkeys[5] + ")");
+    }
+
+    private void restartGame() {
+        clear();
+        if (board != null) {
+            if (board.outputLog()) {
+                board.closeOutput("start new game");
+            }
+        }
+        board = new Board(width, height, numMines, pane, scaleMultiplier);
+        if (outputLog) {
+            board.generateLog(true, hash, width, height, numMines, difficulty.getText());
+        } else {
+            board.generateLog(false);
+        }
+        mines.setText("     " + numMines);
+        flags.setText("     " + numMines);
+        numFlags = numMines;
+        pause.setDisable(false);
+        startTime = 0;
+        timeline.stop();
+        timeline.play();
+        start = true;
+        run = true;
+        play = true;
     }
 }
