@@ -156,8 +156,18 @@ Using a preset hash and seed will no longer cause the board to be generated twic
 
 Loading a game using the set seed parameter will no longer disable the restart function.
 
-###Known Bugs
+## Version 1.3.2 A
+
+### Bugs To Fix
 
 Application will consider the settings configuration file invalid if the version number is not correct. A workaround for this will be released in the next update.
 
 Some monitor resolutions display the GUI at an incorrect size causing the tiles to not line up. A fix is currently being worked on although this may take some time.
+
+## Version 1.4.0 A
+
+### New Features
+
+#### To Be Added
+
+Log file playback. This will allow the user to step through a log file either forward or backward and replay a game they already completed. This will require some verification of the log files sadly. Also if a desync occurs with the file and the board (due to user unauthorized edits) it will display a message to the user.
