@@ -132,7 +132,7 @@ The restart hotkey is no longer bound to the pause hotkey and vice versa.
 
 Application no longer crashes when the Logs or Records folders do not exist.
 
-## Version 1.3.1 A
+## Version 1.3.1
 
 ### Improvements
 
