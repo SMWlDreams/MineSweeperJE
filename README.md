@@ -155,3 +155,9 @@ The settings verifier now properly sets the ERROR_LEVEL to 0 before verifying th
 Using a preset hash and seed will no longer cause the board to be generated twice causing the board to overflow downward and the game to become unplayable.
 
 Loading a game using the set seed parameter will no longer disable the restart function.
+
+###Known Bugs
+
+Application will consider the settings configuration file invalid if the version number is not correct. A workaround for this will be released in the next update.
+
+Some monitor resolutions display the GUI at an incorrect size causing the tiles to not line up. A fix is currently being worked on although this may take some time.
