@@ -142,7 +142,9 @@ You can now view high scores even while playing a game with a custom board. The 
 
 When entering new hotkeys you can once again leave fields blank to keep the ones that are currently saved.
 
-Saving new hotkeys will now clear the associated field so attempting to edit them again without closing the window will not leave the hotkeys sitting there
+Saving new hotkeys will now clear the associated field so attempting to edit them again without closing the window will not leave the hotkeys sitting there.
+
+The option to resize the window is now enabled by default.
 
 ### Bug Fixes
 
