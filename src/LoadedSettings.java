@@ -41,7 +41,8 @@ public final class LoadedSettings {
     }
 
     private static Scanner loadLaunchSettings(Scanner in) {
-        launchSettings = new String[5];in.nextLine();
+        launchSettings = new String[5];
+        in.nextLine();
         in.nextLine();
         in.nextLine();
         String s = in.next();

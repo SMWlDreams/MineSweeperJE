@@ -17,7 +17,22 @@ public class About implements Controllers {
     /**
      * The current version number of the application
      */
-    public static final String VERSION_ID = "1.3.1";
+    public static final String VERSION_ID = "1.3.2";
+
+    /**
+     * The major revision number of the application
+     */
+    public static final int MAJOR_REVISION = 1;
+
+    /**
+     * The minor revision number of the application
+     */
+    public static final int MINOR_REVISION = 3;
+
+    /**
+     * The sub revision number of the application
+     */
+    public static final int SUB_REVISION = 2;
 
     private Controller controller;
 

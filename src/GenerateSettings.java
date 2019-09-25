@@ -98,8 +98,12 @@ public final class GenerateSettings {
                 if (in.nextLine().equalsIgnoreCase("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")) {
                     if (in.hasNextLine()) {
                         if (!(in.nextLine().equalsIgnoreCase("<Settings version=\"" + About.VERSION_ID + "\">"))) {
-                            ERROR_LEVEL = 3;
-                            return false;
+                            if (rewriteFile()) {
+                                return verifyXML();
+                            } else {
+                                ERROR_LEVEL = 3;
+                                return false;
+                            }
                         }
                     } else {
                         ERROR_LEVEL = 3;
@@ -302,6 +306,41 @@ public final class GenerateSettings {
      */
     public static int getErrorLevel() {
         return ERROR_LEVEL;
+    }
+
+    private static boolean rewriteFile() {
+        try {
+            Scanner in = new Scanner(Paths.get("Settings.cfg"));
+            String[] lines = new String[17];
+            lines[0] = in.nextLine() + "\r\n";
+            String s = in.nextLine();
+            s = s.substring(19, s.length() - 2);
+            if (!(Integer.parseInt(s.substring(0, 1)) <= About.MAJOR_REVISION)) {
+                return false;
+            }
+            if (!(Integer.parseInt(s.substring(2, 3)) <= About.MINOR_REVISION)) {
+                return false;
+            }
+            if (!(Integer.parseInt(s.substring(4)) <= About.SUB_REVISION)) {
+                return false;
+            }
+            for (int i = 1; i < lines.length; i++) {
+                lines[i] = in.nextLine() + "\r\n";
+            }
+            in.close();
+            PrintWriter writer = new PrintWriter("Settings.cfg");
+            writer.write(lines[0]);
+            writer.write("<Settings version=\"" + About.VERSION_ID + "\">\r\n");
+            for (int i = 1; i < lines.length; i++) {
+                writer.write(lines[i]);
+            }
+            writer.close();
+            ERROR_LEVEL = 0;
+            return true;
+        } catch (IOException e) {
+            System.out.println("Oops");
+            return false;
+        }
     }
 
     private static void verify(String seed) {

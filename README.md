@@ -158,9 +158,11 @@ Loading a game using the set seed parameter will no longer disable the restart f
 
 ## Version 1.3.2 A
 
-### Bugs To Fix
+### Bug Fixes
 
-Application will consider the settings configuration file invalid if the version number is not correct. A workaround for this will be released in the next update.
+Application will no longer reset the settings and hotkeys when moving from one version to another. Note that the movement is **ONE WAY** in that you cannot use the same settings.cfg file in version 1.3.2 if you already loaded that file in 1.4.0.
+
+### Bugs To Fix
 
 Some monitor resolutions display the GUI at an incorrect size causing the tiles to not line up. A fix is currently being worked on although this may take some time.
 
