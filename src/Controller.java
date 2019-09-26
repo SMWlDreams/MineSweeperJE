@@ -713,12 +713,12 @@ public class Controller {
         score = 1000;
         play = true;
         grid.setPrefHeight((height * Tile.SCALE * scaleMultiplier) + 50);
-        grid.setPrefWidth((width * Tile.SCALE * scaleMultiplier + 14) > 460 ?
-                (width * Tile.SCALE * scaleMultiplier + 14) : 460);
+        grid.setPrefWidth((width * Tile.SCALE * scaleMultiplier + 16) > 460 ?
+                (width * Tile.SCALE * scaleMultiplier + 16) : 460);
         pane.setPrefHeight(height * Tile.SCALE * scaleMultiplier);
         pane.setPrefWidth(width * Tile.SCALE * scaleMultiplier);
-        gui.setDimensions((width * Tile.SCALE * scaleMultiplier + 14) > 460 ?
-                        (width * Tile.SCALE * scaleMultiplier + 14) : 460,
+        gui.setDimensions((width * Tile.SCALE * scaleMultiplier + 16) > 460 ?
+                        (width * Tile.SCALE * scaleMultiplier + 16) : 460,
                 (height * Tile.SCALE * scaleMultiplier) + 100);
         mines.setText("     " + numMines);
         flags.setText("     " + numMines);
