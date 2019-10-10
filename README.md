@@ -6,6 +6,12 @@
 
 This is my personal adaptation of the famous DOS game MineSweeper. This game is made entirely in the Java language and is meant to be a close imitation of Minesweeper for Windows XP. This project is fully open source and anyone may use the source files as long as I am credited in the final submission.
 
+## Note
+
+This application requires JRE or JDK 11 or higher to run. To get version 11 of the JRE, please go here and select the installer for your operating system:
+
+https://adoptopenjdk.net/releases.html?variant=openjdk11&jvmVariant=hotspot
+
 # Change log
 
 ## Version 1.0.1
