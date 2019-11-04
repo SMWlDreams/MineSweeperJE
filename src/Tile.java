@@ -56,7 +56,6 @@ public class Tile extends Rectangle {
 
     public void setMine() {
         mine = true;
-//        afterClicked = new Image(new File(System.getProperty("user.dir") + "\\Images\\mine.png").toURI().toURL().toString());
         afterClicked = MINE_IMAGE;
     }
 

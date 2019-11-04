@@ -19,7 +19,7 @@ public class GUI extends Application {
         Controller controller = loader.getController();
         controller.setGui(this);
         Scene scene = new Scene(root);
-        scene.setOnKeyPressed(e -> controller.parseInput(e));
+        scene.setOnKeyPressed(controller::parseInput);
         controller.initialGame();
         mainStage.setOnHidden(e -> controller.stopTimeline());
         mainStage.getIcons().add(Tile.MINE_IMAGE);

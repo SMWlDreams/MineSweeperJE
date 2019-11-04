@@ -22,7 +22,7 @@ Fixed two bugs related to registering high scores. One prevented the current hig
 
 #### Added Hotkey Functionality
 
-Hotkeys have been added for the core functions of the game. They work simply by pressing the corresponsing button while in the application. The hotkeys default to the specified hotkeys if the Hotkeys.ini file is missing from the user directory. The default hotkeys are; P for pause, R for restart, H opens the help menu, A opens the about menu, N starts a new game and S opens the high score dialogue. Added these hotkeys to a new "hotkeys" menu which can be found under help. Changing hotkeys through the GUI will be added soon. Hotkeys can be manually edited by changing the corresponding letter in the Hotkeys.ini file found in the main filesystem. You can set the same character to mutiple hotkeys which may cause undesired side effects. I will remove this later.
+Hotkeys have been added for the core functions of the game. They work simply by pressing the corresponding button while in the application. The hotkeys default to the specified hotkeys if the Hotkeys.ini file is missing from the user directory. The default hotkeys are; P for pause, R for restart, H opens the help menu, A opens the about menu, N starts a new game and S opens the high score dialogue. Added these hotkeys to a new "hotkeys" menu which can be found under help. Changing hotkeys through the GUI will be added soon. Hotkeys can be manually edited by changing the corresponding letter in the Hotkeys.ini file found in the main filesystem. You can set the same character to mutiple hotkeys which may cause undesired side effects. I will remove this later.
 
 ### Bug Fixes/Improvements
 
@@ -44,7 +44,7 @@ Pausing and restarting the game no longer randomly crashes or leaves the applica
 
 Fix to prevent the user from playing the game in the paused state by choosing certain options.
 
-Fixed the game crashing when finshing a game in the paused state under certain circumstances.
+Fixed the game crashing when finishing a game in the paused state under certain circumstances.
 
 #### Fixed Bugs With Log Files
 
@@ -162,6 +162,8 @@ Loading a game using the set seed parameter will no longer disable the restart f
 
 Application will no longer reset the settings and hotkeys when moving from one version to another. Note that the movement is **ONE WAY** in that you cannot use the same settings.cfg file in version 1.3.2 if you already loaded that file in 1.4.0.
 
+You can no longer place more flags than there are mines present on the board
+
 ### Bugs To Fix
 
 Some monitor resolutions display the GUI at an incorrect size causing the tiles to not line up. A fix is currently being worked on although this may take some time.
@@ -173,3 +175,7 @@ Some monitor resolutions display the GUI at an incorrect size causing the tiles 
 #### To Be Added
 
 Log file playback. This will allow the user to step through a log file either forward or backward and replay a game they already completed. This will require some verification of the log files sadly. Also if a desync occurs with the file and the board (due to user unauthorized edits) it will display a message to the user.
+
+### Changes
+
+Minesweeper log files now follow a specific XML format and are saved with a new file extension *.msl

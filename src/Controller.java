@@ -4,8 +4,10 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
@@ -16,47 +18,67 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.IllegalFormatException;
 import java.util.List;
 
 public class Controller {
     @FXML
-    GridPane grid;
+    private GridPane grid;
     @FXML
-    FlowPane pane;
+    private FlowPane pane;
     @FXML
-    MenuItem pause;
+    private MenuItem pause;
     @FXML
-    MenuItem restart;
+    private MenuItem restart;
     @FXML
-    MenuItem newGame;
+    private MenuItem newGame;
     @FXML
-    MenuItem about;
+    private MenuItem about;
     @FXML
-    MenuItem helpMenu;
+    private MenuItem helpMenu;
     @FXML
-    Text flags;
+    private Text flags;
     @FXML
-    Text mines;
+    private Text mines;
     @FXML
-    Text time;
+    private Text time;
     @FXML
-    Text difficulty;
+    private Text difficulty;
     @FXML
-    MenuItem highScore;
+    private MenuItem highScore;
     @FXML
-    CheckMenuItem log;
+    private CheckMenuItem log;
     @FXML
-    Menu file;
+    private Menu file;
     @FXML
-    Menu game;
+    private Menu game;
     @FXML
-    Menu help;
+    private Menu help;
+    @FXML
+    private HBox gameStats1;
+    @FXML
+    private HBox gameStats2;
+    @FXML
+    private HBox playback1;
+    @FXML
+    private HBox playback2;
+    @FXML
+    private VBox box;
+    @FXML
+    private Text currentStep;
+    @FXML
+    private Text move;
 
     private Stage newWindowStage;
     private Board board;
@@ -80,6 +102,8 @@ public class Controller {
     private boolean showMines = false;
     private int logCount = 0;
     private int cycleCount = 0;
+    private boolean isPlayback = false;
+    private Playback playback;
 
     /**
      * Starts the main application on clicking new
@@ -163,6 +187,82 @@ public class Controller {
         } catch (IOException e) {
             System.out.println("APPLICATION IS CORRUPT! PLEASE RE-DOWNLOAD!");
         }
+    }
+
+    public void enterPlaybackMode(ActionEvent actionEvent) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm?");
+        alert.setHeaderText("Enter Playback?");
+        alert.setContentText("Undergoing this action will enter playback mode.\n" +
+                "Any current game progress will be lost!\n" +
+                "Are you sure you wish to proceed?");
+        alert.showAndWait();
+        if (alert.getResult().equals(ButtonType.OK)) {
+            FileChooser chooser = new FileChooser();
+            chooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+            chooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Minesweeper Logs", "*.msl"));
+            File file = chooser.showOpenDialog(new Stage());
+            if (file != null) {
+                try {
+                    playback = new Playback(file);
+                    timeline.stop();
+                    clear();
+                    playback.generate(pane);
+                    box.getChildren().removeAll(gameStats1, gameStats2);
+                    box.getChildren().addAll(playback1, playback2);
+                    restart.setDisable(true);
+                    pause.setDisable(true);
+                    for (Node n : playback1.getChildren()) {
+                        Text t = (Text) n;
+                        t.setWrappingWidth(playback1.getPrefWidth() / 4.0);
+                    }
+                    for (Node n : playback2.getChildren()) {
+                        Button b = (Button) n;
+                        b.setPrefWidth(playback2.getPrefWidth() / 5.0);
+                    }
+                    isPlayback = true;
+                } catch (NullPointerException | FileNotFoundException e) {
+                    alert.setAlertType(Alert.AlertType.ERROR);
+                    alert.setTitle("Invalid File");
+                    alert.setHeaderText("Invalid File");
+                    alert.setContentText("The specified file could not be found or does not exist" +
+                            ".\nPlease ensure the file is in the specified directory.");
+                    alert.showAndWait();
+                } catch (IllegalFormatException e) {
+                    alert.setAlertType(Alert.AlertType.ERROR);
+                    alert.setTitle("Invalid File");
+                    alert.setHeaderText("Invalid File");
+                    alert.setContentText("The specified file contains invalid file formatting.\n" +
+                            "Please only select unmodified minesweeper log files.");
+                    alert.showAndWait();
+                }
+            }
+        }
+    }
+
+    public void exitPlaybackMode(ActionEvent actionEvent) {
+        exitPlaybackMode(true);
+    }
+
+    public void toStart(ActionEvent actionEvent) {
+        playback.toStart();
+    }
+
+    public void stepBack(ActionEvent actionEvent) {
+        playback.stepBack();
+    }
+
+    public void stepForward(ActionEvent actionEvent) {
+        playback.stepForward();
+    }
+
+    public void toEnd(ActionEvent actionEvent) {
+        playback.toEnd();
+    }
+
+    public void autoplay(ActionEvent actionEvent) {
+        playback.stepForward();
     }
 
     /**
@@ -249,7 +349,7 @@ public class Controller {
      * @param mouseEvent    Event sent by clicking the mouse
      */
     public void onClick(MouseEvent mouseEvent) {
-        if (start && run) {
+        if (start && run && !isPlayback) {
             if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
                 numFlags = board.setFlagged(mouseEvent);
                 flags.setText("     " + numFlags);
@@ -343,24 +443,26 @@ public class Controller {
      * Changes the size of the window to fit the game and starts it
      */
     public void begin() {
-        if (board != null) {
-            if (board.outputLog()) {
-                board.closeOutput("new game");
+        if (!isPlayback || exitPlaybackMode(false)) {
+            if (board != null) {
+                if (board.outputLog()) {
+                    board.closeOutput();
+                }
             }
+            board = new Board(width, height, numMines, pane, scaleMultiplier);
+            if (outputLog) {
+                board.generateLog(true, hash, width, height, numMines, difficulty.getText());
+            } else {
+                board.generateLog(false);
+            }
+            adjustBoard();
+            restart.setDisable(false);
+            pause.setDisable(false);
+            startTime = 0;
+            cycleCount = 0;
+            start = true;
+            run = true;
         }
-        board = new Board(width, height, numMines, pane, scaleMultiplier);
-        if (outputLog) {
-            board.generateLog(true, hash, width, height, numMines, difficulty.getText());
-        } else {
-            board.generateLog(false);
-        }
-        adjustBoard();
-        restart.setDisable(false);
-        pause.setDisable(false);
-        startTime = 0;
-        cycleCount = 0;
-        start = true;
-        run = true;
     }
 
     /**
@@ -387,6 +489,10 @@ public class Controller {
      * sets any relevant settings
      */
     public void initialGame() {
+        if (board != null) {
+            clear();
+        }
+        box.getChildren().removeAll(playback1, playback2);
         try {
             LoadedSettings.load();
             String[] settings = LoadedSettings.getLaunchSettings();
@@ -513,45 +619,47 @@ public class Controller {
      * @param hash  The hash to build the board
      */
     public void setHashSeed(String seed, String hash) {
-        this.hash = hash;
-        int height = Integer.parseInt(hash.substring(2, 4));
-        int width = Integer.parseInt(hash.substring(4, 6));
-        int mine = Integer.parseInt(hash.substring(6));
-        customDimensions(height, width, mine);
-        if (board != null) {
-            board.clear(pane);
-        }
-        if (outputLog && board != null) {
-            if (board.outputLog()) {
-                board.closeOutput("start new game");
+        if (!isPlayback || exitPlaybackMode(false)) {
+            this.hash = hash;
+            int height = Integer.parseInt(hash.substring(2, 4));
+            int width = Integer.parseInt(hash.substring(4, 6));
+            int mine = Integer.parseInt(hash.substring(6));
+            customDimensions(height, width, mine);
+            if (board != null) {
+                clear();
             }
-        } else if (board != null) {
-            board.generateLog(false);
-        }
-        board = new Board(width, height, numMines, pane, scaleMultiplier, seed);
-        if (outputLog) {
-            if (keepLogs) {
-                logCount = board.generateLog(true, hash, width, height, numMines, true, logCount,
-                        difficulty.getText());
+            if (outputLog && board != null) {
+                if (board.outputLog()) {
+                    board.closeOutput();
+                }
+            } else if (board != null) {
+                board.generateLog(false);
+            }
+            board = new Board(width, height, numMines, pane, scaleMultiplier, seed);
+            if (outputLog) {
+                if (keepLogs) {
+                    logCount = board.generateLog(true, hash, width, height, numMines,
+                            true, logCount, difficulty.getText());
+                } else {
+                    logCount = 0;
+                    logCount = board.generateLog(true, hash, width, height, numMines,
+                            false, logCount, difficulty.getText());
+                }
             } else {
-                logCount = 0;
-                logCount = board.generateLog(true, hash, width, height, numMines, false, logCount,
-                        difficulty.getText());
+                board.generateLog(false);
             }
-        } else {
-            board.generateLog(false);
+            adjustBoard();
+            startTime = 0;
+            timeline.stop();
+            cycleCount = 0;
+            timeline.play();
+            pause.setDisable(false);
+            restart.setDisable(false);
+            start = true;
+            run = true;
+            play = true;
+            setSeed = true;
         }
-        adjustBoard();
-        startTime = 0;
-        timeline.stop();
-        cycleCount = 0;
-        timeline.play();
-        pause.setDisable(false);
-        restart.setDisable(false);
-        start = true;
-        run = true;
-        play = true;
-        setSeed = true;
     }
 
     /**
@@ -726,10 +834,12 @@ public class Controller {
     }
 
     private void startTimeUpdate() {
-        KeyFrame keyFrame = new KeyFrame(Duration.millis(1), e -> updateTimeText());
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.getKeyFrames().add(keyFrame);
-        timeline.play();
+        if (timeline.getKeyFrames().size() == 0) {
+            KeyFrame keyFrame = new KeyFrame(Duration.millis(1), e -> updateTimeText());
+            timeline.setCycleCount(Timeline.INDEFINITE);
+            timeline.getKeyFrames().add(keyFrame);
+            timeline.play();
+        }
     }
 
     private void updateTimeText() {
@@ -876,7 +986,7 @@ public class Controller {
         clear();
         if (board != null) {
             if (board.outputLog()) {
-                board.closeOutput("start new game");
+                board.closeOutput();
             }
         }
         board = new Board(width, height, numMines, pane, scaleMultiplier);
@@ -895,5 +1005,27 @@ public class Controller {
         start = true;
         run = true;
         play = true;
+    }
+
+    private boolean exitPlaybackMode(boolean buttonExit) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm?");
+        alert.setHeaderText("Exit Playback?");
+        alert.setContentText("Undergoing this action will exit playback mode.\n" +
+                "Are you sure you wish to proceed?");
+        alert.showAndWait();
+        if (alert.getResult().equals(ButtonType.OK)) {
+            box.getChildren().addAll(gameStats1, gameStats2);
+            box.getChildren().removeAll(playback1, playback2);
+            restart.setDisable(false);
+            pause.setDisable(false);
+            playback = null;
+            isPlayback = false;
+            if (buttonExit) {
+                initialGame();
+            }
+            return true;
+        }
+        return false;
     }
 }

@@ -75,7 +75,10 @@ public class Board {
             int x = (int) mouseEvent.getY() / (Tile.SCALE * scaleMultiplier);
             if (!tiles.get(x).get(y).isSelected()) {
                 if (log) {
-                    writer.write("Primary click on tile: " + y + "," + x + "\r\n");
+                    writer.write("    <select>\r\n" +
+                            "        <X>" + x + "</X>\r\n" +
+                            "        <Y>" + y + "</Y>\r\n" +
+                            "    </select>\r\n\r\n");
                 }
             }
             return parseBoard(x, y);
@@ -92,20 +95,32 @@ public class Board {
         int x = (int) mouseEvent.getX() / (Tile.SCALE * scaleMultiplier);
         int y = (int) mouseEvent.getY() / (Tile.SCALE * scaleMultiplier);
         Tile temp = tiles.get(y).get(x);
-        if (!temp.isSelected()) {
-            temp.flag();
-            if (temp.isFlagged()) {
-                if (log) {
-                    writer.write("Flagged tile: " + y + "," + x + "\r\n");
+        end:
+            if (!temp.isSelected()) {
+                temp.flag();
+                if (temp.isFlagged()) {
+                    if (numFlags > 0) {
+    //                    if (log) {
+    //                        writer.write("Flagged tile: " + y + "," + x + "\r\n");
+    //                    }
+                        numFlags--;
+                    } else {
+                        temp.flag();
+                        break end;
+                    }
+                } else {
+    //                if (log) {
+    //                    writer.write("Un-flagged tile: " + y + "," + x + "\r\n");
+    //                }
+                    numFlags++;
                 }
-                numFlags--;
-            } else {
                 if (log) {
-                    writer.write("Un-flagged tile: " + y + "," + x + "\r\n");
+                    writer.write("    <flag>\r\n" +
+                            "        <X>" + x + "</X>\r\n" +
+                            "        <Y>" + y + "</Y>\r\n" +
+                            "    </flag>\r\n\r\n");
                 }
-                numFlags++;
             }
-        }
         return numFlags;
     }
 
@@ -186,21 +201,29 @@ public class Board {
                 }
                 if (keepLogs){
                     writer = new PrintWriter(System.getProperty("user.dir") + "\\Logs\\" +
-                            seed + "_" + hash + "_attempt_" + ++logCount + ".txt");
-                    writer.write("File seed and hash: " + seed + hash + "\r\n");
-                    writer.write("Difficulty: " + difficulty.substring(5) + "\r\n");
-                    writer.write("Board width: " + width + "\r\n");
-                    writer.write("Board height: " + height + "\r\n");
-                    writer.write("Total number of mines: " + numMines + "\r\n");
+                            seed + "_" + hash + "_attempt_" + ++logCount + ".msl");
+//                    writer.write("File seed and hash: " + seed + hash + "\r\n");
+//                    writer.write("Difficulty: " + difficulty.substring(5) + "\r\n");
+//                    writer.write("Board width: " + width + "\r\n");
+//                    writer.write("Board height: " + height + "\r\n");
+//                    writer.write("Total number of mines: " + numMines + "\r\n");
                 } else {
-                    writer = new PrintWriter( System.getProperty("user.dir") + "\\Logs\\" +
-                            + seed + "_" + hash + ".txt");
-                    writer.write("File seed and hash: " + seed + hash + "\r\n");
-                    writer.write("Difficulty: " + difficulty.substring(5) + "\r\n");
-                    writer.write("Board width: " + width + "\r\n");
-                    writer.write("Board height: " + height + "\r\n");
-                    writer.write("Total number of mines: " + numMines + "\r\n");
+                    writer = new PrintWriter(System.getProperty("user.dir") + "\\Logs\\" +
+                            + seed + "_" + hash + ".msl");
+//                    writer.write("File seed and hash: " + seed + hash + "\r\n");
+//                    writer.write("Difficulty: " + difficulty.substring(5) + "\r\n");
+//                    writer.write("Board width: " + width + "\r\n");
+//                    writer.write("Board height: " + height + "\r\n");
+//                    writer.write("Total number of mines: " + numMines + "\r\n");
                 }
+                writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n\r\n" +
+                        "<game>\r\n" +
+                        "    <seed>" + seed + "</seed>\r\n" +
+                        "    <diff>" + difficulty.substring(5) + "</diff>\r\n" +
+                        "    <width>" + width + "</width>\r\n" +
+                        "    <height>" + height + "</height>\r\n" +
+                        "    <mines>" + numMines + "</mines>\r\n\r\n" +
+                        "");
             } catch (IOException e) {
                 File dir = new File(System.getProperty("user.dir") + "\\Logs");
                 if (dir.mkdirs()) {
@@ -242,19 +265,23 @@ public class Board {
      */
     public void closeOutput(boolean result) {
         if (result) {
-            writer.write("Final result: Won!");
+//            writer.write("Final result: Won!");
+            writer.write("    <result>W</result>\r\n" +
+                    "</game>");
         } else {
-            writer.write("Final result: Loss!");
+//            writer.write("Final result: Loss!");
+            writer.write("    <result>L</result>\r\n" +
+                    "</game>");
         }
         writer.close();
     }
 
     /**
      * Closes the log writer file when ended before a game has ended
-     * @param result    What action was done to end the game
      */
-    public void closeOutput(String result) {
-        writer.write("Game ended early due to a " + result + " requested by the user.");
+    public void closeOutput() {
+        writer.write("</game>");
+//        writer.write("Game ended early due to a " + result + " requested by the user.");
         writer.close();
     }
 
@@ -365,8 +392,7 @@ public class Board {
     private void setNeighbors() {
         for (int i = 0; i < tiles.size(); i++) {
             List<Tile> temp = tiles.get(i);
-            for (int j = 0; j < temp.size(); j++) {
-                Tile tile = temp.get(j);
+            for (Tile tile : temp) {
                 if (!tile.isMine()) {
                     tile.determineNeighbors(tiles);
                 }
