@@ -36,8 +36,8 @@ public class Board {
      * @param pane          The pane to draw the mines to
      * @param multiplier    The value to multiply the scale of the images by
      */
-    public Board(int row, int col, int numMines, Pane pane, int multiplier) {
-        this(row, col, numMines, pane, multiplier, "0");
+    public Board(int col, int row, int numMines, Pane pane, int multiplier) {
+        this(col, row, numMines, pane, multiplier, "0");
     }
 
     /**
@@ -49,11 +49,11 @@ public class Board {
      * @param multiplier    The value to multiply the scale of the images by
      * @param seed          The seed to populate RNG with
      */
-    public Board(int row, int col, int numMines, Pane pane, int multiplier, String seed) {
+    public Board(int col, int row, int numMines, Pane pane, int multiplier, String seed) {
         numClickedTiles = 0;
         scaleMultiplier = multiplier;
         numFlags = numMines;
-        createBoard(col, row);
+        createBoard(row, col);
         rows = row;
         columns = col;
         initMines(numMines, seed);
@@ -300,22 +300,22 @@ public class Board {
             if (x - 1 >= 0) {
                 parseBoard(x - 1, y);
             }
-            if (x - 1 >= 0 && y + 1 < columns) {
+            if (x - 1 >= 0 && y + 1 < rows) {
                 parseBoard(x - 1, y + 1);
             }
             if (y - 1 >= 0) {
                 parseBoard(x, y - 1);
             }
-            if (y + 1 < columns) {
+            if (y + 1 < rows) {
                 parseBoard(x, y + 1);
             }
-            if (x + 1 < rows && y - 1 >= 0) {
+            if (x + 1 < columns && y - 1 >= 0) {
                 parseBoard(x + 1, y - 1);
             }
-            if (x + 1 < rows) {
+            if (x + 1 < columns) {
                 parseBoard(x + 1, y);
             }
-            if (x + 1 < rows && y + 1 < columns) {
+            if (x + 1 < columns && y + 1 < rows) {
                 parseBoard(x + 1, y + 1);
             }
             return true;
@@ -324,10 +324,10 @@ public class Board {
         }
     }
 
-    private void createBoard(int col, int row) {
-        for (int i = 0; i < col; i++) {
+    private void createBoard(int row, int col) {
+        for (int i = 0; i < row; i++) {
             List<Tile> temp = new ArrayList<>();
-            for (int j = 0; j < row; j++) {
+            for (int j = 0; j < col; j++) {
                 temp.add(new Tile(i, j, this, scaleMultiplier));
             }
             tiles.add(temp);
@@ -345,9 +345,9 @@ public class Board {
         int rowSize = rows;
         int colSize = columns;
         while (i < mines) {
-            int x = rand.nextInt(colSize);
             int y = rand.nextInt(rowSize);
-            Tile tile = tiles.get(x).get(y);
+            int x = rand.nextInt(colSize);
+            Tile tile = tiles.get(y).get(x);
             if (!tile.isMine()) {
                 tile.setMine();
                 i++;

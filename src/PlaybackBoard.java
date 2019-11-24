@@ -85,22 +85,22 @@ public class PlaybackBoard extends Board {
             if (x - 1 >= 0) {
                 selectTile(x - 1, y, moveSelected);
             }
-            if (x - 1 >= 0 && y + 1 < columns) {
+            if (x - 1 >= 0 && y + 1 < rows) {
                 selectTile(x - 1, y + 1, moveSelected);
             }
             if (y - 1 >= 0) {
                 selectTile(x, y - 1, moveSelected);
             }
-            if (y + 1 < columns) {
+            if (y + 1 < rows) {
                 selectTile(x, y + 1,moveSelected);
             }
-            if (x + 1 < rows && y - 1 >= 0) {
+            if (x + 1 < columns && y - 1 >= 0) {
                 selectTile(x + 1, y - 1, moveSelected);
             }
-            if (x + 1 < rows) {
+            if (x + 1 < columns) {
                 selectTile(x + 1, y, moveSelected);
             }
-            if (x + 1 < rows && y + 1 < columns) {
+            if (x + 1 < columns && y + 1 < rows) {
                 selectTile(x + 1, y + 1, moveSelected);
             }
         }
@@ -137,22 +137,22 @@ public class PlaybackBoard extends Board {
             if (x - 1 >= 0) {
                 deSelect(x - 1, y, moveSelected);
             }
-            if (x - 1 >= 0 && y + 1 < columns) {
+            if (x - 1 >= 0 && y + 1 < rows) {
                 deSelect(x - 1, y + 1, moveSelected);
             }
             if (y - 1 >= 0) {
                 deSelect(x, y - 1, moveSelected);
             }
-            if (y + 1 < columns) {
+            if (y + 1 < rows) {
                 deSelect(x, y + 1, moveSelected);
             }
-            if (x + 1 < rows && y - 1 >= 0) {
+            if (x + 1 < columns && y - 1 >= 0) {
                 deSelect(x + 1, y - 1, moveSelected);
             }
-            if (x + 1 < rows) {
+            if (x + 1 < columns) {
                 deSelect(x + 1, y, moveSelected);
             }
-            if (x + 1 < rows && y + 1 < columns) {
+            if (x + 1 < columns && y + 1 < rows) {
                 deSelect(x + 1, y + 1, moveSelected);
             }
         }
@@ -184,9 +184,9 @@ public class PlaybackBoard extends Board {
         int rowSize = rows;
         int colSize = columns;
         while (i < mines) {
-            int x = rand.nextInt(rowSize);
-            int y = rand.nextInt(colSize);
-            Tile tile = tiles.get(x).get(y);
+            int y = rand.nextInt(rowSize);
+            int x = rand.nextInt(colSize);
+            Tile tile = tiles.get(y).get(x);
             if (!tile.isMine()) {
                 tile.setMine();
                 i++;

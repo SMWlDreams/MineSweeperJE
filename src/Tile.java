@@ -188,17 +188,17 @@ public class Tile extends Rectangle {
     }
 
     private void determineNeighbors(List<List<Tile>> tiles, int xcoord, int ycoord) {
-        if (ycoord + 1 < board.getRows()) {
+        if (ycoord + 1 < board.getColumns()) {
             if (tiles.get(xcoord).get(ycoord + 1).isMine()) {
                 neighborMines++;
             }
         }
-        if (ycoord + 1 < board.getRows() && xcoord - 1 >= 0) {
+        if (ycoord + 1 < board.getColumns() && xcoord - 1 >= 0) {
             if (tiles.get(xcoord - 1).get(ycoord + 1).isMine()) {
                 neighborMines++;
             }
         }
-        if (ycoord + 1 < board.getRows() && xcoord + 1 < board.getColumns()) {
+        if (ycoord + 1 < board.getColumns() && xcoord + 1 < board.getRows()) {
             if (tiles.get(xcoord + 1).get(ycoord + 1).isMine()) {
                 neighborMines++;
             }
@@ -213,7 +213,7 @@ public class Tile extends Rectangle {
                 neighborMines++;
             }
         }
-        if (ycoord - 1 >= 0 && xcoord + 1 < board.getColumns()) {
+        if (ycoord - 1 >= 0 && xcoord + 1 < board.getRows()) {
             if (tiles.get(xcoord + 1).get(ycoord - 1).isMine()) {
                 neighborMines++;
             }
@@ -223,7 +223,7 @@ public class Tile extends Rectangle {
                 neighborMines++;
             }
         }
-        if (xcoord + 1 < board.getColumns()) {
+        if (xcoord + 1 < board.getRows()) {
             if (tiles.get(xcoord + 1).get(ycoord).isMine()) {
                 neighborMines++;
             }
