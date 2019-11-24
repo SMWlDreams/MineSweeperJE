@@ -19,7 +19,8 @@ public class Tile extends Rectangle {
     public static final Image MINE_IMAGE = new Image("mine.png");
 
     private int scaleMultiplier;
-    private final Image[] clickedImages = {new Image("zero.png"), new Image("one.png"), new Image(
+    private static final Image[] clickedImages = {new Image("zero.png"), new Image("one.png"),
+            new Image(
             "two.png"), new Image("three.png"), new Image("four.png"), new Image("five.png"),
             new Image("six.png"), new Image("seven.png"), new Image("eight.png")};
     private final Image beforeFlagged = new Image("default.png");
@@ -32,6 +33,7 @@ public class Tile extends Rectangle {
     private boolean flagged = false;
     private boolean selected;
     private Board board;
+    private int moveSelected;
 
     /**
      * Creates a new tile with specified coordinates
@@ -54,6 +56,9 @@ public class Tile extends Rectangle {
                 SCALE * scaleMultiplier, false));
     }
 
+    /**
+     * Sets this tile to be a mine
+     */
     public void setMine() {
         mine = true;
         afterClicked = MINE_IMAGE;
@@ -110,6 +115,14 @@ public class Tile extends Rectangle {
         return flagged;
     }
 
+    public void setMoveSelected(int moveSelected) {
+        this.moveSelected = moveSelected;
+    }
+
+    public int getMoveSelected() {
+        return moveSelected;
+    }
+
     /**
      * Determines how many mines are around this specific tile
      * @param tiles The list of tiles for this board
@@ -146,6 +159,32 @@ public class Tile extends Rectangle {
                 afterClicked = clickedImages[8];
                 break;
         }
+    }
+
+    public int getNeighborMines() {
+        return neighborMines;
+    }
+
+    /**
+     * Updates the image for this tile
+     */
+    public void updateImage() {
+        this.setFill(new ImagePattern(afterClicked, 0, 0, SCALE * scaleMultiplier,
+                SCALE * scaleMultiplier, false));
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    /**
+     * Sets the tile to its unselected state
+     */
+    public void reset() {
+        this.setFill(new ImagePattern(beforeFlagged, 0, 0, SCALE * scaleMultiplier,
+                SCALE * scaleMultiplier, false));
+        selected = false;
+        flagged = false;
     }
 
     private void determineNeighbors(List<List<Tile>> tiles, int xcoord, int ycoord) {
@@ -189,14 +228,5 @@ public class Tile extends Rectangle {
                 neighborMines++;
             }
         }
-    }
-
-    public void updateImage() {
-        this.setFill(new ImagePattern(afterClicked, 0, 0, SCALE * scaleMultiplier,
-                SCALE * scaleMultiplier, false));
-    }
-
-    public boolean isSelected() {
-        return selected;
     }
 }

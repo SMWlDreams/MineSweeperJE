@@ -26,6 +26,8 @@ public class Board {
     private int logCount = 0;
     private boolean saveLogs = false;
 
+    public Board(){}
+
     /**
      * Creates the board with a specified number of mines and a pane to draw mines to
      * @param row           The number of rows for the board
@@ -61,7 +63,6 @@ public class Board {
                 pane.getChildren().add(t);
             }
         }
-
     }
 
     /**
@@ -71,9 +72,9 @@ public class Board {
      */
     public boolean onClick(MouseEvent mouseEvent) {
         if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-            int y = (int) mouseEvent.getX() / (Tile.SCALE * scaleMultiplier);
-            int x = (int) mouseEvent.getY() / (Tile.SCALE * scaleMultiplier);
-            if (!tiles.get(x).get(y).isSelected()) {
+            int x = (int) mouseEvent.getX() / (Tile.SCALE * scaleMultiplier);
+            int y = (int) mouseEvent.getY() / (Tile.SCALE * scaleMultiplier);
+            if (!tiles.get(y).get(x).isSelected()) {
                 if (log) {
                     writer.write("    <select>\r\n" +
                             "        <X>" + x + "</X>\r\n" +
@@ -100,18 +101,12 @@ public class Board {
                 temp.flag();
                 if (temp.isFlagged()) {
                     if (numFlags > 0) {
-    //                    if (log) {
-    //                        writer.write("Flagged tile: " + y + "," + x + "\r\n");
-    //                    }
                         numFlags--;
                     } else {
                         temp.flag();
                         break end;
                     }
                 } else {
-    //                if (log) {
-    //                    writer.write("Un-flagged tile: " + y + "," + x + "\r\n");
-    //                }
                     numFlags++;
                 }
                 if (log) {
@@ -202,19 +197,9 @@ public class Board {
                 if (keepLogs){
                     writer = new PrintWriter(System.getProperty("user.dir") + "\\Logs\\" +
                             seed + "_" + hash + "_attempt_" + ++logCount + ".msl");
-//                    writer.write("File seed and hash: " + seed + hash + "\r\n");
-//                    writer.write("Difficulty: " + difficulty.substring(5) + "\r\n");
-//                    writer.write("Board width: " + width + "\r\n");
-//                    writer.write("Board height: " + height + "\r\n");
-//                    writer.write("Total number of mines: " + numMines + "\r\n");
                 } else {
                     writer = new PrintWriter(System.getProperty("user.dir") + "\\Logs\\" +
                             + seed + "_" + hash + ".msl");
-//                    writer.write("File seed and hash: " + seed + hash + "\r\n");
-//                    writer.write("Difficulty: " + difficulty.substring(5) + "\r\n");
-//                    writer.write("Board width: " + width + "\r\n");
-//                    writer.write("Board height: " + height + "\r\n");
-//                    writer.write("Total number of mines: " + numMines + "\r\n");
                 }
                 writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n\r\n" +
                         "<game>\r\n" +
@@ -265,11 +250,9 @@ public class Board {
      */
     public void closeOutput(boolean result) {
         if (result) {
-//            writer.write("Final result: Won!");
             writer.write("    <result>W</result>\r\n" +
                     "</game>");
         } else {
-//            writer.write("Final result: Loss!");
             writer.write("    <result>L</result>\r\n" +
                     "</game>");
         }
@@ -281,7 +264,6 @@ public class Board {
      */
     public void closeOutput() {
         writer.write("</game>");
-//        writer.write("Game ended early due to a " + result + " requested by the user.");
         writer.close();
     }
 
@@ -303,7 +285,7 @@ public class Board {
     }
 
     private boolean parseBoard(int x, int y) {
-        Tile temp = tiles.get(x).get(y);
+        Tile temp = tiles.get(y).get(x);
         if (temp.isSelected() || temp.isFlagged()) {
             return true;
         }
@@ -312,45 +294,29 @@ public class Board {
         if (res == -1) {
             return false;
         } else if (res == 0) {
-            if (x + 1 < columns) {
-                if (!tiles.get(x + 1).get(y).isMine()) {
-                    parseBoard(x + 1, y);
-                }
+            if (x - 1 >= 0 && y - 1 >= 0) {
+                parseBoard(x - 1, y - 1);
             }
             if (x - 1 >= 0) {
-                if (!tiles.get(x - 1).get(y).isMine()) {
-                    parseBoard(x - 1, y);
-                }
+                parseBoard(x - 1, y);
             }
-            if (y + 1 < rows) {
-                if (!tiles.get(x).get(y + 1).isMine()) {
-                    parseBoard(x, y + 1);
-                }
-            }
-            if (y + 1 < rows && x + 1 < columns) {
-                if (!tiles.get(x + 1).get(y + 1).isMine()) {
-                    parseBoard(x + 1, y + 1);
-                }
-            }
-            if (y + 1 < rows && x - 1 >= 0) {
-                if (!tiles.get(x - 1).get(y + 1).isMine()) {
-                    parseBoard(x - 1, y + 1);
-                }
-            }
-            if (y - 1 >= 0 && x + 1 < columns) {
-                if (!tiles.get(x + 1).get(y - 1).isMine()) {
-                    parseBoard(x + 1, y - 1);
-                }
-            }
-            if (y - 1 >= 0 && x - 1 >= 0) {
-                if (!tiles.get(x - 1).get(y - 1).isMine()) {
-                    parseBoard(x - 1, y - 1);
-                }
+            if (x - 1 >= 0 && y + 1 < columns) {
+                parseBoard(x - 1, y + 1);
             }
             if (y - 1 >= 0) {
-                if (!tiles.get(x).get(y - 1).isMine()) {
-                    parseBoard(x, y - 1);
-                }
+                parseBoard(x, y - 1);
+            }
+            if (y + 1 < columns) {
+                parseBoard(x, y + 1);
+            }
+            if (x + 1 < rows && y - 1 >= 0) {
+                parseBoard(x + 1, y - 1);
+            }
+            if (x + 1 < rows) {
+                parseBoard(x + 1, y);
+            }
+            if (x + 1 < rows && y + 1 < columns) {
+                parseBoard(x + 1, y + 1);
             }
             return true;
         } else {

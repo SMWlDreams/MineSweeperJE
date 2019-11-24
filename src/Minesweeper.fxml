@@ -49,10 +49,12 @@
                         <MenuItem mnemonicParsing="false" onAction="#showHotkeyWindow" text="Hotkeys" />
                   </items>
                 </Menu>
-                  <Menu mnemonicParsing="false" text="Playback">
+                  <Menu fx:id="playbackMenu" mnemonicParsing="false" text="Playback">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#enterPlaybackMode" text="Playback Log File" />
-                        <MenuItem mnemonicParsing="false" text="Select New Log" />
+                        <MenuItem mnemonicParsing="false" onAction="#selectLog" text="Select New Log" />
+                        <MenuItem mnemonicParsing="false" onAction="#setAutoplayFrequency" text="Set Autoplay Frequency" />
+                        <CheckMenuItem fx:id="displayFlags" mnemonicParsing="false" onAction="#displayFlags" selected="true" text="Display Flags In Playback" />
                     </items>
                   </Menu>
               </menus>
@@ -86,9 +88,9 @@
                <children>
                   <Button mnemonicParsing="false" onAction="#toStart" prefHeight="18.8" prefWidth="90.0" text="To Start" />
                   <Button mnemonicParsing="false" onAction="#stepBack" prefHeight="18.8" prefWidth="90.0" text="Step Back" />
-                  <Button mnemonicParsing="false" onAction="#stepForward" prefHeight="18.8" prefWidth="90.0" text="Step Forward" />
+                  <Button mnemonicParsing="false" onAction="#stepForward" prefHeight="18.8" prefWidth="90.0" text="Step Up" />
                   <Button mnemonicParsing="false" onAction="#toEnd" prefHeight="18.8" prefWidth="90.0" text="To End" />
-                  <Button mnemonicParsing="false" onAction="#autoplay" prefHeight="18.8" prefWidth="90.0" text="Autoplay" />
+                  <Button fx:id="auto" mnemonicParsing="false" onAction="#autoplay" prefHeight="18.8" prefWidth="90.0" text="Autoplay" />
                   <Button mnemonicParsing="false" onAction="#exitPlaybackMode" prefHeight="18.8" prefWidth="90.0" text="Exit" />
                </children>
             </HBox>
