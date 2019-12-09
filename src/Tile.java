@@ -23,8 +23,8 @@ public class Tile extends Rectangle {
             new Image(
             "two.png"), new Image("three.png"), new Image("four.png"), new Image("five.png"),
             new Image("six.png"), new Image("seven.png"), new Image("eight.png")};
-    private final Image beforeFlagged = new Image("default.png");
-    private final Image flag = new Image("flag.png");
+    private static final Image beforeFlagged = new Image("default.png");
+    private static final Image flag = new Image("flag.png");
     private Image afterClicked;
     private final int xcoord;
     private final int ycoord;
