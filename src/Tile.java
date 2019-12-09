@@ -19,11 +19,12 @@ public class Tile extends Rectangle {
     public static final Image MINE_IMAGE = new Image("mine.png");
 
     private int scaleMultiplier;
-    private final Image[] clickedImages = {new Image("zero.png"), new Image("one.png"), new Image(
+    private static final Image[] clickedImages = {new Image("zero.png"), new Image("one.png"),
+            new Image(
             "two.png"), new Image("three.png"), new Image("four.png"), new Image("five.png"),
             new Image("six.png"), new Image("seven.png"), new Image("eight.png")};
-    private final Image beforeFlagged = new Image("default.png");
-    private final Image flag = new Image("flag.png");
+    private static final Image beforeFlagged = new Image("default.png");
+    private static final Image flag = new Image("flag.png");
     private Image afterClicked;
     private final int xcoord;
     private final int ycoord;
@@ -32,6 +33,7 @@ public class Tile extends Rectangle {
     private boolean flagged = false;
     private boolean selected;
     private Board board;
+    private int moveSelected;
 
     /**
      * Creates a new tile with specified coordinates
@@ -54,9 +56,11 @@ public class Tile extends Rectangle {
                 SCALE * scaleMultiplier, false));
     }
 
+    /**
+     * Sets this tile to be a mine
+     */
     public void setMine() {
         mine = true;
-//        afterClicked = new Image(new File(System.getProperty("user.dir") + "\\Images\\mine.png").toURI().toURL().toString());
         afterClicked = MINE_IMAGE;
     }
 
@@ -111,6 +115,14 @@ public class Tile extends Rectangle {
         return flagged;
     }
 
+    public void setMoveSelected(int moveSelected) {
+        this.moveSelected = moveSelected;
+    }
+
+    public int getMoveSelected() {
+        return moveSelected;
+    }
+
     /**
      * Determines how many mines are around this specific tile
      * @param tiles The list of tiles for this board
@@ -149,18 +161,44 @@ public class Tile extends Rectangle {
         }
     }
 
+    public int getNeighborMines() {
+        return neighborMines;
+    }
+
+    /**
+     * Updates the image for this tile
+     */
+    public void updateImage() {
+        this.setFill(new ImagePattern(afterClicked, 0, 0, SCALE * scaleMultiplier,
+                SCALE * scaleMultiplier, false));
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    /**
+     * Sets the tile to its unselected state
+     */
+    public void reset() {
+        this.setFill(new ImagePattern(beforeFlagged, 0, 0, SCALE * scaleMultiplier,
+                SCALE * scaleMultiplier, false));
+        selected = false;
+        flagged = false;
+    }
+
     private void determineNeighbors(List<List<Tile>> tiles, int xcoord, int ycoord) {
-        if (ycoord + 1 < board.getRows()) {
+        if (ycoord + 1 < board.getColumns()) {
             if (tiles.get(xcoord).get(ycoord + 1).isMine()) {
                 neighborMines++;
             }
         }
-        if (ycoord + 1 < board.getRows() && xcoord - 1 >= 0) {
+        if (ycoord + 1 < board.getColumns() && xcoord - 1 >= 0) {
             if (tiles.get(xcoord - 1).get(ycoord + 1).isMine()) {
                 neighborMines++;
             }
         }
-        if (ycoord + 1 < board.getRows() && xcoord + 1 < board.getColumns()) {
+        if (ycoord + 1 < board.getColumns() && xcoord + 1 < board.getRows()) {
             if (tiles.get(xcoord + 1).get(ycoord + 1).isMine()) {
                 neighborMines++;
             }
@@ -175,7 +213,7 @@ public class Tile extends Rectangle {
                 neighborMines++;
             }
         }
-        if (ycoord - 1 >= 0 && xcoord + 1 < board.getColumns()) {
+        if (ycoord - 1 >= 0 && xcoord + 1 < board.getRows()) {
             if (tiles.get(xcoord + 1).get(ycoord - 1).isMine()) {
                 neighborMines++;
             }
@@ -185,19 +223,10 @@ public class Tile extends Rectangle {
                 neighborMines++;
             }
         }
-        if (xcoord + 1 < board.getColumns()) {
+        if (xcoord + 1 < board.getRows()) {
             if (tiles.get(xcoord + 1).get(ycoord).isMine()) {
                 neighborMines++;
             }
         }
-    }
-
-    public void updateImage() {
-        this.setFill(new ImagePattern(afterClicked, 0, 0, SCALE * scaleMultiplier,
-                SCALE * scaleMultiplier, false));
-    }
-
-    public boolean isSelected() {
-        return selected;
     }
 }

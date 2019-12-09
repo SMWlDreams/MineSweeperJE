@@ -26,6 +26,8 @@ public class Board {
     private int logCount = 0;
     private boolean saveLogs = false;
 
+    public Board(){}
+
     /**
      * Creates the board with a specified number of mines and a pane to draw mines to
      * @param row           The number of rows for the board
@@ -34,8 +36,8 @@ public class Board {
      * @param pane          The pane to draw the mines to
      * @param multiplier    The value to multiply the scale of the images by
      */
-    public Board(int row, int col, int numMines, Pane pane, int multiplier) {
-        this(row, col, numMines, pane, multiplier, "0");
+    public Board(int col, int row, int numMines, Pane pane, int multiplier) {
+        this(col, row, numMines, pane, multiplier, "0");
     }
 
     /**
@@ -47,11 +49,11 @@ public class Board {
      * @param multiplier    The value to multiply the scale of the images by
      * @param seed          The seed to populate RNG with
      */
-    public Board(int row, int col, int numMines, Pane pane, int multiplier, String seed) {
+    public Board(int col, int row, int numMines, Pane pane, int multiplier, String seed) {
         numClickedTiles = 0;
         scaleMultiplier = multiplier;
         numFlags = numMines;
-        createBoard(col, row);
+        createBoard(row, col);
         rows = row;
         columns = col;
         initMines(numMines, seed);
@@ -61,7 +63,6 @@ public class Board {
                 pane.getChildren().add(t);
             }
         }
-
     }
 
     /**
@@ -71,11 +72,14 @@ public class Board {
      */
     public boolean onClick(MouseEvent mouseEvent) {
         if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-            int y = (int) mouseEvent.getX() / (Tile.SCALE * scaleMultiplier);
-            int x = (int) mouseEvent.getY() / (Tile.SCALE * scaleMultiplier);
-            if (!tiles.get(x).get(y).isSelected()) {
+            int x = (int) mouseEvent.getX() / (Tile.SCALE * scaleMultiplier);
+            int y = (int) mouseEvent.getY() / (Tile.SCALE * scaleMultiplier);
+            if (!tiles.get(y).get(x).isSelected()) {
                 if (log) {
-                    writer.write("Primary click on tile: " + y + "," + x + "\r\n");
+                    writer.write("    <select>\r\n" +
+                            "        <X>" + x + "</X>\r\n" +
+                            "        <Y>" + y + "</Y>\r\n" +
+                            "    </select>\r\n\r\n");
                 }
             }
             return parseBoard(x, y);
@@ -92,20 +96,26 @@ public class Board {
         int x = (int) mouseEvent.getX() / (Tile.SCALE * scaleMultiplier);
         int y = (int) mouseEvent.getY() / (Tile.SCALE * scaleMultiplier);
         Tile temp = tiles.get(y).get(x);
-        if (!temp.isSelected()) {
-            temp.flag();
-            if (temp.isFlagged()) {
-                if (log) {
-                    writer.write("Flagged tile: " + y + "," + x + "\r\n");
+        end:
+            if (!temp.isSelected()) {
+                temp.flag();
+                if (temp.isFlagged()) {
+                    if (numFlags > 0) {
+                        numFlags--;
+                    } else {
+                        temp.flag();
+                        break end;
+                    }
+                } else {
+                    numFlags++;
                 }
-                numFlags--;
-            } else {
                 if (log) {
-                    writer.write("Un-flagged tile: " + y + "," + x + "\r\n");
+                    writer.write("    <flag>\r\n" +
+                            "        <X>" + x + "</X>\r\n" +
+                            "        <Y>" + y + "</Y>\r\n" +
+                            "    </flag>\r\n\r\n");
                 }
-                numFlags++;
             }
-        }
         return numFlags;
     }
 
@@ -186,21 +196,19 @@ public class Board {
                 }
                 if (keepLogs){
                     writer = new PrintWriter(System.getProperty("user.dir") + "\\Logs\\" +
-                            seed + "_" + hash + "_attempt_" + ++logCount + ".txt");
-                    writer.write("File seed and hash: " + seed + hash + "\r\n");
-                    writer.write("Difficulty: " + difficulty.substring(5) + "\r\n");
-                    writer.write("Board width: " + width + "\r\n");
-                    writer.write("Board height: " + height + "\r\n");
-                    writer.write("Total number of mines: " + numMines + "\r\n");
+                            seed + "_" + hash + "_attempt_" + ++logCount + ".msl");
                 } else {
-                    writer = new PrintWriter( System.getProperty("user.dir") + "\\Logs\\" +
-                            + seed + "_" + hash + ".txt");
-                    writer.write("File seed and hash: " + seed + hash + "\r\n");
-                    writer.write("Difficulty: " + difficulty.substring(5) + "\r\n");
-                    writer.write("Board width: " + width + "\r\n");
-                    writer.write("Board height: " + height + "\r\n");
-                    writer.write("Total number of mines: " + numMines + "\r\n");
+                    writer = new PrintWriter(System.getProperty("user.dir") + "\\Logs\\" +
+                            + seed + "_" + hash + ".msl");
                 }
+                writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n\r\n" +
+                        "<game>\r\n" +
+                        "    <seed>" + seed + "</seed>\r\n" +
+                        "    <diff>" + difficulty.substring(5) + "</diff>\r\n" +
+                        "    <width>" + width + "</width>\r\n" +
+                        "    <height>" + height + "</height>\r\n" +
+                        "    <mines>" + numMines + "</mines>\r\n\r\n" +
+                        "");
             } catch (IOException e) {
                 File dir = new File(System.getProperty("user.dir") + "\\Logs");
                 if (dir.mkdirs()) {
@@ -242,19 +250,20 @@ public class Board {
      */
     public void closeOutput(boolean result) {
         if (result) {
-            writer.write("Final result: Won!");
+            writer.write("    <result>W</result>\r\n" +
+                    "</game>");
         } else {
-            writer.write("Final result: Loss!");
+            writer.write("    <result>L</result>\r\n" +
+                    "</game>");
         }
         writer.close();
     }
 
     /**
      * Closes the log writer file when ended before a game has ended
-     * @param result    What action was done to end the game
      */
-    public void closeOutput(String result) {
-        writer.write("Game ended early due to a " + result + " requested by the user.");
+    public void closeOutput() {
+        writer.write("</game>");
         writer.close();
     }
 
@@ -276,7 +285,7 @@ public class Board {
     }
 
     private boolean parseBoard(int x, int y) {
-        Tile temp = tiles.get(x).get(y);
+        Tile temp = tiles.get(y).get(x);
         if (temp.isSelected() || temp.isFlagged()) {
             return true;
         }
@@ -285,45 +294,29 @@ public class Board {
         if (res == -1) {
             return false;
         } else if (res == 0) {
-            if (x + 1 < columns) {
-                if (!tiles.get(x + 1).get(y).isMine()) {
-                    parseBoard(x + 1, y);
-                }
+            if (x - 1 >= 0 && y - 1 >= 0) {
+                parseBoard(x - 1, y - 1);
             }
             if (x - 1 >= 0) {
-                if (!tiles.get(x - 1).get(y).isMine()) {
-                    parseBoard(x - 1, y);
-                }
+                parseBoard(x - 1, y);
             }
-            if (y + 1 < rows) {
-                if (!tiles.get(x).get(y + 1).isMine()) {
-                    parseBoard(x, y + 1);
-                }
-            }
-            if (y + 1 < rows && x + 1 < columns) {
-                if (!tiles.get(x + 1).get(y + 1).isMine()) {
-                    parseBoard(x + 1, y + 1);
-                }
-            }
-            if (y + 1 < rows && x - 1 >= 0) {
-                if (!tiles.get(x - 1).get(y + 1).isMine()) {
-                    parseBoard(x - 1, y + 1);
-                }
-            }
-            if (y - 1 >= 0 && x + 1 < columns) {
-                if (!tiles.get(x + 1).get(y - 1).isMine()) {
-                    parseBoard(x + 1, y - 1);
-                }
-            }
-            if (y - 1 >= 0 && x - 1 >= 0) {
-                if (!tiles.get(x - 1).get(y - 1).isMine()) {
-                    parseBoard(x - 1, y - 1);
-                }
+            if (x - 1 >= 0 && y + 1 < rows) {
+                parseBoard(x - 1, y + 1);
             }
             if (y - 1 >= 0) {
-                if (!tiles.get(x).get(y - 1).isMine()) {
-                    parseBoard(x, y - 1);
-                }
+                parseBoard(x, y - 1);
+            }
+            if (y + 1 < rows) {
+                parseBoard(x, y + 1);
+            }
+            if (x + 1 < columns && y - 1 >= 0) {
+                parseBoard(x + 1, y - 1);
+            }
+            if (x + 1 < columns) {
+                parseBoard(x + 1, y);
+            }
+            if (x + 1 < columns && y + 1 < rows) {
+                parseBoard(x + 1, y + 1);
             }
             return true;
         } else {
@@ -331,10 +324,10 @@ public class Board {
         }
     }
 
-    private void createBoard(int col, int row) {
-        for (int i = 0; i < col; i++) {
+    private void createBoard(int row, int col) {
+        for (int i = 0; i < row; i++) {
             List<Tile> temp = new ArrayList<>();
-            for (int j = 0; j < row; j++) {
+            for (int j = 0; j < col; j++) {
                 temp.add(new Tile(i, j, this, scaleMultiplier));
             }
             tiles.add(temp);
@@ -352,9 +345,9 @@ public class Board {
         int rowSize = rows;
         int colSize = columns;
         while (i < mines) {
-            int x = rand.nextInt(colSize);
             int y = rand.nextInt(rowSize);
-            Tile tile = tiles.get(x).get(y);
+            int x = rand.nextInt(colSize);
+            Tile tile = tiles.get(y).get(x);
             if (!tile.isMine()) {
                 tile.setMine();
                 i++;
@@ -365,8 +358,7 @@ public class Board {
     private void setNeighbors() {
         for (int i = 0; i < tiles.size(); i++) {
             List<Tile> temp = tiles.get(i);
-            for (int j = 0; j < temp.size(); j++) {
-                Tile tile = temp.get(j);
+            for (Tile tile : temp) {
                 if (!tile.isMine()) {
                     tile.determineNeighbors(tiles);
                 }

@@ -6,12 +6,6 @@
 
 This is my personal adaptation of the famous DOS game MineSweeper. This game is made entirely in the Java language and is meant to be a close imitation of Minesweeper for Windows XP. This project is fully open source and anyone may use the source files as long as I am credited in the final submission.
 
-## Note
-
-This application requires JRE or JDK 11 or higher to run. To get version 11 of the JRE, please go here and select the installer for your operating system:
-
-https://adoptopenjdk.net/releases.html?variant=openjdk11&jvmVariant=hotspot
-
 # Change log
 
 ## Version 1.0.1
@@ -28,7 +22,7 @@ Fixed two bugs related to registering high scores. One prevented the current hig
 
 #### Added Hotkey Functionality
 
-Hotkeys have been added for the core functions of the game. They work simply by pressing the corresponsing button while in the application. The hotkeys default to the specified hotkeys if the Hotkeys.ini file is missing from the user directory. The default hotkeys are; P for pause, R for restart, H opens the help menu, A opens the about menu, N starts a new game and S opens the high score dialogue. Added these hotkeys to a new "hotkeys" menu which can be found under help. Changing hotkeys through the GUI will be added soon. Hotkeys can be manually edited by changing the corresponding letter in the Hotkeys.ini file found in the main filesystem. You can set the same character to mutiple hotkeys which may cause undesired side effects. I will remove this later.
+Hotkeys have been added for the core functions of the game. They work simply by pressing the corresponding button while in the application. The hotkeys default to the specified hotkeys if the Hotkeys.ini file is missing from the user directory. The default hotkeys are; P for pause, R for restart, H opens the help menu, A opens the about menu, N starts a new game and S opens the high score dialogue. Added these hotkeys to a new "hotkeys" menu which can be found under help. Changing hotkeys through the GUI will be added soon. Hotkeys can be manually edited by changing the corresponding letter in the Hotkeys.ini file found in the main filesystem. You can set the same character to mutiple hotkeys which may cause undesired side effects. I will remove this later.
 
 ### Bug Fixes/Improvements
 
@@ -50,7 +44,7 @@ Pausing and restarting the game no longer randomly crashes or leaves the applica
 
 Fix to prevent the user from playing the game in the paused state by choosing certain options.
 
-Fixed the game crashing when finshing a game in the paused state under certain circumstances.
+Fixed the game crashing when finishing a game in the paused state under certain circumstances.
 
 #### Fixed Bugs With Log Files
 
@@ -162,20 +156,63 @@ Using a preset hash and seed will no longer cause the board to be generated twic
 
 Loading a game using the set seed parameter will no longer disable the restart function.
 
-## Version 1.3.2 A
+## Version 1.4.0
+
+### New Features
+
+#### Log File Playback
+
+You can now playback all log files generated from version 1.4.0 and onward! A new playback menu 
+has been added where you can select a log file, play it back, change the audoplay frequency, 
+change the selected log, and even play back a file without showing flags on the board. Each of 
+the functions details are as follows:
+
+##### Playback Log File
+
+Prompts the user to open a valid log file and reads in the data. If the log is invalid, an alert 
+will be shown and no board will be drawn. Hitting cancel or closing out of the file select window 
+will cancel the playback loading and resume the game in progress. Note that this function will 
+not pause the current game so the time will continue to run.
+ 
+##### Select New Log
+
+This command only works once the user is in Playback mode (as denoted by the UI layout.) 
+Attempting to select this option while not in playback mode will simply do nothing (the event is 
+consumed.) If the user is in playback mode, it will prompt them to select a valid log file as 
+before. It will then clear the board and generate a new playback. If the file is invalid it will 
+still clear the board but will not draw a new one.
+
+##### Set Autoplay Frequency
+
+This command can be invoked at any time but will not have any effect on a currently running 
+autoplay. In order for it to have effect the autoplay must be stopped and then restarted. This 
+command opens up a window which prompts the user to enter a delay for moves in autoplay mode. The
+lowest usable value is 0.001 and the highest is unbound. Invalid inputs will simply be ignored. 
+
+##### Display flags in playback 
+
+This command can be invoked at any time. If a playback is currently running it will prompt the 
+user to restart the playback with this setting as it cannot be applied retroactively. If this 
+setting is unchecked, the game will not display flagged tiles while playing back a file. Rather, 
+these tiles will remain in the unclicked state, giving the board a more filled appearance.
+
+#### Change to log file layout
+
+Log files are now generated in XML format. This means that all old log files are no longer going 
+to be usable. In addition, there was an issue with old logs where the x and y coordinates were 
+backward for selecting tiles. This cannot be easily fixed and so logs generated before 1.4.0 will
+not be able to be used. These files also now have their own extension. *.msl
+
+### Improvements
+
+Added new exceptions that are more specific than the ones that already existed.
+
+Fixed the constant x and y coordinate mismatching in the board and tiles classes.
+
+Updated board generation logic (again) to try to make them load faster.
 
 ### Bug Fixes
 
 Application will no longer reset the settings and hotkeys when moving from one version to another. Note that the movement is **ONE WAY** in that you cannot use the same settings.cfg file in version 1.3.2 if you already loaded that file in 1.4.0.
 
-### Bugs To Fix
-
-Some monitor resolutions display the GUI at an incorrect size causing the tiles to not line up. A fix is currently being worked on although this may take some time.
-
-## Version 1.4.0 A
-
-### New Features
-
-#### To Be Added
-
-Log file playback. This will allow the user to step through a log file either forward or backward and replay a game they already completed. This will require some verification of the log files sadly. Also if a desync occurs with the file and the board (due to user unauthorized edits) it will display a message to the user.
+You can no longer place more flags than there are mines present on the board

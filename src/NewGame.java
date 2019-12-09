@@ -89,7 +89,7 @@ public class NewGame implements Controllers {
         }
         int tempWidth = Integer.parseInt(width.getText());
         int tempHeight = Integer.parseInt(height.getText());
-        if (numMines.getText().equals("") || Integer.parseInt(numMines.getText()) == 0) {
+        if (numMines.getText().equals("")) {
             double mines = ((tempWidth * tempHeight) / 4.5);
             controller.customDimensions(tempHeight, tempWidth, (int)mines);
         } else {

@@ -4,59 +4,89 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.IllegalFormatException;
+import java.util.InputMismatchException;
 import java.util.List;
 
 public class Controller {
     @FXML
-    GridPane grid;
+    private GridPane grid;
     @FXML
-    FlowPane pane;
+    private FlowPane pane;
     @FXML
-    MenuItem pause;
+    private MenuItem pause;
     @FXML
-    MenuItem restart;
+    private MenuItem restart;
     @FXML
-    MenuItem newGame;
+    private MenuItem newGame;
     @FXML
-    MenuItem about;
+    private MenuItem about;
     @FXML
-    MenuItem helpMenu;
+    private MenuItem helpMenu;
     @FXML
-    Text flags;
+    private Text flags;
     @FXML
-    Text mines;
+    private Text mines;
     @FXML
-    Text time;
+    private Text time;
     @FXML
-    Text difficulty;
+    private Text difficulty;
     @FXML
-    MenuItem highScore;
+    private MenuItem highScore;
     @FXML
-    CheckMenuItem log;
+    private CheckMenuItem log;
     @FXML
-    Menu file;
+    private Menu file;
     @FXML
-    Menu game;
+    private Menu game;
     @FXML
-    Menu help;
+    private Menu help;
+    @FXML
+    private HBox gameStats1;
+    @FXML
+    private HBox gameStats2;
+    @FXML
+    private HBox playback1;
+    @FXML
+    private HBox playback2;
+    @FXML
+    private VBox box;
+    @FXML
+    private Text currentStep;
+    @FXML
+    private Text move;
+    @FXML
+    private Menu playbackMenu;
+    @FXML
+    private Button auto;
+    @FXML
+    private CheckMenuItem displayFlags;
 
     private Stage newWindowStage;
     private Board board;
@@ -68,6 +98,7 @@ public class Controller {
     private long startTime;
     private int numFlags;
     private final Timeline timeline = new Timeline();
+    private Timeline autoplay;
     private GUI gui;
     private int scaleMultiplier = 1;
     private boolean paused = false;
@@ -80,6 +111,11 @@ public class Controller {
     private boolean showMines = false;
     private int logCount = 0;
     private int cycleCount = 0;
+    private boolean isPlayback = false;
+    private Playback playback;
+    private boolean playing = false;
+    private double autoplayMoveDelay = 1.0;
+    private int currentMove = 0;
 
     /**
      * Starts the main application on clicking new
@@ -162,6 +198,304 @@ public class Controller {
             launch(Help.PROPERTIES);
         } catch (IOException e) {
             System.out.println("APPLICATION IS CORRUPT! PLEASE RE-DOWNLOAD!");
+        }
+    }
+
+    /**
+     * Enters playback mode if it not currently active
+     * @param actionEvent   Event sent by javafx
+     */
+    public void enterPlaybackMode(ActionEvent actionEvent) {
+        if (!isPlayback) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirm?");
+            alert.setHeaderText("Enter Playback?");
+            alert.setContentText("Undergoing this action will enter playback mode.\n" +
+                    "Any current game progress will be lost!\n" +
+                    "Are you sure you wish to proceed?");
+            alert.showAndWait();
+            if (alert.getResult().equals(ButtonType.OK)) {
+                FileChooser chooser = new FileChooser();
+                chooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+                chooser.getExtensionFilters().add(
+                        new FileChooser.ExtensionFilter("Minesweeper Logs", "*.msl"));
+                File file = chooser.showOpenDialog(new Stage());
+                if (file != null) {
+                    try {
+                        playback = new Playback(file);
+                        timeline.stop();
+                        clear();
+                        playback.setController(this);
+                        playback.generate(pane);
+                        toStart(actionEvent);
+                        playback.setDisplayFlags(displayFlags.isSelected());
+                        box.getChildren().removeAll(gameStats1, gameStats2);
+                        box.getChildren().addAll(playback1, playback2);
+                        restart.setDisable(true);
+                        pause.setDisable(true);
+                        playback1.setPrefWidth(pane.getPrefWidth());
+                        playback2.setPrefWidth(pane.getPrefWidth());
+                        for (Node n : playback1.getChildren()) {
+                            Text t = (Text) n;
+                            t.setWrappingWidth(playback1.getPrefWidth() / 4.0);
+                        }
+                        for (Node n : playback2.getChildren()) {
+                            Button b = (Button) n;
+                            b.setPrefWidth(playback2.getPrefWidth() / 5.0);
+                        }
+                        isPlayback = true;
+                    } catch (NullPointerException | FileNotFoundException e) {
+                        alert.setAlertType(Alert.AlertType.ERROR);
+                        alert.setTitle("Invalid File");
+                        alert.setHeaderText("Invalid File");
+                        alert.setContentText("The specified file could not be found or does not exist" +
+                                ".\nPlease ensure the file is in the specified directory.");
+                        alert.showAndWait();
+                    } catch (IOException | InvalidLogException e) {
+                        alert.setAlertType(Alert.AlertType.ERROR);
+                        alert.setTitle("Invalid File");
+                        alert.setHeaderText("Invalid File");
+                        alert.setContentText("The specified file contains invalid file formatting.\n" +
+                                "Please only select unmodified minesweeper log files.");
+                        alert.showAndWait();
+                    } catch (InvalidCoordinateException e) {
+                        alert.setAlertType(Alert.AlertType.ERROR);
+                        alert.setTitle("Invalid Coordinate");
+                        alert.setHeaderText("Invalid Coordinate");
+                        alert.setContentText(e.getMessage());
+                        alert.showAndWait();
+                    } catch (InvalidCountException | InvalidDimensionException e) {
+                        alert.setAlertType(Alert.AlertType.ERROR);
+                        alert.setTitle("Invalid Board Dimension");
+                        alert.setHeaderText("Invalid Board Dimension");
+                        alert.setContentText(e.getMessage());
+                        alert.showAndWait();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Selects a new log file
+     * @param actionEvent   Event sent by javafx
+     */
+    public void selectLog(ActionEvent actionEvent) {
+        if (isPlayback) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            FileChooser chooser = new FileChooser();
+            chooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+            chooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Minesweeper Logs", "*.msl"));
+            File file = chooser.showOpenDialog(new Stage());
+            if (file != null) {
+                try {
+                    playback.clear(pane);
+                    playback = new Playback(file);
+                    playback.setController(this);
+                    playback.generate(pane);
+                    toStart(actionEvent);
+                    playback.setDisplayFlags(displayFlags.isSelected());
+                    playback1.setPrefWidth(pane.getPrefWidth());
+                    playback2.setPrefWidth(pane.getPrefWidth());
+                    for (Node n : playback1.getChildren()) {
+                        Text t = (Text) n;
+                        t.setWrappingWidth(playback1.getPrefWidth() / 4.0);
+                    }
+                    for (Node n : playback2.getChildren()) {
+                        Button b = (Button) n;
+                        b.setPrefWidth(playback2.getPrefWidth() / 5.0);
+                    }
+                } catch (NullPointerException | FileNotFoundException e) {
+                    alert.setAlertType(Alert.AlertType.ERROR);
+                    alert.setTitle("Invalid File");
+                    alert.setHeaderText("Invalid File");
+                    alert.setContentText("The specified file could not be found or does not exist" +
+                            ".\nPlease ensure the file is in the specified directory.");
+                    alert.showAndWait();
+                } catch (IOException | InvalidLogException e) {
+                    alert.setAlertType(Alert.AlertType.ERROR);
+                    alert.setTitle("Invalid File");
+                    alert.setHeaderText("Invalid File");
+                    alert.setContentText("The specified file contains invalid file formatting.\n" +
+                            "Please only select unmodified minesweeper log files.");
+                    alert.showAndWait();
+                } catch (InvalidCoordinateException e) {
+                    alert.setAlertType(Alert.AlertType.ERROR);
+                    alert.setTitle("Invalid Coordinate");
+                    alert.setHeaderText("Invalid Coordinate");
+                    alert.setContentText(e.getMessage());
+                    alert.showAndWait();
+                } catch (InvalidCountException | InvalidDimensionException e) {
+                    alert.setAlertType(Alert.AlertType.ERROR);
+                    alert.setTitle("Invalid Board Dimension");
+                    alert.setHeaderText("Invalid Board Dimension");
+                    alert.setContentText(e.getMessage());
+                    alert.showAndWait();
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets the width, height, and scale multiplier values for a playback board to autoscale the UI
+     * @param width         The width of the board
+     * @param height        The height of the board
+     * @param multiplier    The scale multiplier for the tile sizes
+     */
+    public void setVars(int width, int height, int multiplier) {
+        this.width = width;
+        this.height = height;
+        scaleMultiplier = multiplier;
+        adjustBoard();
+    }
+
+    /**
+     * Exits log file playback mode and starts a new game
+     * @param actionEvent   Event sent by javafx
+     */
+    public void exitPlaybackMode(ActionEvent actionEvent) {
+        exitPlaybackMode(true);
+    }
+
+    /**
+     * Jumps to the start of the playback and kills the autoplay if it is running
+     * @param actionEvent   Event sent by javafx
+     */
+    public void toStart(ActionEvent actionEvent) {
+        if (playing) {
+            autoplay(actionEvent);
+        }
+        playback.toStart();
+        currentMove = 0;
+        move.setText("None");
+        currentStep.setText("0");
+    }
+
+    /**
+     * Steps back one move in the playback and kills the autoplay if it is running
+     * @param actionEvent   Event sent by javafx
+     */
+    public void stepBack(ActionEvent actionEvent) {
+        if (playing) {
+            autoplay(actionEvent);
+        }
+        String s = playback.stepBack();
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == ' ') {
+                move.setText("Undo " + s.substring(0, i));
+                currentStep.setText(s.substring(i + 1));
+                currentMove--;
+                break;
+            }
+        }
+    }
+
+    /**
+     * Steps forward one move in the playback and kills the autoplay if it is currently running
+     * @param actionEvent   Event sent by javafx
+     */
+    public void stepForward(ActionEvent actionEvent) {
+        String s = playback.stepForward();
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == ')') {
+                i++;
+                move.setText(s.substring(0, i));
+                currentStep.setText(s.substring(i + 1));
+                currentMove++;
+                break;
+            }
+        }
+    }
+
+    /**
+     * Jumps to the end of the playback and kills the autoplay if it is currently running
+     * @param actionEvent   Event sent by javafx
+     */
+    public void toEnd(ActionEvent actionEvent) {
+        if (playing) {
+            autoplay(actionEvent);
+        }
+        String s = playback.toEnd();
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == ')') {
+                i++;
+                move.setText(s.substring(0, i));
+                currentStep.setText(s.substring(i + 1));
+                currentMove = playback.getNumberOfMoves() - 1;
+                break;
+            }
+        }
+    }
+
+    /**
+     * Runs an autoplay on the current playback or kills the current autoplay
+     * @param actionEvent   Event sent by javafx
+     */
+    public void autoplay(ActionEvent actionEvent) {
+        if (!playing) {
+            autoplay = new Timeline();
+            KeyFrame keyFrame = new KeyFrame(Duration.seconds(autoplayMoveDelay), e -> stepForward(actionEvent));
+            autoplay.setCycleCount(playback.getNumberOfMoves() - currentMove);
+            autoplay.setOnFinished(this::autoplay);
+            autoplay.getKeyFrames().add(keyFrame);
+            auto.setText("Stop");
+            playing = true;
+            autoplay.play();
+        } else {
+            auto.setText("Autoplay");
+            autoplay.stop();
+            playing = false;
+        }
+    }
+
+    /**
+     * Tells the current playback whether or not to display flag objects during playback
+     * @param actionEvent   Event sent by javafx
+     */
+    public void displayFlags(ActionEvent actionEvent) {
+        if (playback != null) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Restart");
+            alert.setHeaderText("Restart?");
+            alert.setContentText("Changing this setting will require you to reload\n" +
+                    "the current playback file.\n" +
+                    "Are you sure you wish to restart?");
+            alert.showAndWait();
+            if (alert.getResult().equals(ButtonType.OK)) {
+                toStart(actionEvent);
+                playback.setDisplayFlags(displayFlags.isSelected());
+            } else {
+                displayFlags.setSelected(!displayFlags.isSelected());
+            }
+        }
+    }
+
+    /**
+     * Changes the audoplay frequency to the desired value
+     * @param actionEvent   Event sent by javafx
+     */
+    public void setAutoplayFrequency(ActionEvent actionEvent) {
+        TextInputDialog dialog = new TextInputDialog(autoplayMoveDelay + "");
+        dialog.setTitle("Set Autoplay Frequency");
+        dialog.setHeaderText("Set Autoplay Frequency");
+        dialog.setContentText("Please enter a value greater than 0 to wait between\n" +
+                "moves while in autoplay.");
+        dialog.showAndWait();
+        String s = dialog.getResult();
+        try {
+            double d = Double.parseDouble(s);
+            if (d <= 0) {
+                throw new InputMismatchException("Invalid value");
+            }
+            autoplayMoveDelay = d;
+        } catch (InputMismatchException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("Invalid Input");
+            alert.setTitle("Invalid Input");
+            alert.setContentText("User input " + s + "\n" +
+                    "is not a valid value for the autoplay delay.");
+            alert.showAndWait();
         }
     }
 
@@ -249,7 +583,7 @@ public class Controller {
      * @param mouseEvent    Event sent by clicking the mouse
      */
     public void onClick(MouseEvent mouseEvent) {
-        if (start && run) {
+        if (start && run && !isPlayback) {
             if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
                 numFlags = board.setFlagged(mouseEvent);
                 flags.setText("     " + numFlags);
@@ -343,24 +677,26 @@ public class Controller {
      * Changes the size of the window to fit the game and starts it
      */
     public void begin() {
-        if (board != null) {
-            if (board.outputLog()) {
-                board.closeOutput("new game");
+        if (!isPlayback || exitPlaybackMode(false)) {
+            if (board != null) {
+                if (board.outputLog()) {
+                    board.closeOutput();
+                }
             }
+            board = new Board(width, height, numMines, pane, scaleMultiplier);
+            if (outputLog) {
+                board.generateLog(true, hash, width, height, numMines, difficulty.getText());
+            } else {
+                board.generateLog(false);
+            }
+            adjustBoard();
+            restart.setDisable(false);
+            pause.setDisable(false);
+            startTime = 0;
+            cycleCount = 0;
+            start = true;
+            run = true;
         }
-        board = new Board(width, height, numMines, pane, scaleMultiplier);
-        if (outputLog) {
-            board.generateLog(true, hash, width, height, numMines, difficulty.getText());
-        } else {
-            board.generateLog(false);
-        }
-        adjustBoard();
-        restart.setDisable(false);
-        pause.setDisable(false);
-        startTime = 0;
-        cycleCount = 0;
-        start = true;
-        run = true;
     }
 
     /**
@@ -387,6 +723,10 @@ public class Controller {
      * sets any relevant settings
      */
     public void initialGame() {
+        if (board != null) {
+            clear();
+        }
+        box.getChildren().removeAll(playback1, playback2);
         try {
             LoadedSettings.load();
             String[] settings = LoadedSettings.getLaunchSettings();
@@ -513,45 +853,47 @@ public class Controller {
      * @param hash  The hash to build the board
      */
     public void setHashSeed(String seed, String hash) {
-        this.hash = hash;
-        int height = Integer.parseInt(hash.substring(2, 4));
-        int width = Integer.parseInt(hash.substring(4, 6));
-        int mine = Integer.parseInt(hash.substring(6));
-        customDimensions(height, width, mine);
-        if (board != null) {
-            board.clear(pane);
-        }
-        if (outputLog && board != null) {
-            if (board.outputLog()) {
-                board.closeOutput("start new game");
+        if (!isPlayback || exitPlaybackMode(false)) {
+            this.hash = hash;
+            int height = Integer.parseInt(hash.substring(2, 4));
+            int width = Integer.parseInt(hash.substring(4, 6));
+            int mine = Integer.parseInt(hash.substring(6));
+            customDimensions(height, width, mine);
+            if (board != null) {
+                clear();
             }
-        } else if (board != null) {
-            board.generateLog(false);
-        }
-        board = new Board(width, height, numMines, pane, scaleMultiplier, seed);
-        if (outputLog) {
-            if (keepLogs) {
-                logCount = board.generateLog(true, hash, width, height, numMines, true, logCount,
-                        difficulty.getText());
+            if (outputLog && board != null) {
+                if (board.outputLog()) {
+                    board.closeOutput();
+                }
+            } else if (board != null) {
+                board.generateLog(false);
+            }
+            board = new Board(width, height, numMines, pane, scaleMultiplier, seed);
+            if (outputLog) {
+                if (keepLogs) {
+                    logCount = board.generateLog(true, hash, width, height, numMines,
+                            true, logCount, difficulty.getText());
+                } else {
+                    logCount = 0;
+                    logCount = board.generateLog(true, hash, width, height, numMines,
+                            false, logCount, difficulty.getText());
+                }
             } else {
-                logCount = 0;
-                logCount = board.generateLog(true, hash, width, height, numMines, false, logCount,
-                        difficulty.getText());
+                board.generateLog(false);
             }
-        } else {
-            board.generateLog(false);
+            adjustBoard();
+            startTime = 0;
+            timeline.stop();
+            cycleCount = 0;
+            timeline.play();
+            pause.setDisable(false);
+            restart.setDisable(false);
+            start = true;
+            run = true;
+            play = true;
+            setSeed = true;
         }
-        adjustBoard();
-        startTime = 0;
-        timeline.stop();
-        cycleCount = 0;
-        timeline.play();
-        pause.setDisable(false);
-        restart.setDisable(false);
-        start = true;
-        run = true;
-        play = true;
-        setSeed = true;
     }
 
     /**
@@ -713,12 +1055,12 @@ public class Controller {
         score = 1000;
         play = true;
         grid.setPrefHeight((height * Tile.SCALE * scaleMultiplier) + 50);
-        grid.setPrefWidth((width * Tile.SCALE * scaleMultiplier + 14) > 460 ?
-                (width * Tile.SCALE * scaleMultiplier + 14) : 460);
+        grid.setPrefWidth((width * Tile.SCALE * scaleMultiplier + 16) > 460 ?
+                (width * Tile.SCALE * scaleMultiplier + 16) : 460);
         pane.setPrefHeight(height * Tile.SCALE * scaleMultiplier);
         pane.setPrefWidth(width * Tile.SCALE * scaleMultiplier);
-        gui.setDimensions((width * Tile.SCALE * scaleMultiplier + 14) > 460 ?
-                        (width * Tile.SCALE * scaleMultiplier + 14) : 460,
+        gui.setDimensions((width * Tile.SCALE * scaleMultiplier + 16) > 460 ?
+                        (width * Tile.SCALE * scaleMultiplier + 16) : 460,
                 (height * Tile.SCALE * scaleMultiplier) + 100);
         mines.setText("     " + numMines);
         flags.setText("     " + numMines);
@@ -726,13 +1068,15 @@ public class Controller {
     }
 
     private void startTimeUpdate() {
-        KeyFrame keyFrame = new KeyFrame(Duration.millis(1), e -> updateTimeText());
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.getKeyFrames().add(keyFrame);
-        timeline.play();
+        if (timeline.getKeyFrames().size() == 0) {
+            KeyFrame keyFrame = new KeyFrame(Duration.millis(1), e -> updateTimeText());
+            timeline.setCycleCount(Timeline.INDEFINITE);
+            timeline.getKeyFrames().add(keyFrame);
+            timeline.play();
+        }
     }
 
-    private void updateTimeText() {
+    private synchronized void updateTimeText() {
         cycleCount++;
         if (cycleCount == 1000) {
             time.setText("     " + ++startTime + " seconds");
@@ -853,6 +1197,7 @@ public class Controller {
         file.setDisable(lock);
         game.setDisable(lock);
         help.setDisable(lock);
+        playbackMenu.setDisable(lock);
     }
 
     private void partialLockout(boolean lock) {
@@ -860,6 +1205,7 @@ public class Controller {
         restart.setDisable(lock);
         help.setDisable(lock);
         highScore.setDisable(lock);
+        playbackMenu.setDisable(lock);
     }
 
     private void setHotkeyTexts() {
@@ -876,7 +1222,7 @@ public class Controller {
         clear();
         if (board != null) {
             if (board.outputLog()) {
-                board.closeOutput("start new game");
+                board.closeOutput();
             }
         }
         board = new Board(width, height, numMines, pane, scaleMultiplier);
@@ -895,5 +1241,28 @@ public class Controller {
         start = true;
         run = true;
         play = true;
+    }
+
+    private boolean exitPlaybackMode(boolean buttonExit) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm?");
+        alert.setHeaderText("Exit Playback?");
+        alert.setContentText("Undergoing this action will exit playback mode.\n" +
+                "Are you sure you wish to proceed?");
+        alert.showAndWait();
+        if (alert.getResult().equals(ButtonType.OK)) {
+            box.getChildren().addAll(gameStats1, gameStats2);
+            box.getChildren().removeAll(playback1, playback2);
+            restart.setDisable(false);
+            pause.setDisable(false);
+            playback.clear(pane);
+            playback = null;
+            isPlayback = false;
+            if (buttonExit) {
+                initialGame();
+            }
+            return true;
+        }
+        return false;
     }
 }
