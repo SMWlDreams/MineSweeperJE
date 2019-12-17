@@ -89,12 +89,22 @@ public class Tile extends Rectangle {
         }
     }
 
+    public void unshownFlag() {
+        if (!selected) {
+            if (flagged) {
+                flagged = false;
+            } else {
+                flagged = true;
+            }
+        }
+    }
+
     /**
      * Selects the tile and updates the image for the tile
      * @return  -1 if it is a mine, otherwise the number of adjacent mines
      */
     public int onClick() {
-        if (!selected) {
+        if (!selected && !flagged) {
             updateImage();
             selected = true;
             if (mine) {
