@@ -168,6 +168,11 @@ public class PlaybackBoard extends Board {
         t.flag();
     }
 
+    public void flagUndisplayedTile(int x, int y) {
+        Tile t = tiles.get(y).get(x);
+        t.unshownFlag();
+    }
+
     private void createBoard(int col, int row) {
         for (int i = 0; i < col; i++) {
             List<Tile> temp = new ArrayList<>();
