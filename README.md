@@ -230,3 +230,5 @@ You can no longer place more flags than there are mines present on the board
 Tiles will now be flagged properly when the "Show Flags in Playback" option is not selected. This means that if you clicked a flagged tile in a game it will no longer be revealed in the playback (it will just appear blank).
 
 Flagged tiles will no longer be overridden when they are clicked in the playback (if you flagged a tile and then clicked the tile accidentally during the game, the flag would be overridden by whatever was under the tile in the playback).
+
+You can once agian import old settings.cfg files to newer version of the application without your settings being reset.
