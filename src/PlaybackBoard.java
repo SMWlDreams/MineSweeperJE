@@ -168,6 +168,11 @@ public class PlaybackBoard extends Board {
         t.flag();
     }
 
+    /**
+     * Flags or unflags the specified tile
+     * @param x X coordinate of the tile
+     * @param y Y coordinate of the tile
+     */
     public void flagUndisplayedTile(int x, int y) {
         Tile t = tiles.get(y).get(x);
         t.unshownFlag();

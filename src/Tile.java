@@ -89,6 +89,9 @@ public class Tile extends Rectangle {
         }
     }
 
+    /**
+     * Marks this tile as flagged without updating the image
+     */
     public void unshownFlag() {
         if (!selected) {
             if (flagged) {
