@@ -27,12 +27,12 @@ public class About implements Controllers {
     /**
      * The minor revision number of the application
      */
-    public static final int MINOR_REVISION = 3;
+    public static final int MINOR_REVISION = 4;
 
     /**
      * The sub revision number of the application
      */
-    public static final int SUB_REVISION = 2;
+    public static final int SUB_REVISION = 1;
 
     private Controller controller;
 
