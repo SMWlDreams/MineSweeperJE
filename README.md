@@ -222,3 +222,11 @@ Updated board generation logic (again) to try to make them load faster.
 Application will no longer reset the settings and hotkeys when moving from one version to another. Note that the movement is **ONE WAY** in that you cannot use the same settings.cfg file in version 1.3.2 if you already loaded that file in 1.4.0.
 
 You can no longer place more flags than there are mines present on the board
+
+## Version 1.4.1 Alpha
+
+### Bug Fixes
+
+Tiles will now be flagged properly when the "Show Flags in Playback" option is not selected. This means that if you clicked a flagged tile in a game it will no longer be revealed in the playback (it will just appear blank).
+
+Flagged tiles will no longer be overridden when they are clicked in the playback (if you flagged a tile and then clicked the tile accidentally during the game, the flag would be overridden by whatever was under the tile in the playback).
