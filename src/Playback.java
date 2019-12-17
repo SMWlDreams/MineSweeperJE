@@ -147,6 +147,8 @@ public class Playback {
                 case "flag":
                     if (displayFlags) {
                         board.flagTile(x, y);
+                    } else {
+                        board.flagUndisplayedTile(x, y);
                     }
                     index++;
                     return ("Flag (" + x + "," + y + ") " + index);
