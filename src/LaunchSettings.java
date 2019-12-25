@@ -14,7 +14,7 @@ public class LaunchSettings implements Controllers {
     /**
      * Class properties to allow loading of the window
      */
-    public static final String[] PROPERTIES = {"LaunchSettings.fxml", "Launch LaunchSettings"};
+    public static final String[] PROPERTIES = {"LaunchSettings.fxml", "Launch Settings"};
 
     @FXML
     private TextField seed;
