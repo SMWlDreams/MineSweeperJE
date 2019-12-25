@@ -1,4 +1,12 @@
+import javafx.fxml.FXML;
+import javafx.scene.control.TextField;
+
+import java.awt.event.ActionEvent;
+
 public class Settings implements Controllers {
+    @FXML
+    private TextField field;
+
     public static final String[] PROPERTIES = {"Settings.fxml", "Settings"};
 
     private Controller controller;
@@ -22,5 +30,9 @@ public class Settings implements Controllers {
     @Override
     public void setController(Controller controller) {
         this.controller = controller;
+    }
+
+    public void save(ActionEvent actionEvent) {
+
     }
 }
