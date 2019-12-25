@@ -2,6 +2,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -843,10 +844,19 @@ public class Controller {
 
     /**
      * Closes the application
-     * @param actionEvent   Event send by javafx
+     * @param event   Event send by javafx
      */
-    public void close(ActionEvent actionEvent) {
-        Platform.exit();
+    public void close(Event event) {
+        try {
+            if (board.outputLog()) {
+                if (GUI.promptSaveLog()) {
+                    board.closeOutput();
+                }
+            }
+        } catch (NullPointerException ignored) {
+        } finally {
+            Platform.exit();
+        }
     }
 
     /**
