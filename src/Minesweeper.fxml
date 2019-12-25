@@ -30,7 +30,7 @@
                         <MenuItem fx:id="newGame" mnemonicParsing="false" onAction="#start" text="New Game" />
                         <MenuItem mnemonicParsing="false" onAction="#showSettingsMenu" text="Launch Settings" />
                         <MenuItem mnemonicParsing="false" onAction="#setSeed" text="Set RNG Seed" />
-                        <MenuItem mnemonicParsing="false" text="Other Settings" />
+                        <MenuItem mnemonicParsing="false" onAction="#showOtherSettingsMenu" text="Other Settings" />
                         <CheckMenuItem fx:id="log" mnemonicParsing="false" onAction="#generateLog" text="Generate Log File" />
                     <MenuItem mnemonicParsing="false" onAction="#close" text="Close" />
                   </items>
