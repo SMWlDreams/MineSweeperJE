@@ -78,10 +78,15 @@ public class Board {
             int y = (int) mouseEvent.getY() / (Tile.SCALE * scaleMultiplier);
             if (!tiles.get(y).get(x).isSelected()) {
                 if (log) {
-                    writer.write("    <select>\r\n" +
-                            "        <X>" + x + "</X>\r\n" +
-                            "        <Y>" + y + "</Y>\r\n" +
-                            "    </select>\r\n\r\n");
+                    Move m = new Move();
+                    m.setProperty("select");
+                    m.setX(x);
+                    m.setY(y);
+                    moves.add(m);
+//                    writer.write("    <select>\r\n" +
+//                            "        <X>" + x + "</X>\r\n" +
+//                            "        <Y>" + y + "</Y>\r\n" +
+//                            "    </select>\r\n\r\n");
                 }
             }
             return parseBoard(x, y);
@@ -112,10 +117,15 @@ public class Board {
                     numFlags++;
                 }
                 if (log) {
-                    writer.write("    <flag>\r\n" +
-                            "        <X>" + x + "</X>\r\n" +
-                            "        <Y>" + y + "</Y>\r\n" +
-                            "    </flag>\r\n\r\n");
+                    Move m = new Move();
+                    m.setProperty("flag");
+                    m.setX(x);
+                    m.setY(y);
+                    moves.add(m);
+//                    writer.write("    <flag>\r\n" +
+//                            "        <X>" + x + "</X>\r\n" +
+//                            "        <Y>" + y + "</Y>\r\n" +
+//                            "    </flag>\r\n\r\n");
                 }
             }
         return numFlags;
