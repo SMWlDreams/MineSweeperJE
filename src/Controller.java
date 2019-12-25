@@ -177,6 +177,14 @@ public class Controller {
         }
     }
 
+    public void showOtherSettingsMenu(ActionEvent actionEvent) {
+        try {
+            launch(Settings.PROPERTIES);
+        } catch (IOException e) {
+            System.out.println("APPLICATION IS CORRUPT! PLEASE RE-DOWNLOAD!");
+        }
+    }
+
     /**
      * Displays the about menu
      * @param actionEvent   Event sent by javafx
