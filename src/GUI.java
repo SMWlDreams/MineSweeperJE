@@ -1,6 +1,8 @@
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -9,6 +11,15 @@ public class GUI extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public static boolean promptSaveLog() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Save Log");
+        alert.setHeaderText("Save Log File?");
+        alert.setContentText("Would you like to save your partial game?");
+        alert.showAndWait();
+        return alert.getResult().equals(ButtonType.OK);
     }
 
     @Override
