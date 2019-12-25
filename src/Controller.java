@@ -680,7 +680,9 @@ public class Controller {
         if (!isPlayback || exitPlaybackMode(false)) {
             if (board != null) {
                 if (board.outputLog()) {
-                    board.closeOutput();
+                    if (GUI.promptSaveLog()) {
+                        board.closeOutput();
+                    }
                 }
             }
             board = new Board(width, height, numMines, pane, scaleMultiplier);
@@ -864,7 +866,9 @@ public class Controller {
             }
             if (outputLog && board != null) {
                 if (board.outputLog()) {
-                    board.closeOutput();
+                    if (GUI.promptSaveLog()) {
+                        board.closeOutput();
+                    }
                 }
             } else if (board != null) {
                 board.generateLog(false);
@@ -1222,7 +1226,9 @@ public class Controller {
         clear();
         if (board != null) {
             if (board.outputLog()) {
-                board.closeOutput();
+                if (GUI.promptSaveLog()) {
+                    board.closeOutput();
+                }
             }
         }
         board = new Board(width, height, numMines, pane, scaleMultiplier);
