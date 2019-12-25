@@ -25,6 +25,7 @@ public class Board {
     private boolean log = false;
     private int logCount = 0;
     private boolean saveLogs = false;
+    private List<Move> moves;
     private String tempFileName;
 
     public Board(){}
@@ -226,6 +227,7 @@ public class Board {
                 }
             }
         }
+        moves = new ArrayList<>();
         return logCount;
     }
 
@@ -252,6 +254,12 @@ public class Board {
      * @param result    The result of the match, true for win false for loss
      */
     public void closeOutput(boolean result) {
+        for (Move m : moves) {
+            writer.write("    <" + m.getProperty() + ">\r\n" +
+                    "        <X>" + m.getX() + "</X>\r\n" +
+                    "        <Y>" + m.getY() + "</Y>\r\n" +
+                    "    </" + m.getProperty() + ">\r\n\r\n");
+        }
         if (result) {
             writer.write("    <result>W</result>\r\n" +
                     "</game>");
@@ -266,6 +274,12 @@ public class Board {
      * Closes the log writer file when ended before a game has ended
      */
     public void closeOutput() {
+        for (Move m : moves) {
+            writer.write("    <" + m.getProperty() + ">\r\n" +
+                            "        <X>" + m.getX() + "</X>\r\n" +
+                            "        <Y>" + m.getY() + "</Y>\r\n" +
+                            "    </" + m.getProperty() + ">\r\n\r\n");
+        }
         writer.write("</game>");
         writer.close();
     }

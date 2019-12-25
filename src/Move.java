@@ -26,6 +26,14 @@ public class Move {
         return (x + "," + y);
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
     public String getProperty() {
         return property;
     }
