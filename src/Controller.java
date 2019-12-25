@@ -683,6 +683,8 @@ public class Controller {
                 if (board.outputLog()) {
                     if (GUI.promptSaveLog()) {
                         board.closeOutput();
+                    } else {
+                        board.deleteLog();
                     }
                 }
             }
