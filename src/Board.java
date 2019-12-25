@@ -25,7 +25,7 @@ public class Board {
     private boolean log = false;
     private int logCount = 0;
     private boolean saveLogs = false;
-    private List<Move> moves;
+    private String tempFileName;
 
     public Board(){}
 
@@ -196,11 +196,13 @@ public class Board {
                     logCount = 0;
                 }
                 if (keepLogs){
-                    writer = new PrintWriter(System.getProperty("user.dir") + "\\Logs\\" +
-                            seed + "_" + hash + "_attempt_" + ++logCount + ".msl");
+                    tempFileName = System.getProperty("user.dir") + "\\Logs\\" + seed + "_" + hash
+                            + "_attempt_" + ++logCount + ".msl";
+                    writer = new PrintWriter(tempFileName);
                 } else {
-                    writer = new PrintWriter(System.getProperty("user.dir") + "\\Logs\\" +
-                            + seed + "_" + hash + ".msl");
+                    tempFileName = System.getProperty("user.dir") + "\\Logs\\" + + seed + "_" +
+                            hash + ".msl";
+                    writer = new PrintWriter(tempFileName);
                 }
                 writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n\r\n" +
                         "<game>\r\n" +
@@ -266,6 +268,12 @@ public class Board {
     public void closeOutput() {
         writer.write("</game>");
         writer.close();
+    }
+
+    public void deleteLog() {
+        writer.close();
+        File file = new File(tempFileName);
+        file.delete();
     }
 
     public String getSeed() {
