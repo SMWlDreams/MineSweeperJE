@@ -851,6 +851,8 @@ public class Controller {
             if (board.outputLog()) {
                 if (GUI.promptSaveLog()) {
                     board.closeOutput();
+                } else {
+                    board.deleteLog();
                 }
             }
         } catch (NullPointerException ignored) {
@@ -878,6 +880,8 @@ public class Controller {
                 if (board.outputLog()) {
                     if (GUI.promptSaveLog()) {
                         board.closeOutput();
+                    } else {
+                        board.deleteLog();
                     }
                 }
             } else if (board != null) {
@@ -1238,6 +1242,8 @@ public class Controller {
             if (board.outputLog()) {
                 if (GUI.promptSaveLog()) {
                     board.closeOutput();
+                } else {
+                    board.deleteLog();
                 }
             }
         }
