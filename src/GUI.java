@@ -32,6 +32,7 @@ public class GUI extends Application {
         Scene scene = new Scene(root);
         scene.setOnKeyPressed(controller::parseInput);
         controller.initialGame();
+        mainStage.setOnCloseRequest(controller::close);
         mainStage.setOnHidden(e -> controller.stopTimeline());
         mainStage.getIcons().add(Tile.MINE_IMAGE);
         mainStage.setScene(scene);
