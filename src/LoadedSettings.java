@@ -7,26 +7,26 @@ public final class LoadedSettings {
     private static String[] launchSettings;
 
     /**
-     * Loads the contents of the Settings.cfg file and stores them in their individual arrays
+     * Loads the contents of the LaunchSettings.cfg file and stores them in their individual arrays
      * @throws IOException              If the file is unable to be found
      * @throws InvalidSettingsException If any part of the settings file is invalid
      */
     public static void load() throws IOException, InvalidSettingsException {
-        Scanner in = new Scanner(Paths.get("Settings.cfg"));
+        Scanner in = new Scanner(Paths.get("LaunchSettings.cfg"));
         if (!GenerateSettings.verifyXML()) {
             int errorLevel = GenerateSettings.getErrorLevel();
             if (errorLevel == 1) {
                 while (in.hasNextLine()) {
                     if (in.nextLine().equalsIgnoreCase("    <Hotkeys>")) {
                         loadHotkeySettings(in);
-                        throw new InvalidSettingsException("Settings file is invalid");
+                        throw new InvalidSettingsException("LaunchSettings file is invalid");
                     }
                 }
             } else if (errorLevel == 2) {
                 loadLaunchSettings(in);
-                throw new InvalidSettingsException("Settings file is invalid");
+                throw new InvalidSettingsException("LaunchSettings file is invalid");
             } else if (errorLevel == 3) {
-                throw new InvalidSettingsException("Settings file is invalid");
+                throw new InvalidSettingsException("LaunchSettings file is invalid");
             }
         }
         loadHotkeySettings(loadLaunchSettings(in));

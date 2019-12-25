@@ -31,7 +31,6 @@ import javafx.util.Duration;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.IllegalFormatException;
 import java.util.InputMismatchException;
 import java.util.List;
 
@@ -172,7 +171,7 @@ public class Controller {
      */
     public void showSettingsMenu(ActionEvent actionEvent) {
         try {
-            launch(Settings.PROPERTIES);
+            launch(LaunchSettings.PROPERTIES);
         } catch (IOException e) {
             System.out.println("APPLICATION IS CORRUPT! PLEASE RE-DOWNLOAD!");
         }
@@ -724,7 +723,7 @@ public class Controller {
     }
 
     /**
-     * Creates the initial game at launch based off of data found in the Settings.cfg file and
+     * Creates the initial game at launch based off of data found in the LaunchSettings.cfg file and
      * sets any relevant settings
      */
     public void initialGame() {
@@ -961,7 +960,7 @@ public class Controller {
         newWindowStage.setTitle(args[1]);
         String className = controller.getClass().getName();
         if (className.equalsIgnoreCase("Help") || className.equalsIgnoreCase("SetSeed")
-                || className.equalsIgnoreCase("Settings")) {
+                || className.equalsIgnoreCase("LaunchSettings")) {
             newWindowStage.setOnShown(e -> controller.launch(getSeed()));
         } else if (className.equalsIgnoreCase("HighScores")) {
             newWindowStage.setOnShown(e -> controller.launch(difficulty.getText().substring(5)));
@@ -1011,8 +1010,8 @@ public class Controller {
         if (!(keyEvent.getCode().equals(KeyCode.CONTROL))) {
             if (keyEvent.isControlDown() && keyEvent.getCode().equals(KeyCode.R)) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Reset Settings");
-                alert.setHeaderText("Reset Settings?");
+                alert.setTitle("Reset LaunchSettings");
+                alert.setHeaderText("Reset LaunchSettings?");
                 alert.setContentText("Are you sure you want to hard-reset the launch settings?");
                 alert.showAndWait();
                 if (alert.getResult().equals(ButtonType.OK)) {

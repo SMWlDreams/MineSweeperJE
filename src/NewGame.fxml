@@ -20,7 +20,7 @@
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Desired width, height, and number of mines" textAlignment="CENTER" wrappingWidth="256.53667068481445" />
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Leave number of mines empty to auto generate" textAlignment="CENTER" wrappingWidth="256.5366859436035" />
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="the number of mines in this game." textAlignment="CENTER" wrappingWidth="257.33667373657227" />
-      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Settings apply only to custom games." textAlignment="CENTER" wrappingWidth="257.33667373657227" />
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="LaunchSettings apply only to custom games." textAlignment="CENTER" wrappingWidth="257.33667373657227" />
       <HBox>
          <children>
             <TextField fx:id="width" prefWidth="75.0" promptText="Width" />

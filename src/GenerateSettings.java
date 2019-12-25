@@ -23,9 +23,9 @@ public final class GenerateSettings {
      */
     public static void xmlGeneration() {
         try {
-            PrintWriter writer = new PrintWriter("Settings.cfg");
+            PrintWriter writer = new PrintWriter("LaunchSettings.cfg");
             writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n");
-            writer.write("<Settings version=\"" + About.VERSION_ID + "\">\r\n");
+            writer.write("<LaunchSettings version=\"" + About.VERSION_ID + "\">\r\n");
             writer.write("    <LaunchSettings>\r\n");
             writer.write("        <Launch>" + DEFAULT_SETTINGS[0] + "</Launch>\r\n");
             writer.write("        <SetSeed>" + DEFAULT_SETTINGS[1] + "</SetSeed>\r\n");
@@ -41,7 +41,7 @@ public final class GenerateSettings {
             writer.write("        <HighScores>" + Hotkeys.DEFAULT_HOTKEYS[4] + "</HighScores>\r\n");
             writer.write("        <About>" + Hotkeys.DEFAULT_HOTKEYS[5] + "</About>\r\n");
             writer.write("    </Hotkeys>\r\n");
-            writer.write("</Settings>");
+            writer.write("</LaunchSettings>");
             writer.close();
             ERROR_LEVEL = 0;
             LoadedSettings.load();
@@ -57,9 +57,9 @@ public final class GenerateSettings {
      */
     public static void updateSettings(String[] settings, String[] hotkeys) {
         try {
-            PrintWriter writer = new PrintWriter("Settings.cfg");
+            PrintWriter writer = new PrintWriter("LaunchSettings.cfg");
             writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n");
-            writer.write("<Settings version=\"" + About.VERSION_ID + "\">\r\n");
+            writer.write("<LaunchSettings version=\"" + About.VERSION_ID + "\">\r\n");
             writer.write("    <LaunchSettings>\r\n");
             writer.write("        <Launch>" + settings[0] + "</Launch>\r\n");
             writer.write("        <SetSeed>" + settings[1] + "</SetSeed>\r\n");
@@ -75,7 +75,7 @@ public final class GenerateSettings {
             writer.write("        <HighScores>" + hotkeys[4] + "</HighScores>\r\n");
             writer.write("        <About>" + hotkeys[5] + "</About>\r\n");
             writer.write("    </Hotkeys>\r\n");
-            writer.write("</Settings>");
+            writer.write("</LaunchSettings>");
             writer.close();
             ERROR_LEVEL = 0;
             LoadedSettings.load();
@@ -85,19 +85,19 @@ public final class GenerateSettings {
     }
 
     /**
-     * Verifies the integrity of the Settings.cfg file. This method updates the ERROR_LEVEL based
+     * Verifies the integrity of the LaunchSettings.cfg file. This method updates the ERROR_LEVEL based
      * on the result of the integrity check: 0 for pass, 1 for invalid settings, 2 for invalid
      * hotkeys, 3 for both or the header being invalid.
      * @return  True if and only if the file passes the integrity check
      */
     public static boolean verifyXML() {
         ERROR_LEVEL = 0;
-        try (Scanner in = new Scanner(Paths.get("Settings.cfg"))) {
+        try (Scanner in = new Scanner(Paths.get("LaunchSettings.cfg"))) {
             String[] hk = new String[6];
             if (in.hasNextLine()) {
                 if (in.nextLine().equalsIgnoreCase("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")) {
                     if (in.hasNextLine()) {
-                        if (!(in.nextLine().equalsIgnoreCase("<Settings version=\"" + About.VERSION_ID + "\">"))) {
+                        if (!(in.nextLine().equalsIgnoreCase("<LaunchSettings version=\"" + About.VERSION_ID + "\">"))) {
                             if (rewriteFile()) {
                                 return verifyXML();
                             } else {
@@ -272,7 +272,7 @@ public final class GenerateSettings {
             }
             boolean bool = false;
             while (in.hasNextLine()) {
-                if (in.nextLine().equalsIgnoreCase("</Settings>")) {
+                if (in.nextLine().equalsIgnoreCase("</LaunchSettings>")) {
                     bool = true;
                     break;
                 }
@@ -310,7 +310,7 @@ public final class GenerateSettings {
 
     private static boolean rewriteFile() {
         try {
-            Scanner in = new Scanner(Paths.get("Settings.cfg"));
+            Scanner in = new Scanner(Paths.get("LaunchSettings.cfg"));
             String[] lines = new String[17];
             lines[0] = in.nextLine() + "\r\n";
             String s = in.nextLine();
@@ -328,9 +328,9 @@ public final class GenerateSettings {
                 lines[i] = in.nextLine() + "\r\n";
             }
             in.close();
-            PrintWriter writer = new PrintWriter("Settings.cfg");
+            PrintWriter writer = new PrintWriter("LaunchSettings.cfg");
             writer.write(lines[0]);
-            writer.write("<Settings version=\"" + About.VERSION_ID + "\">\r\n");
+            writer.write("<LaunchSettings version=\"" + About.VERSION_ID + "\">\r\n");
             for (int i = 1; i < lines.length; i++) {
                 writer.write(lines[i]);
             }
