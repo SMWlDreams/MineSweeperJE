@@ -25,6 +25,7 @@ public class Board {
     private boolean log = false;
     private int logCount = 0;
     private boolean saveLogs = false;
+    private List<Move> moves;
 
     public Board(){}
 
