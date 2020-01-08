@@ -10,6 +10,13 @@ import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.AttributesImpl;
 
 public class SettingsParser implements ErrorHandler, ContentHandler, LexicalHandler {
+    private enum States {INIT, SETTINGS, LAUNCHSETTINGS, LAUNCH, SETSEED, SEED, HASH, LOGS, HOTKEYS,
+        RESTART, PAUSE, NEWGAME, HELP, HIGHSCORE, ABOUT, OTHERSETTINGS, LINES}
+    private States state = States.INIT;
+    private int errorLevel = 0;
+    private Locator locator;
+    private String version;
+
     /**
      * Receive an object for locating the origin of SAX document events.
      *
@@ -39,7 +46,7 @@ public class SettingsParser implements ErrorHandler, ContentHandler, LexicalHand
      */
     @Override
     public void setDocumentLocator(Locator locator) {
-
+        this.locator = locator;
     }
 
     /**
@@ -55,7 +62,7 @@ public class SettingsParser implements ErrorHandler, ContentHandler, LexicalHand
      */
     @Override
     public void startDocument() throws SAXException {
-
+        System.out.println("Document Parsing Beginning!");
     }
 
     /**
@@ -81,7 +88,7 @@ public class SettingsParser implements ErrorHandler, ContentHandler, LexicalHand
      */
     @Override
     public void endDocument() throws SAXException {
-
+        System.out.println("Document Parsing Complete!");
     }
 
     /**
@@ -214,7 +221,84 @@ public class SettingsParser implements ErrorHandler, ContentHandler, LexicalHand
      */
     @Override
     public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-
+        switch (state) {
+            case INIT:
+                if (!localName.equalsIgnoreCase("Settings")) {
+                    throw new SAXException("Expected Settings, Found " + localName);
+                }
+                state = States.SETTINGS;
+                version = atts.getValue("version");
+                break;
+            case SETTINGS:
+                switch (localName.toLowerCase()) {
+                    case "launchsettings":
+                        state = States.LAUNCHSETTINGS;
+                        break;
+                    case "hotkeys":
+                        state = States.HOTKEYS;
+                        break;
+                    case "othersettings":
+                        state = States.OTHERSETTINGS;
+                        break;
+                    default:
+                        throw new SAXException("Invalid tag following settings, found " + localName);
+                }
+                break;
+            case LAUNCHSETTINGS:
+                switch (localName.toLowerCase()) {
+                    case "launch":
+                        state = States.LAUNCH;
+                        break;
+                    case "setseed":
+                        state = States.SETSEED;
+                        break;
+                    case "seed":
+                        state = States.SEED;
+                        break;
+                    case "hash":
+                        state = States.HASH;
+                        break;
+                    case "logs":
+                        state = States.LOGS;
+                        break;
+                    default:
+                        throw new SAXException("Invalid tag following LaunchSettings, found " + localName);
+                }
+                break;
+            case HOTKEYS:
+                switch (localName.toLowerCase()) {
+                    case "restart":
+                        state = States.RESTART;
+                        break;
+                    case "pause":
+                        state = States.PAUSE;
+                        break;
+                    case "newgame":
+                        state = States.NEWGAME;
+                        break;
+                    case "help":
+                        state = States.HELP;
+                        break;
+                    case "highscores":
+                        state = States.HIGHSCORE;
+                        break;
+                    case "about":
+                        state = States.ABOUT;
+                        break;
+                    default:
+                        throw new SAXException("Invalid tag following hotkeys, found " + localName);
+                }
+                break;
+            case OTHERSETTINGS:
+                switch (localName.toLowerCase()) {
+                    case "lines":
+                        state = States.LINES;
+                        break;
+                    default:
+                        throw new SAXException("Invalid tag following OtherSettings, found " + localName);
+                }
+                break;
+        }
     }
 
     /**
@@ -240,7 +324,79 @@ public class SettingsParser implements ErrorHandler, ContentHandler, LexicalHand
      */
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-
+        switch (state) {
+            case INIT:
+                throw new SAXException("Invalid ending tag, found " + localName);
+            case SETTINGS:
+                switch (localName.toLowerCase()) {
+                    case "launchsettings":
+                        state = States.LAUNCHSETTINGS;
+                        break;
+                    case "hotkeys":
+                        state = States.HOTKEYS;
+                        break;
+                    case "othersettings":
+                        state = States.OTHERSETTINGS;
+                        break;
+                    default:
+                        throw new SAXException("Invalid tag following settings, found " + localName);
+                }
+                break;
+            case LAUNCHSETTINGS:
+                switch (localName.toLowerCase()) {
+                    case "launch":
+                        state = States.LAUNCH;
+                        break;
+                    case "setseed":
+                        state = States.SETSEED;
+                        break;
+                    case "seed":
+                        state = States.SEED;
+                        break;
+                    case "hash":
+                        state = States.HASH;
+                        break;
+                    case "logs":
+                        state = States.LOGS;
+                        break;
+                    default:
+                        throw new SAXException("Invalid tag following LaunchSettings, found " + localName);
+                }
+                break;
+            case HOTKEYS:
+                switch (localName.toLowerCase()) {
+                    case "restart":
+                        state = States.RESTART;
+                        break;
+                    case "pause":
+                        state = States.PAUSE;
+                        break;
+                    case "newgame":
+                        state = States.NEWGAME;
+                        break;
+                    case "help":
+                        state = States.HELP;
+                        break;
+                    case "highscores":
+                        state = States.HIGHSCORE;
+                        break;
+                    case "about":
+                        state = States.ABOUT;
+                        break;
+                    default:
+                        throw new SAXException("Invalid tag following hotkeys, found " + localName);
+                }
+                break;
+            case OTHERSETTINGS:
+                switch (localName.toLowerCase()) {
+                    case "lines":
+                        state = States.LINES;
+                        break;
+                    default:
+                        throw new SAXException("Invalid tag following OtherSettings, found " + localName);
+                }
+                break;
+        }
     }
 
     /**
