@@ -9,6 +9,8 @@ public class Settings implements Controllers {
 
     public static final String[] PROPERTIES = {"Settings.fxml", "Settings"};
 
+    public static final String[] DEFAULT_SETTINGS = {"0"};
+
     private Controller controller;
 
     /**
@@ -18,7 +20,7 @@ public class Settings implements Controllers {
      */
     @Override
     public void launch(String string) {
-
+        //Does nothing?
     }
 
     /**
