@@ -5,6 +5,8 @@ import java.util.Scanner;
 public final class LoadedSettings {
     private static String[] hotkeys;
     private static String[] launchSettings;
+    private static String[] logSettings;
+    private static int errorLevel;
 
     /**
      * Loads the contents of the Settings.cfg file and stores them in their individual arrays
@@ -14,7 +16,7 @@ public final class LoadedSettings {
     public static void load() throws IOException, InvalidSettingsException {
         Scanner in = new Scanner(Paths.get("Settings.cfg"));
         if (!GenerateSettings.verifyXML()) {
-            int errorLevel = GenerateSettings.getErrorLevel();
+            errorLevel = GenerateSettings.getErrorLevel();
             if (errorLevel == 1) {
                 while (in.hasNextLine()) {
                     if (in.nextLine().equalsIgnoreCase("    <Hotkeys>")) {
@@ -30,6 +32,17 @@ public final class LoadedSettings {
             }
         }
         loadHotkeySettings(loadLaunchSettings(in));
+    }
+
+    public static void generateNewFile() {
+    }
+
+    public static int getErrorLevel() {
+        return errorLevel;
+    }
+
+    public static String[] getLogSettings() {
+        return logSettings;
     }
 
     public static String[] getHotkeys() {
