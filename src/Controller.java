@@ -177,6 +177,10 @@ public class Controller {
         }
     }
 
+    /**
+     * Shows the settings menu
+     * @param actionEvent   Event sent by javafx
+     */
     public void showOtherSettingsMenu(ActionEvent actionEvent) {
         try {
             launch(Settings.PROPERTIES);

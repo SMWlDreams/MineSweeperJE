@@ -94,13 +94,14 @@ The jar file containing JavaFX libraries will no longer be updated on minor upda
 
 #### Launch Settings
 
-Launch Settings added! You can now specify what settings the application loads with from the new launch settings window.
+Launch settings added! You can now specify what settings the application loads with from the new launch settings window.
 
-These settings can be found under a new file called Settings.cfg
+These settings can be found under a new file called settings.cfg
 
 ### Improvements
 
-Launch settings and hotkeys are now both found within the Settings.cfg file. This file also is now output in standard XML format for you nerds out there. This means that you can now delete the Hotkeys.ini file as it is no longer used by any subset of the application.
+Launch settings and hotkeys are now both found within the settings.cfg file. This file also is now 
+output in standard XML format for you nerds out there. This means that you can now delete the Hotkeys.ini file as it is no longer used by any subset of the application.
 
 Updated the way that hotkey data is stored in the application so it will now only update if a change is made and saved rather than every time they were referenced.
 
@@ -231,4 +232,4 @@ Tiles will now be flagged properly when the "Show Flags in Playback" option is n
 
 Flagged tiles will no longer be overridden when they are clicked in the playback (if you flagged a tile and then clicked the tile accidentally during the game, the flag would be overridden by whatever was under the tile in the playback).
 
-You can once agian import old settings.cfg files to newer version of the application without your settings being reset.
+You can once again import old settings.cfg files to newer version of the application without your settings being reset.

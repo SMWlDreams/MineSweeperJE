@@ -1,7 +1,7 @@
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
-import java.awt.event.ActionEvent;
 
 public class Settings implements Controllers {
     @FXML
@@ -33,6 +33,10 @@ public class Settings implements Controllers {
     }
 
     public void save(ActionEvent actionEvent) {
+
+    }
+
+    public void close(ActionEvent actionEvent) {
 
     }
 }
