@@ -831,27 +831,33 @@ public class Controller {
             alert.setContentText("Error! The settings file is corrupted!\n" +
                     "Generating a new file...");
             alert.showAndWait();
-            int errorLevel = GenerateSettings.getErrorLevel();
-            if (errorLevel == 1) {
-                GenerateSettings.updateSettings(GenerateSettings.DEFAULT_SETTINGS, LoadedSettings.getHotkeys());
-                setDifficulty(1);
-                outputLog = false;
-                keepLogs = false;
-                setHotkeyTexts();
-                begin();
-                startTimeUpdate();
-            } else if (errorLevel == 2) {
-                GenerateSettings.updateSettings(LoadedSettings.getLaunchSettings(), Hotkeys.DEFAULT_HOTKEYS);
-                initialGame();
-            } else {
-                GenerateSettings.xmlGeneration();
-                setDifficulty(1);
-                outputLog = false;
-                keepLogs = false;
-                setHotkeyTexts();
-                begin();
-                startTimeUpdate();
+            LoadedSettings.generateNewFile();
+            switch (LoadedSettings.getErrorLevel()) {
+                case 1:
+                    GenerateSettings.updateSettings(GenerateSettings.DEFAULT_SETTINGS,
+                            LoadedSettings.getHotkeys(), LoadedSettings.getLogSettings());
             }
+//            int errorLevel = GenerateSettings.getErrorLevel();
+//            if (errorLevel == 1) {
+//                GenerateSettings.updateSettings(GenerateSettings.DEFAULT_SETTINGS, LoadedSettings.getHotkeys());
+//                setDifficulty(1);
+//                outputLog = false;
+//                keepLogs = false;
+//                setHotkeyTexts();
+//                begin();
+//                startTimeUpdate();
+//            } else if (errorLevel == 2) {
+//                GenerateSettings.updateSettings(LoadedSettings.getLaunchSettings(), Hotkeys.DEFAULT_HOTKEYS);
+//                initialGame();
+//            } else {
+//                GenerateSettings.xmlGeneration();
+//                setDifficulty(1);
+//                outputLog = false;
+//                keepLogs = false;
+//                setHotkeyTexts();
+//                begin();
+//                startTimeUpdate();
+//            }
         }
     }
 
@@ -1022,8 +1028,8 @@ public class Controller {
         if (!(keyEvent.getCode().equals(KeyCode.CONTROL))) {
             if (keyEvent.isControlDown() && keyEvent.getCode().equals(KeyCode.R)) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Reset LaunchSettings");
-                alert.setHeaderText("Reset LaunchSettings?");
+                alert.setTitle("Reset Settings");
+                alert.setHeaderText("Reset Settings?");
                 alert.setContentText("Are you sure you want to hard-reset the launch settings?");
                 alert.showAndWait();
                 if (alert.getResult().equals(ButtonType.OK)) {
