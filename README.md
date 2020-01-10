@@ -224,7 +224,10 @@ Application will no longer reset the settings and hotkeys when moving from one v
 
 You can no longer place more flags than there are mines present on the board
 
-## Version 1.4.1 Alpha
+## Version 1.4.1
+
+## NOTE:
+This version will be released as unfinished as I work on 2.0. This is because there is a lot of work that would need to be done to update all classes to run on the new 2.0 framework I am building. Some things are going to be completely broken in this release - continue to use 1.4.0 instead of this version unless you want to test developer features.
 
 ### Bug Fixes
 
