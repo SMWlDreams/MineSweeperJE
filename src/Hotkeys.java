@@ -179,7 +179,8 @@ public class Hotkeys implements Controllers {
      * Resets to the default hotkey settings keeping the user specified launch settings
      */
     private void reset() {
-        GenerateSettings.updateSettings(LoadedSettings.getLaunchSettings(), DEFAULT_HOTKEYS);
+        GenerateSettings.updateSettings(LoadedSettings.getLaunchSettings(), DEFAULT_HOTKEYS,
+                Settings.DEFAULT_SETTINGS);
     }
 
     /**
@@ -245,7 +246,7 @@ public class Hotkeys implements Controllers {
      */
     private void verify(String[] hotkeys) {
         if (verify(hotkeys, 0)) {
-            GenerateSettings.updateSettings(LoadedSettings.getLaunchSettings(), hotkeys);
+            GenerateSettings.updateSettings(LoadedSettings.getLaunchSettings(), hotkeys, Settings.DEFAULT_SETTINGS);
         } else {
             throw new StringIndexOutOfBoundsException("Invalid hotkey");
         }

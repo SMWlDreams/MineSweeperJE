@@ -125,7 +125,7 @@ public class LaunchSettings implements Controllers {
             } else {
                 settings[4] = "False";
             }
-            GenerateSettings.updateSettings(settings, LoadedSettings.getHotkeys());
+            GenerateSettings.updateSettings(settings, LoadedSettings.getHotkeys(), Settings.DEFAULT_SETTINGS);
             controller.closeNewWindow();
         } catch (InvalidSeedException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);

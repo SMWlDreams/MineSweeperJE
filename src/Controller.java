@@ -1032,9 +1032,9 @@ public class Controller {
                 alert.setHeaderText("Reset Settings?");
                 alert.setContentText("Are you sure you want to hard-reset the launch settings?");
                 alert.showAndWait();
-                if (alert.getResult().equals(ButtonType.OK)) {
-                    GenerateSettings.updateSettings(GenerateSettings.DEFAULT_SETTINGS,
-                            LoadedSettings.getHotkeys());
+//                if (alert.getResult().equals(ButtonType.OK)) {
+//                    GenerateSettings.updateSettings(GenerateSettings.DEFAULT_SETTINGS,
+//                            LoadedSettings.getHotkeys());
                     try {
                         LoadedSettings.load();
                     } catch (IOException e) {
@@ -1042,7 +1042,7 @@ public class Controller {
                     }
                     run = false;
                     restart(new ActionEvent());
-                }
+//                }
             } else {
                 parseInput(keyEvent.getText());
             }
