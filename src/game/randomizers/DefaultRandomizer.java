@@ -14,7 +14,13 @@ public class DefaultRandomizer extends Randomizer {
     }
 
     @Override
-    public void generateBoard(int[] args) {
+    public void generateBoard(double[] args) {
         random = new Random(seed);
+        generateBoard(args, this);
+    }
+
+    @Override
+    protected int[] getCoordinatePair(int x, int y) {
+        return new int[]{random.nextInt(x), random.nextInt(y)};
     }
 }

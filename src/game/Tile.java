@@ -30,8 +30,8 @@ public class Tile extends Rectangle {
     private boolean flagged = false;
 
     public Tile(double x, double y, double scale) {
-        setX(x);
-        setY(y);
+        setX(x * scale * DEFAULT_TILE_SIZE);
+        setY(y * scale * DEFAULT_TILE_SIZE);
         setHeight(scale * DEFAULT_TILE_SIZE);
         setWidth(scale * DEFAULT_TILE_SIZE);
         setFill(new ImagePattern(images[DEFAULT_IMAGE_INDEX]));
@@ -78,11 +78,10 @@ public class Tile extends Rectangle {
     public void flag() {
         if (flagged) {
             setFill(new ImagePattern(images[DEFAULT_IMAGE_INDEX]));
-            flagged = false;
         } else {
             setFill(new ImagePattern(images[FLAG_IMAGE_INDEX]));
-            flagged = true;
         }
+        flagged = !flagged;
     }
 
     public void determineNeighbors(List<List<Tile>> tiles, int rows, int columns, int y, int x) {
@@ -94,6 +93,7 @@ public class Tile extends Rectangle {
         if (y + 1 < rows && x - 1 >= 0 && tiles.get(x - 1).get(y + 1).isMine()) neighborMines++;
         if (y + 1 < rows && tiles.get(x).get(y + 1).isMine()) neighborMines++;
         if (y + 1 < rows && x + 1 < columns && tiles.get(x + 1).get(y + 1).isMine()) neighborMines++;
+        setOnClickImage();
     }
 
     private void setOnClickImage() {
