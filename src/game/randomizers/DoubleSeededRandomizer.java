@@ -35,7 +35,12 @@ public class DoubleSeededRandomizer extends Randomizer {
     public void generateBoard(double[] args) {
         seed1 = new Random(seed);
         seed2 = new Random(secondSeed);
-        generateBoard(args, this);
+        super.generateBoard(args);
+    }
+
+    @Override
+    public void placeMines(double[] args) {
+        placeMines(args, this);
     }
 
     @Override

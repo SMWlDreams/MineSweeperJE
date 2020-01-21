@@ -20,11 +20,11 @@ public class GUI extends Application {
         Tile.loadImages("/tilesets/windowsset/");
         stage.getIcons().add(Tile.getImage(Tile.MINE_IMAGE_INDEX));
 //        scene.setOnKeyPressed();
-//        scene.setOnMouseClicked();
+//        scene.setOnMouseClicked(controller::onClick);
         stage.setScene(scene);
         stage.setResizable(false);
         stage.setTitle("Minesweeper " + AboutWindow.VERSION_ID);
-//        stage.setOnShown(e -> controller.start());
+        stage.setOnShown(e -> controller.start());
         stage.show();
     }
 

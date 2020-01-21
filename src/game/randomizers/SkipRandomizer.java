@@ -16,7 +16,12 @@ public class SkipRandomizer extends Randomizer {
     @Override
     public void generateBoard(double[] args) {
         random = new Random(seed);
-        generateBoard(args, this);
+        super.generateBoard(args);
+    }
+
+    @Override
+    public void placeMines(double[] args) {
+        placeMines(args, this);
     }
 
     @Override

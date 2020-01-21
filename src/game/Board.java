@@ -38,15 +38,23 @@ public class Board {
     }
 
     private void flagTile(MouseEvent mouseEvent) {
-        int x = (int)(mouseEvent.getX() / scale);
-        int y = (int)(mouseEvent.getY() / scale);
-        Tile t = board.get(x).get(y);
+        int x = (int)(mouseEvent.getX() / (scale * Tile.DEFAULT_TILE_SIZE));
+        int y = (int)(mouseEvent.getY() / (scale * Tile.DEFAULT_TILE_SIZE));
+        Tile t = board.get(y).get(x);
         if (!t.isClicked()) {
             t.flag();
+            moves.add(new Move(x, y, "flag"));
         }
     }
 
     private void clickTile(MouseEvent mouseEvent) {
+        int x = (int)(mouseEvent.getX() / (scale * Tile.DEFAULT_TILE_SIZE));
+        int y = (int)(mouseEvent.getY() / (scale * Tile.DEFAULT_TILE_SIZE));
+        Tile t = board.get(y).get(x);
+        if (!t.isClicked() && !t.isFlagged()) {
+            t.onClick();
+            moves.add(new Move(x, y, "select"));
+        }
     }
 
     public void restart(Pane pane) {

@@ -50,7 +50,8 @@ public class Tile extends Rectangle {
     }
 
     public void setMine() {
-        mine = !mine;
+        mine = true;
+        onClick = images[MINE_IMAGE_INDEX];
     }
 
     public void reset() {
@@ -71,8 +72,10 @@ public class Tile extends Rectangle {
         return flagged;
     }
 
-    public void onClick() {
+    public boolean onClick() {
         setFill(new ImagePattern(onClick));
+        clicked = true;
+        return neighborMines == 0;
     }
 
     public void flag() {
@@ -84,15 +87,15 @@ public class Tile extends Rectangle {
         flagged = !flagged;
     }
 
-    public void determineNeighbors(List<List<Tile>> tiles, int rows, int columns, int y, int x) {
-        if (y - 1 >= 0 && x - 1 >= 0 && tiles.get(x - 1).get(y - 1).isMine()) neighborMines++;
-        if (y - 1 >= 0 && tiles.get(x).get(y - 1).isMine()) neighborMines++;
-        if (y - 1 >= 0 && x + 1 < columns && tiles.get(x + 1).get(y - 1).isMine()) neighborMines++;
-        if (x - 1 >= 0 && tiles.get(x - 1).get(y).isMine()) neighborMines++;
-        if (x + 1 < columns && tiles.get(x + 1).get(y).isMine()) neighborMines++;
-        if (y + 1 < rows && x - 1 >= 0 && tiles.get(x - 1).get(y + 1).isMine()) neighborMines++;
-        if (y + 1 < rows && tiles.get(x).get(y + 1).isMine()) neighborMines++;
-        if (y + 1 < rows && x + 1 < columns && tiles.get(x + 1).get(y + 1).isMine()) neighborMines++;
+    public void determineNeighbors(List<List<Tile>> tiles, int columns, int rows, int x, int y) {
+        if (y - 1 >= 0 && x - 1 >= 0 && tiles.get(y - 1).get(x - 1).isMine()) neighborMines++;
+        if (y - 1 >= 0 && tiles.get(y - 1).get(x).isMine()) neighborMines++;
+        if (y - 1 >= 0 && x + 1 < columns && tiles.get(y - 1).get(x + 1).isMine()) neighborMines++;
+        if (x - 1 >= 0 && tiles.get(y).get(x - 1).isMine()) neighborMines++;
+        if (x + 1 < columns && tiles.get(y).get(x + 1).isMine()) neighborMines++;
+        if (y + 1 < rows && x - 1 >= 0 && tiles.get(y + 1).get(x - 1).isMine()) neighborMines++;
+        if (y + 1 < rows && tiles.get(y + 1).get(x).isMine()) neighborMines++;
+        if (y + 1 < rows && x + 1 < columns && tiles.get(y + 1).get(x + 1).isMine()) neighborMines++;
         setOnClickImage();
     }
 
