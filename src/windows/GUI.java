@@ -17,7 +17,7 @@ public class GUI extends Application {
         Pane root = loader.load(getClass().getResourceAsStream("/fxml/Game.fxml"));
         Controller controller = loader.getController();
         Scene scene = new Scene(root);
-        Tile.loadImages("/tilesets/windowsset/");
+        Tile.loadImages("/tilesets/defaultset/");
         stage.getIcons().add(Tile.getImage(Tile.MINE_IMAGE_INDEX));
 //        scene.setOnKeyPressed();
 //        scene.setOnMouseClicked(controller::onClick);

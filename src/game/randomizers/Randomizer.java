@@ -19,15 +19,16 @@ public abstract class Randomizer {
 
     /**
      * Generates a board from the given arguments
-     * @param args  4 arguments as doubles: Number of columns, number of rows, tile dimension scale,
-     *             number of mines
+     * @param columns   Number of columns to place on the board
+     * @param rows      Number of rows to place on the board
+     * @param scale     The tile size multiplication scale
      */
-    protected void generateBoard(double[] args) {
+    public void generateBoard(int columns, int rows, double scale) {
         board = new ArrayList<>();
-        for (int i = 0; i < args[1]; i++) {
+        for (int i = 0; i < rows; i++) {
             List<Tile> tiles = new ArrayList<>();
-            for (int j = 0; j < args[0]; j++) {
-                tiles.add(new Tile(j, i, args[2]));
+            for (int j = 0; j < columns; j++) {
+                tiles.add(new Tile(j, i, scale));
             }
             board.add(tiles);
         }
@@ -45,18 +46,19 @@ public abstract class Randomizer {
         }
     }
 
-    public abstract void placeMines(double[] args);
+    public abstract void placeMines(int columns, int rows, int mines, List<List<Tile>> board);
 
-    protected void placeMines(double[] args, Randomizer randomizer) {
-        placeMines(args, randomizer, new int[] {32, 32});
+    public abstract void placeMines(int columns, int rows, int mines, List<List<Tile>> board,
+                                    int[] safeTile);
+
+    protected void placeMines(int columns, int rows, int mines, List<List<Tile>> board, Randomizer randomizer) {
+        placeMines(columns, rows, mines, board, randomizer, new int[] {32, 32});
     }
 
-    public void placeMines(double[] args, Randomizer randomizer, int[] safeTile) {
+    protected void placeMines(int columns, int rows, int mines, List<List<Tile>> board, Randomizer randomizer, int[] safeTile) {
         int i = 0;
-        int x = (int)args[0];
-        int y = (int)args[1];
-        while (i < args[3]) {
-            int[] coords = randomizer.getCoordinatePair(x, y);
+        while (i < mines) {
+            int[] coords = randomizer.getCoordinatePair(columns, rows);
             if (coords[0] != safeTile[0] || coords[1] != safeTile[1]) {
                 Tile t = board.get(coords[1]).get(coords[0]);
                 if (!t.isMine()) {

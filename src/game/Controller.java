@@ -1,6 +1,8 @@
 package game;
 
 import game.randomizers.DefaultRandomizer;
+import game.randomizers.DoubleSeededRandomizer;
+import game.randomizers.SkipRandomizer;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -19,7 +21,7 @@ public class Controller {
     private Board game;
 
     public void start() {
-         game = new Board(9, 9, 10, 3.0, this.board, new DefaultRandomizer());
+         game = new Board(5, 5, 10, 3.0, this.board, new SkipRandomizer(123456789));
     }
 
     @FXML

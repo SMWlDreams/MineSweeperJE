@@ -1,5 +1,8 @@
 package game.randomizers;
 
+import game.Tile;
+
+import java.util.List;
 import java.util.Random;
 
 public class DoubleSeededRandomizer extends Randomizer {
@@ -18,29 +21,38 @@ public class DoubleSeededRandomizer extends Randomizer {
         }
     }
 
+    @Override
+    public void placeMines(int columns, int rows, int mines, List<List<Tile>> board) {
+        placeMines(columns, rows, mines, board, this);
+    }
+
+    @Override
+    public void placeMines(int columns, int rows, int mines, List<List<Tile>> board, int[] safeTile) {
+        placeMines(columns, rows, mines, board, this, safeTile);
+    }
+
     public DoubleSeededRandomizer(long seed) {
         this.seed = seed;
         secondSeed = seed % Integer.MAX_VALUE;
         if (secondSeed == 0) {
             secondSeed = Integer.MAX_VALUE;
         }
+        while (seed == secondSeed) {
+            secondSeed %= (secondSeed/2);
+        }
     }
 
     /**
      * Generates a board from the given arguments
-     * @param args 4 arguments as double: Number of columns, number of rows, tile dimension scale,
-     *             number of mines
+     * @param columns   Number of columns to place on the board
+     * @param rows      Number of rows to place on the board
+     * @param scale     The tile size multiplication scale
      */
     @Override
-    public void generateBoard(double[] args) {
+    public void generateBoard(int columns, int rows, double scale) {
         seed1 = new Random(seed);
         seed2 = new Random(secondSeed);
-        super.generateBoard(args);
-    }
-
-    @Override
-    public void placeMines(double[] args) {
-        placeMines(args, this);
+        super.generateBoard(columns, rows, scale);
     }
 
     @Override
