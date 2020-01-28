@@ -101,10 +101,12 @@ public class Board {
         }
         Tile t = board.get(y).get(x);
         if (!t.isClicked() && !t.isFlagged()) {
+            moves.add(new Move(x, y, "select"));
             if (t.onClick()) {
                 clearAdjacentTiles(x, y);
+            } else if (t.isMine()) {
+                end();
             }
-            moves.add(new Move(x, y, "select"));
         }
     }
 
@@ -141,5 +143,8 @@ public class Board {
         for (List<Tile> tiles : board) {
             pane.getChildren().addAll(tiles);
         }
+    }
+
+    private void end() {
     }
 }
