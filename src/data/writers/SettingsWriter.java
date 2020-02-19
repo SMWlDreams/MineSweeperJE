@@ -8,7 +8,8 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
 public class SettingsWriter {
-    private static String filename;
+    private static final String FILENAME = System.getProperty("user.home") + "\\AppData\\Roaming" +
+            "\\Minesweeper\\Settings.cfg";
     private static final String[] DEFAULT_LAUNCH_SETTINGS = {"False", "Null", "10", "10", "False"};
     private static final String[] DEFAULT_HOTKEYS = {"R", "P", "N", "H", "S", "A"};
     private static final String[] DEFAULT_SETTINGS = {"Default", "Default", "0", "default"};
@@ -24,88 +25,47 @@ public class SettingsWriter {
 
     private SettingsWriter() {}
 
-    public static void setFilename(String file) {
-        filename = file;
-    }
-
     public static void writeSettings(String[] launchSettings, String[] hotkeys, String[] settings) {
-        if (filename == null) {
-            throw new IllegalStateException("Must set filename before invoking this method");
-        }
         writeAllSettings(launchSettings, hotkeys, settings);
     }
 
-    public static void updateSettings() {
-
-    }
-
     public static void writeDefaultSettings() {
-
+        writeAllSettings(DEFAULT_LAUNCH_SETTINGS, DEFAULT_HOTKEYS, DEFAULT_SETTINGS);
     }
 
     private static void writeAllSettings(String[] launchSettings, String[] hotkeys, String[] settings) {
-        try (PrintWriter writer = new PrintWriter(new File(filename))) {
+        try (PrintWriter writer = new PrintWriter(new File(FILENAME))) {
             writer.println(HEAD);
             writer.println(START_TAGS[0]);
             writer.println(START_TAGS[1]);
-            writer.print(START_TAGS[2]);
-            writer.print(launchSettings[0]);
-            writer.println(END_TAGS[2]);
-            writer.print(START_TAGS[3]);
-            writer.print(launchSettings[1]);
-            writer.println(END_TAGS[3]);
-            writer.print(START_TAGS[4]);
-            writer.print(launchSettings[2]);
-            writer.println(END_TAGS[4]);
-            writer.print(START_TAGS[5]);
-            writer.print(launchSettings[3]);
-            writer.println(END_TAGS[5]);
-            writer.print(START_TAGS[6]);
-            writer.print(launchSettings[4]);
-            writer.println(END_TAGS[6]);
+            for (int i = 2; i <= 6; i++) {
+                writer.print(START_TAGS[i]);
+                writer.print(launchSettings[i - 2]);
+                writer.println(END_TAGS[i]);
+            }
             writer.println(END_TAGS[1]);
             writer.println(START_TAGS[7]);
-            writer.print(START_TAGS[8]);
-            writer.print(hotkeys[0]);
-            writer.println(END_TAGS[8]);
-            writer.print(START_TAGS[9]);
-            writer.print(hotkeys[1]);
-            writer.println(END_TAGS[9]);
-            writer.print(START_TAGS[10]);
-            writer.print(hotkeys[2]);
-            writer.println(END_TAGS[10]);
-            writer.print(START_TAGS[11]);
-            writer.print(hotkeys[3]);
-            writer.println(END_TAGS[11]);
-            writer.print(START_TAGS[12]);
-            writer.print(hotkeys[4]);
-            writer.println(END_TAGS[12]);
-            writer.print(START_TAGS[13]);
-            writer.print(hotkeys[5]);
-            writer.println(END_TAGS[13]);
+            for (int i = 8; i <= 13; i++) {
+                writer.print(START_TAGS[i]);
+                writer.print(hotkeys[i - 8]);
+                writer.println(END_TAGS[i]);
+            }
             writer.println(END_TAGS[7]);
             writer.println(START_TAGS[14]);
-            writer.print(START_TAGS[15]);
-            writer.print(settings[0]);
-            writer.println(END_TAGS[15]);
-            writer.print(START_TAGS[16]);
-            writer.print(settings[1]);
-            writer.println(END_TAGS[16]);
-            writer.print(START_TAGS[17]);
-            writer.print(settings[2]);
-            writer.println(END_TAGS[17]);
-            writer.print(START_TAGS[18]);
-            writer.print(settings[3]);
-            writer.println(END_TAGS[18]);
+            for (int i = 15; i <= 18; i++) {
+                writer.print(START_TAGS[i]);
+                writer.print(settings[i - 15]);
+                writer.println(END_TAGS[i]);
+            }
             writer.println(END_TAGS[14]);
             writer.println(END_TAGS[0]);
         } catch (FileNotFoundException e) {
-            File f = new File(filename);
+            File f = new File(FILENAME);
             if (f.mkdirs()) {
                 writeAllSettings(launchSettings, hotkeys, settings);
             } else {
                 ErrorHandler.newExpectedExceptionAlert(new FileNotFoundException("Unable to write to " +
-                        "file\n" + filename), "File Write Error!");
+                        "file\n" + FILENAME), "File Write Error!");
             }
         }
     }

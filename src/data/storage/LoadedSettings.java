@@ -26,6 +26,17 @@ public class LoadedSettings {
             ErrorHandler.newExpectedExceptionAlert(e, "Critical Error!");
             ErrorHandler.forceExit();
         }
+    }
 
+    public static String[] getLoadedHotkeys() {
+        return LOADED_HOTKEYS;
+    }
+
+    public static String[] getLaunchSettings() {
+        return LAUNCH_SETTINGS;
+    }
+
+    public static String[] getOtherSettings() {
+        return OTHER_SETTINGS;
     }
 }
