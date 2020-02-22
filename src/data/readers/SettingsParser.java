@@ -1,9 +1,5 @@
 package data.readers;
 
-import data.storage.Move;
-import error.exceptions.InvalidCoordinateException;
-import error.exceptions.InvalidCountException;
-import error.exceptions.InvalidDimensionException;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.ErrorHandler;
@@ -16,7 +12,8 @@ public class SettingsParser extends AbstractParser {
     /**
      * The states for this specific state machine
      */
-    private enum States {INIT, GAME, SEED, WIDTH, HEIGHT, MINES, SELECT, FLAG, X, Y, END}
+    private enum States {INIT, SETTINGS, LAUNCH, SETSEED, SEED, WIDTH, HEIGHT, MINES, SELECT,
+        FLAG, X, Y, END}
     private States states = States.INIT;
     private States tempStates;
     private Locator locator;
@@ -162,12 +159,12 @@ public class SettingsParser extends AbstractParser {
     public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
         switch (states) {
             case INIT:
-                if (!localName.equalsIgnoreCase("GAME")) {
-                    throw new SAXException("Expected game element, found " + localName);
+                if (!localName.equalsIgnoreCase("SETTINGS")) {
+                    throw new SAXException("Expected settings element, found " + localName);
                 }
-                states = States.GAME;
+                states = States.SETTINGS;
                 break;
-            case GAME:
+            case SETTINGS:
                 switch (localName.toLowerCase()) {
                     case "seed":
                         states = States.SEED;
@@ -186,14 +183,10 @@ public class SettingsParser extends AbstractParser {
                     case "select":
                         states = States.SELECT;
                         tempStates = States.SELECT;
-                        move = new Move();
-                        move.setState("select");
                         break;
                     case "flag":
                         states = States.FLAG;
                         tempStates = States.FLAG;
-                        move = new Move();
-                        move.setState("flag");
                         break;
                     default:
                         throw new SAXException("Invalid element! Found " + localName);
@@ -250,7 +243,7 @@ public class SettingsParser extends AbstractParser {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         switch (states) {
-            case GAME:
+            case SETTINGS:
                 if (localName.equalsIgnoreCase("diff")) {
                     break;
                 } else if (!localName.equalsIgnoreCase("game")) {
@@ -262,39 +255,37 @@ public class SettingsParser extends AbstractParser {
                 if (!localName.equalsIgnoreCase("seed")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
                 }
-                states = States.GAME;
+                states = States.SETTINGS;
                 break;
             case WIDTH:
                 if (!localName.equalsIgnoreCase("width")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
                 }
-                states = States.GAME;
+                states = States.SETTINGS;
                 break;
             case HEIGHT:
                 if (!localName.equalsIgnoreCase("height")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
                 }
-                states = States.GAME;
+                states = States.SETTINGS;
                 break;
             case MINES:
                 if (!localName.equalsIgnoreCase("mines")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
                 }
-                states = States.GAME;
+                states = States.SETTINGS;
                 break;
             case SELECT:
                 if (!localName.equalsIgnoreCase("select")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
                 }
-                states = States.GAME;
-                moves.add(move);
+                states = States.SETTINGS;
                 break;
             case FLAG:
                 if (!localName.equalsIgnoreCase("flag")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
                 }
-                states = States.GAME;
-                moves.add(move);
+                states = States.SETTINGS;
                 break;
             case X:
                 if (!localName.equalsIgnoreCase("x")) {
@@ -351,67 +342,17 @@ public class SettingsParser extends AbstractParser {
      * @param ch     the characters from the XML document
      * @param start  the start position in the array
      * @param length the number of characters to read from the array
-     * @throws SAXException any SAX exception, possibly
-     *                      wrapping another exception
      * @see #ignorableWhitespace
      * @see Locator
      */
     @Override
-    public void characters(char[] ch, int start, int length) throws SAXException {
+    public void characters(char[] ch, int start, int length) {
         String s = new String(ch);
         s = s.substring(start, start + length);
         s = s.trim();
         long l;
         int i;
-        try {
-            switch (states) {
-                case X:
-                    i = Integer.parseInt(s);
-                    if (i >= properties[1] || i < 0) {
-                        throw new InvalidCoordinateException("Invalid X coordinate at line " + locator.getLineNumber() +
-                                ", column " + locator.getColumnNumber() + "!\nValue: " + i);
-                    }
-                    move.setX(i);
-                    break;
-                case Y:
-                    i = Integer.parseInt(s);
-                    if (i >= properties[2] || i < 0) {
-                        throw new InvalidCoordinateException("Invalid Y coordinate at line " + locator.getLineNumber() +
-                                ", column " + locator.getColumnNumber() + "!\nValue: " + i);
-                    }
-                    move.setY(i);
-                    break;
-                case SEED:
-                    properties[0] = Long.parseLong(s);
-                    break;
-                case WIDTH:
-                    l = Long.parseLong(s);
-                    if (l < 5 || l > 30) {
-                        throw new InvalidDimensionException("Invalid log file width at line " + locator.getLineNumber() +
-                                ", column " + locator.getColumnNumber() + "!\nValue: " + l);
-                    }
-                    properties[1] = l;
-                    break;
-                case HEIGHT:
-                    l = Long.parseLong(s);
-                    if (l < 5 || l > 24) {
-                        throw new InvalidDimensionException("Invalid log file height at line " + locator.getLineNumber() +
-                                ", column " + locator.getColumnNumber() + "!\nValue: " + l);
-                    }
-                    properties[2] = l;
-                    break;
-                case MINES:
-                    l = Long.parseLong(s);
-                    if (l == 0 || l >= (properties[1] * properties[2])) {
-                        throw new InvalidCountException("Invalid number of mines at line " + locator.getLineNumber() +
-                                ", column " + locator.getColumnNumber() + "!\nValue: " + l);
-                    }
-                    properties[3] = l;
-                    break;
-            }
-        } catch (NumberFormatException e) {
-            throw new SAXException("Invalid number format! Line " + locator.getLineNumber() + " " +
-                    "Column " + locator.getColumnNumber());
+        switch (states) {
         }
     }
 

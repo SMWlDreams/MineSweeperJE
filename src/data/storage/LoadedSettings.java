@@ -3,6 +3,7 @@ package data.storage;
 import data.readers.ParserHandler;
 import data.readers.SettingsParser;
 import error.ErrorHandler;
+import error.exceptions.InvalidXMLException;
 
 import java.io.FileNotFoundException;
 
@@ -23,7 +24,13 @@ public class LoadedSettings {
             LAUNCH_SETTINGS = settingsParser.getLaunchSettings();
             OTHER_SETTINGS = settingsParser.getSettings();
         } catch (FileNotFoundException e) {
-            ErrorHandler.newExpectedExceptionAlert(e, "Critical Error!");
+            ErrorHandler.newExpectedExceptionAlert(e, "Critical Error!", true);
+            ErrorHandler.forceExit();
+        } catch (InvalidXMLException e) {
+            ErrorHandler.newExpectedExceptionAlert(e, "Invalid File Format", true);
+            ErrorHandler.forceExit();
+        } catch (Exception e) {
+            ErrorHandler.newUnexpectedExceptionAlert(e, true);
             ErrorHandler.forceExit();
         }
     }

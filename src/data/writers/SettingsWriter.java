@@ -9,19 +9,20 @@ import java.io.PrintWriter;
 
 public class SettingsWriter {
     private static final String FILENAME = System.getProperty("user.home") + "\\AppData\\Roaming" +
-            "\\Minesweeper\\Settings.cfg";
-    private static final String[] DEFAULT_LAUNCH_SETTINGS = {"False", "Null", "10", "10", "False"};
+            "\\Minesweeper\\";
+    private static final String[] DEFAULT_LAUNCH_SETTINGS = {"False", "Null", "10", "10", "10",
+            "False"};
     private static final String[] DEFAULT_HOTKEYS = {"R", "P", "N", "H", "S", "A"};
     private static final String[] DEFAULT_SETTINGS = {"Default", "Default", "0", "default"};
     private static final String HEAD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
     private static final String[] START_TAGS = {"<Settings version=\"" + AboutWindow.VERSION_ID + "\">",
-            "<Launch>", "<SetSeed>", "<Seed>", "<Width>", "<Height>", "<Log>", "<Hotkeys>",
+            "<Launch>", "<SetSeed>", "<Seed>", "<Width>", "<Height>", "<Mine>", "<Log>", "<Hotkeys>",
             "<Restart>", "<Pause>", "<NewGame>", "<Help>", "<HighScore>", "<About>",
             "<GameSettings>", "<Tileset>", "<Randomizer>", "<NumLogs>", "<LogPath>"};
     private static final String[] END_TAGS = {"</Settings>", "</Launch>", "</SetSeed>", "</Seed>",
-            "</Width>", "</Height>", "</Log>", "</Hotkeys>", "</Restart>", "</Pause>", "</NewGame>",
-            "</Help>", "</HighScore>", "</About>", "</GameSettings>", "</Tileset>", "</Randomizer>",
-            "</NumLogs>", "</LogPath>"};
+            "</Width>", "</Height>", "</Mine>", "</Log>", "</Hotkeys>", "</Restart>", "</Pause>",
+            "</NewGame>", "</Help>", "</HighScore>", "</About>", "</GameSettings>", "</Tileset>",
+            "</Randomizer>", "</NumLogs>", "</LogPath>"};
 
     private SettingsWriter() {}
 
@@ -34,30 +35,30 @@ public class SettingsWriter {
     }
 
     private static void writeAllSettings(String[] launchSettings, String[] hotkeys, String[] settings) {
-        try (PrintWriter writer = new PrintWriter(new File(FILENAME))) {
+        try (PrintWriter writer = new PrintWriter(new File(FILENAME + "Settings.cfg"))) {
             writer.println(HEAD);
             writer.println(START_TAGS[0]);
             writer.println(START_TAGS[1]);
-            for (int i = 2; i <= 6; i++) {
+            for (int i = 2; i <= 7; i++) {
                 writer.print(START_TAGS[i]);
                 writer.print(launchSettings[i - 2]);
                 writer.println(END_TAGS[i]);
             }
             writer.println(END_TAGS[1]);
-            writer.println(START_TAGS[7]);
-            for (int i = 8; i <= 13; i++) {
+            writer.println(START_TAGS[8]);
+            for (int i = 9; i <= 14; i++) {
                 writer.print(START_TAGS[i]);
-                writer.print(hotkeys[i - 8]);
+                writer.print(hotkeys[i - 9]);
                 writer.println(END_TAGS[i]);
             }
-            writer.println(END_TAGS[7]);
-            writer.println(START_TAGS[14]);
-            for (int i = 15; i <= 18; i++) {
+            writer.println(END_TAGS[8]);
+            writer.println(START_TAGS[15]);
+            for (int i = 16; i <= 19; i++) {
                 writer.print(START_TAGS[i]);
-                writer.print(settings[i - 15]);
+                writer.print(settings[i - 16]);
                 writer.println(END_TAGS[i]);
             }
-            writer.println(END_TAGS[14]);
+            writer.println(END_TAGS[15]);
             writer.println(END_TAGS[0]);
         } catch (FileNotFoundException e) {
             File f = new File(FILENAME);
@@ -65,7 +66,7 @@ public class SettingsWriter {
                 writeAllSettings(launchSettings, hotkeys, settings);
             } else {
                 ErrorHandler.newExpectedExceptionAlert(new FileNotFoundException("Unable to write to " +
-                        "file\n" + FILENAME), "File Write Error!");
+                        "file\n" + FILENAME), "File Write Error!", true);
             }
         }
     }

@@ -1,5 +1,6 @@
 package windows;
 
+import data.writers.SettingsWriter;
 import game.Controller;
 import game.Tile;
 import javafx.application.Application;
@@ -19,6 +20,7 @@ public class GUI extends Application {
         Scene scene = new Scene(root);
         Tile.loadImages("/tilesets/defaultset/");
         stage.getIcons().add(Tile.getImage(Tile.MINE_IMAGE_INDEX));
+        SettingsWriter.writeDefaultSettings();
 //        scene.setOnKeyPressed();
 //        scene.setOnMouseClicked(controller::onClick);
         stage.setScene(scene);
