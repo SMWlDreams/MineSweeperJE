@@ -1,5 +1,6 @@
 package data.readers;
 
+import error.exceptions.InvalidXMLException;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.ErrorHandler;
@@ -12,8 +13,8 @@ public class SettingsParser extends AbstractParser {
     /**
      * The states for this specific state machine
      */
-    private enum States {INIT, SETTINGS, LAUNCH, SETSEED, SEED, WIDTH, HEIGHT, MINES, SELECT,
-        FLAG, X, Y, END}
+    private enum States {INIT, SETTINGS, LAUNCH, SETSEED, SEED, WIDTH, HEIGHT, MINES, LOG, HOTKEY,
+        RESTART, PAUSE, NEWGAME, HELP, HIGHSCORES, ABOUT, GAME, TILESET, RANDO, NUMLOG, PATH}
     private States states = States.INIT;
     private States tempStates;
     private Locator locator;
@@ -166,10 +167,26 @@ public class SettingsParser extends AbstractParser {
                 break;
             case SETTINGS:
                 switch (localName.toLowerCase()) {
+                    case "launch":
+                        states = States.LAUNCH;
+                        break;
+                    case "hotkeys":
+                        states = States.HOTKEY;
+                        break;
+                    case "gamesettings":
+                        states = States.GAME;
+                        break;
+                    default:
+                        throw new SAXException("Invalid element! Found " + localName);
+                }
+                break;
+            case LAUNCH:
+                switch (localName.toLowerCase()) {
+                    case "setseed":
+                        states = States.SETSEED;
+                        break;
                     case "seed":
                         states = States.SEED;
-                        break;
-                    case "diff":
                         break;
                     case "width":
                         states = States.WIDTH;
@@ -177,45 +194,60 @@ public class SettingsParser extends AbstractParser {
                     case "height":
                         states = States.HEIGHT;
                         break;
-                    case "mines":
+                    case "mine":
                         states = States.MINES;
                         break;
-                    case "select":
-                        states = States.SELECT;
-                        tempStates = States.SELECT;
-                        break;
-                    case "flag":
-                        states = States.FLAG;
-                        tempStates = States.FLAG;
+                    case "log":
+                        states = States.LOG;
                         break;
                     default:
                         throw new SAXException("Invalid element! Found " + localName);
                 }
                 break;
-            case SELECT:
+            case HOTKEY:
                 switch (localName.toLowerCase()) {
-                    case "x":
-                        states = States.X;
+                    case "restart":
+                        states = States.RESTART;
                         break;
-                    case "y":
-                        states = States.Y;
+                    case "pause":
+                        states = States.PAUSE;
+                        break;
+                    case "newgame":
+                        states = States.NEWGAME;
+                        break;
+                    case "help":
+                        states = States.HELP;
+                        break;
+                    case "highscore":
+                        states = States.HIGHSCORES;
+                        break;
+                    case "about":
+                        states = States.ABOUT;
                         break;
                     default:
                         throw new SAXException("Invalid element! Found " + localName);
                 }
                 break;
-            case FLAG:
+            case GAME:
                 switch (localName.toLowerCase()) {
-                    case "x":
-                        states = States.X;
+                    case "tileset":
+                        states = States.TILESET;
                         break;
-                    case "y":
-                        states = States.Y;
+                    case "randomizer":
+                        states = States.RANDO;
+                        break;
+                    case "numlogs":
+                        states = States.NUMLOG;
+                        break;
+                    case "logpath":
+                        states = States.PATH;
                         break;
                     default:
                         throw new SAXException("Invalid element! Found " + localName);
                 }
                 break;
+            default:
+                throw new SAXException("Invalid element! Found " + localName);
         }
     }
 
@@ -244,60 +276,117 @@ public class SettingsParser extends AbstractParser {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         switch (states) {
             case SETTINGS:
-                if (localName.equalsIgnoreCase("diff")) {
+                if (localName.equalsIgnoreCase("settings")) {
                     break;
-                } else if (!localName.equalsIgnoreCase("game")) {
+                }
+                throw new SAXException("Invalid ending element! Found " + localName);
+            case SETSEED:
+                if (!localName.equalsIgnoreCase("setseed")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
                 }
-                states = States.END;
+                states = States.LAUNCH;
                 break;
             case SEED:
                 if (!localName.equalsIgnoreCase("seed")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
                 }
-                states = States.SETTINGS;
+                states = States.LAUNCH;
                 break;
             case WIDTH:
                 if (!localName.equalsIgnoreCase("width")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
                 }
-                states = States.SETTINGS;
+                states = States.LAUNCH;
                 break;
             case HEIGHT:
                 if (!localName.equalsIgnoreCase("height")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
                 }
-                states = States.SETTINGS;
+                states = States.LAUNCH;
                 break;
             case MINES:
-                if (!localName.equalsIgnoreCase("mines")) {
+                if (!localName.equalsIgnoreCase("mine")) {
+                    throw new SAXException("Invalid ending element! Found " + localName);
+                }
+                states = States.LAUNCH;
+                break;
+            case LOG:
+                if (!localName.equalsIgnoreCase("log")) {
+                    throw new SAXException("Invalid ending element! Found " + localName);
+                }
+                states = States.LAUNCH;
+                break;
+            case HOTKEY:
+                if (!localName.equalsIgnoreCase("hotkeys")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
                 }
                 states = States.SETTINGS;
                 break;
-            case SELECT:
-                if (!localName.equalsIgnoreCase("select")) {
+            case GAME:
+                if (!localName.equalsIgnoreCase("gamesettings")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
                 }
                 states = States.SETTINGS;
                 break;
-            case FLAG:
-                if (!localName.equalsIgnoreCase("flag")) {
+            case RESTART:
+                if (!localName.equalsIgnoreCase("restart")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
                 }
-                states = States.SETTINGS;
+                states = States.HOTKEY;
                 break;
-            case X:
-                if (!localName.equalsIgnoreCase("x")) {
+            case PAUSE:
+                if (!localName.equalsIgnoreCase("pause")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
                 }
-                states = tempStates;
+                states = States.HOTKEY;
                 break;
-            case Y:
-                if (!localName.equalsIgnoreCase("y")) {
+            case NEWGAME:
+                if (!localName.equalsIgnoreCase("newgame")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
                 }
-                states = tempStates;
+                states = States.HOTKEY;
+                break;
+            case HELP:
+                if (!localName.equalsIgnoreCase("help")) {
+                    throw new SAXException("Invalid ending element! Found " + localName);
+                }
+                states = States.HOTKEY;
+                break;
+            case HIGHSCORES:
+                if (!localName.equalsIgnoreCase("highscore")) {
+                    throw new SAXException("Invalid ending element! Found " + localName);
+                }
+                states = States.HOTKEY;
+                break;
+            case ABOUT:
+                if (!localName.equalsIgnoreCase("about")) {
+                    throw new SAXException("Invalid ending element! Found " + localName);
+                }
+                states = States.HOTKEY;
+                break;
+            case TILESET:
+                if (!localName.equalsIgnoreCase("tileset")) {
+                    throw new SAXException("Invalid ending element! Found " + localName);
+                }
+                states = States.GAME;
+                break;
+            case RANDO:
+                if (!localName.equalsIgnoreCase("randomizer")) {
+                    throw new SAXException("Invalid ending element! Found " + localName);
+                }
+                states = States.GAME;
+                break;
+            case NUMLOG:
+                if (!localName.equalsIgnoreCase("numlogs")) {
+                    throw new SAXException("Invalid ending element! Found " + localName);
+                }
+                states = States.GAME;
+                break;
+            case PATH:
+                if (!localName.equalsIgnoreCase("logpath")) {
+                    throw new SAXException("Invalid ending element! Found " + localName);
+                }
+                states = States.GAME;
                 break;
             default:
                 throw new SAXException("Invalid ending element! Found " + localName);
@@ -348,11 +437,75 @@ public class SettingsParser extends AbstractParser {
     @Override
     public void characters(char[] ch, int start, int length) {
         String s = new String(ch);
-        s = s.substring(start, start + length);
-        s = s.trim();
-        long l;
-        int i;
         switch (states) {
+            case SETSEED:
+                launchSettings[0] = s;
+                break;
+            case SEED:
+                launchSettings[1] = s;
+                break;
+            case WIDTH:
+                launchSettings[2] = s;
+                break;
+            case HEIGHT:
+                launchSettings[3] = s;
+                break;
+            case MINES:
+                launchSettings[4] = s;
+                break;
+            case LOG:
+                launchSettings[5] = s;
+                break;
+            case RESTART:
+                if (s.length() != 1) {
+                    throw new InvalidXMLException("Invalid hotkey tag length!");
+                }
+                hotkeys[0] = s;
+                break;
+            case PAUSE:
+                if (s.length() != 1) {
+                    throw new InvalidXMLException("Invalid hotkey tag length!");
+                }
+                hotkeys[1] = s;
+                break;
+            case NEWGAME:
+                if (s.length() != 1) {
+                    throw new InvalidXMLException("Invalid hotkey tag length!");
+                }
+                hotkeys[2] = s;
+                break;
+            case HELP:
+                if (s.length() != 1) {
+                    throw new InvalidXMLException("Invalid hotkey tag length!");
+                }
+                hotkeys[3] = s;
+                break;
+            case HIGHSCORES:
+                if (s.length() != 1) {
+                    throw new InvalidXMLException("Invalid hotkey tag length!");
+                }
+                hotkeys[4] = s;
+                break;
+            case ABOUT:
+                if (s.length() != 1) {
+                    throw new InvalidXMLException("Invalid hotkey tag length!");
+                }
+                hotkeys[5] = s;
+                break;
+            case TILESET:
+                settings[3] = s;
+                break;
+            case RANDO:
+                settings[3] = s;
+                break;
+            case NUMLOG:
+                settings[3] = s;
+                break;
+            case PATH:
+                settings[3] = s;
+                break;
+            default:
+                throw new InvalidXMLException("Illegal data character in file!");
         }
     }
 

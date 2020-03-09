@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 
@@ -30,6 +29,8 @@ public class Logger {
                         "to error logger!\nPlease make sure you have write permissions!"), "File " +
                         "Write Error!", false);
             }
+        } catch (Exception e) {
+            ErrorHandler.newUnexpectedExceptionAlert(e, true);
         }
     }
 
@@ -39,13 +40,12 @@ public class Logger {
 
     public void log(Exception e) {
         try {
-            writer.append(
-                    new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss")
-                            .parse(new GregorianCalendar()
-                                    .getTime()
-                                    .toString())
-                            + ": " + e.getMessage() + "\r\n");
-        } catch (ParseException e1) {
+            writer.append(String.valueOf(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss")
+                    .parse(new GregorianCalendar().getTime().toString())))
+                    .append(": ")
+                    .append(e.getMessage())
+                    .append("\r\n");
+        } catch (Exception e1) {
             ErrorHandler.newUnexpectedExceptionAlert(e1, false);
         }
     }

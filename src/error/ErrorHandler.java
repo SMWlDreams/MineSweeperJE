@@ -10,7 +10,7 @@ public class ErrorHandler {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(e.getClass().getName());
         alert.setHeaderText("An Unexpected Exception Occurred!");
-        alert.setContentText("Unexpected exception " + e.getClass().getName() + " threw the " +
+        alert.setContentText("Unexpected exception " + e.getClass().getName() + "\nthrew the " +
                 "following:\n" + e.getMessage());
         alert.showAndWait();
         if (log) {

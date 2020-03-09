@@ -1,8 +1,8 @@
 package game;
 
-import game.randomizers.DefaultRandomizer;
-import game.randomizers.DoubleSeededRandomizer;
+import error.Logger;
 import game.randomizers.SkipRandomizer;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -27,5 +27,10 @@ public class Controller {
     @FXML
     public void onClick(MouseEvent mouseEvent) {
         game.click(mouseEvent);
+    }
+
+    public static void cleanup() {
+        Logger.close();
+        Platform.exit();
     }
 }

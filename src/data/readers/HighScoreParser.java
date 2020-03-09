@@ -162,33 +162,33 @@ public class HighScoreParser extends AbstractParser {
                 if (!localName.equalsIgnoreCase("GAME")) {
                     throw new SAXException("Expected game element, found " + localName);
                 }
-                states = LogParser.States.GAME;
+                states States.GAME;
                 break;
             case GAME:
                 switch (localName.toLowerCase()) {
                     case "seed":
-                        states = LogParser.States.SEED;
+                        states = States.SEED;
                         break;
                     case "diff":
                         break;
                     case "width":
-                        states = LogParser.States.WIDTH;
+                        states = States.WIDTH;
                         break;
                     case "height":
-                        states = LogParser.States.HEIGHT;
+                        states = States.HEIGHT;
                         break;
                     case "mines":
-                        states = LogParser.States.MINES;
+                        states = States.MINES;
                         break;
                     case "select":
-                        states = LogParser.States.SELECT;
-                        tempStates = LogParser.States.SELECT;
+                        states = States.SELECT;
+                        tempStates = States.SELECT;
                         move = new Move();
                         move.setState("select");
                         break;
                     case "flag":
-                        states = LogParser.States.FLAG;
-                        tempStates = LogParser.States.FLAG;
+                        states = States.FLAG;
+                        tempStates = States.FLAG;
                         move = new Move();
                         move.setState("flag");
                         break;
@@ -199,10 +199,10 @@ public class HighScoreParser extends AbstractParser {
             case SELECT:
                 switch (localName.toLowerCase()) {
                     case "x":
-                        states = LogParser.States.X;
+                        states = States.X;
                         break;
                     case "y":
-                        states = LogParser.States.Y;
+                        states = States.Y;
                         break;
                     default:
                         throw new SAXException("Invalid element! Found " + localName);
@@ -211,10 +211,10 @@ public class HighScoreParser extends AbstractParser {
             case FLAG:
                 switch (localName.toLowerCase()) {
                     case "x":
-                        states = LogParser.States.X;
+                        states = States.X;
                         break;
                     case "y":
-                        states = LogParser.States.Y;
+                        states = States.Y;
                         break;
                     default:
                         throw new SAXException("Invalid element! Found " + localName);
@@ -253,44 +253,44 @@ public class HighScoreParser extends AbstractParser {
                 } else if (!localName.equalsIgnoreCase("game")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
                 }
-                states = LogParser.States.END;
+                states = States.END;
                 break;
             case SEED:
                 if (!localName.equalsIgnoreCase("seed")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
                 }
-                states = LogParser.States.GAME;
+                states = States.GAME;
                 break;
             case WIDTH:
                 if (!localName.equalsIgnoreCase("width")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
                 }
-                states = LogParser.States.GAME;
+                states = States.GAME;
                 break;
             case HEIGHT:
                 if (!localName.equalsIgnoreCase("height")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
                 }
-                states = LogParser.States.GAME;
+                states = States.GAME;
                 break;
             case MINES:
                 if (!localName.equalsIgnoreCase("mines")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
                 }
-                states = LogParser.States.GAME;
+                states = States.GAME;
                 break;
             case SELECT:
                 if (!localName.equalsIgnoreCase("select")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
                 }
-                states = LogParser.States.GAME;
+                states = States.GAME;
                 moves.add(move);
                 break;
             case FLAG:
                 if (!localName.equalsIgnoreCase("flag")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
                 }
-                states = LogParser.States.GAME;
+                states = States.GAME;
                 moves.add(move);
                 break;
             case X:

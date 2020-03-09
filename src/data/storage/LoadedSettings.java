@@ -2,6 +2,7 @@ package data.storage;
 
 import data.readers.ParserHandler;
 import data.readers.SettingsParser;
+import data.writers.SettingsWriter;
 import error.ErrorHandler;
 import error.exceptions.InvalidXMLException;
 
@@ -28,7 +29,7 @@ public class LoadedSettings {
             ErrorHandler.forceExit();
         } catch (InvalidXMLException e) {
             ErrorHandler.newExpectedExceptionAlert(e, "Invalid File Format", true);
-            ErrorHandler.forceExit();
+            SettingsWriter.writeDefaultSettings();
         } catch (Exception e) {
             ErrorHandler.newUnexpectedExceptionAlert(e, true);
             ErrorHandler.forceExit();
