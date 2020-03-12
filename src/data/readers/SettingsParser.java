@@ -16,11 +16,10 @@ public class SettingsParser extends AbstractParser {
     private enum States {INIT, SETTINGS, LAUNCH, SETSEED, SEED, WIDTH, HEIGHT, MINES, LOG, HOTKEY,
         RESTART, PAUSE, NEWGAME, HELP, HIGHSCORES, ABOUT, GAME, TILESET, RANDO, NUMLOG, PATH}
     private States states = States.INIT;
-    private States tempStates;
     private Locator locator;
-    private String[] launchSettings;
-    private String[] hotkeys;
-    private String[] settings;
+    private String[] launchSettings = new String[6];
+    private String[] hotkeys = new String[6];
+    private String[] settings = new String[4];
 
     /**
      * Receive an object for locating the origin of SAX document events.

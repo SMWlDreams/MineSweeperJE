@@ -1,15 +1,13 @@
 package windows;
 
-import data.writers.SettingsWriter;
+import data.writers.HighScoreWriter;
 import game.Controller;
 import game.Tile;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import tilesets.TilesetRequestHandler;
 
 public class GUI extends Application {
     @Override
@@ -27,6 +25,7 @@ public class GUI extends Application {
         stage.setTitle("Minesweeper " + AboutWindow.VERSION_ID);
         stage.setOnShown(e -> controller.start());
         stage.setOnCloseRequest(e -> Controller.cleanup());
+        HighScoreWriter.writeDefaultScores();
         stage.show();
     }
 
