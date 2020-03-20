@@ -1,15 +1,11 @@
 package error;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.GregorianCalendar;
+import java.io.*;
+import java.time.LocalDateTime;
 
 public class Logger {
     private static Logger LOGGER = new Logger();
-    private PrintWriter writer;
+    private FileWriter writer;
 
     private Logger() {
         initWriter();
@@ -17,9 +13,8 @@ public class Logger {
 
     private void initWriter() {
         try {
-            writer = new PrintWriter(System.getProperty("user.home") + "\\AppData\\Roaming" +
-                    "\\Minesweeper\\ErrorLog.txt");
-
+            writer = new FileWriter(System.getProperty("user.home") + "\\AppData\\Roaming" +
+                    "\\Minesweeper\\ErrorLog.txt", true);
         } catch (IOException e) {
             if (new File(System.getProperty("user.home") + "\\AppData\\Roaming" +
                     "\\Minesweeper\\").mkdirs()) {
@@ -40,8 +35,8 @@ public class Logger {
 
     public void log(Exception e) {
         try {
-            writer.append(String.valueOf(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss")
-                    .parse(new GregorianCalendar().getTime().toString())))
+            LocalDateTime time = LocalDateTime.now();
+            writer.append(time.toString().substring(0, 19))
                     .append(": ")
                     .append(e.getMessage())
                     .append("\r\n");
@@ -51,7 +46,11 @@ public class Logger {
     }
 
     private void closeWriter() {
-        writer.close();
+        try {
+            writer.close();
+        } catch (Exception e) {
+            ErrorHandler.newUnexpectedExceptionAlert(e, false);
+        }
     }
 
     public static void close() {

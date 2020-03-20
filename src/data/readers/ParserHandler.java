@@ -2,6 +2,7 @@ package data.readers;
 
 import data.writers.HighScoreWriter;
 import data.writers.SettingsWriter;
+import error.ErrorHandler;
 import error.exceptions.InvalidXMLException;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -36,10 +37,14 @@ public class ParserHandler {
             if (f.mkdirs()) {
                 if (parser instanceof SettingsParser) {
                     SettingsWriter.writeDefaultSettings();
+                } else if (parser instanceof HighScoreParser) {
+                    try {
+                        HighScoreWriter.writeDefaultScores();
+                    } catch (Exception e1) {
+                        ErrorHandler.newUnexpectedExceptionAlert(e, true);
+                        ErrorHandler.forceExit();
+                    }
                 }
-//                } else if (parser instanceof HighScoreParser) {
-//                    HighScoreWriter.writeDefaultScores();
-//                }
                 parse(parser, URI);
             } else {
                 throw new FileNotFoundException("Unable to find or create required file:\n" + URI);
