@@ -315,6 +315,12 @@ public class SettingsParser extends AbstractParser {
                 }
                 states = States.LAUNCH;
                 break;
+            case LAUNCH:
+                if (!localName.equalsIgnoreCase("launch")) {
+                    throw new SAXException("Invalid ending element! Found " + localName);
+                }
+                states = States.SETTINGS;
+                break;
             case HOTKEY:
                 if (!localName.equalsIgnoreCase("hotkeys")) {
                     throw new SAXException("Invalid ending element! Found " + localName);
@@ -436,75 +442,74 @@ public class SettingsParser extends AbstractParser {
     @Override
     public void characters(char[] ch, int start, int length) {
         String s = new String(ch);
+        String value = s.substring(start, start + length);
         switch (states) {
             case SETSEED:
-                launchSettings[0] = s;
+                launchSettings[0] = value;
                 break;
             case SEED:
-                launchSettings[1] = s;
+                launchSettings[1] = value;
                 break;
             case WIDTH:
-                launchSettings[2] = s;
+                launchSettings[2] = value;
                 break;
             case HEIGHT:
-                launchSettings[3] = s;
+                launchSettings[3] = value;
                 break;
             case MINES:
-                launchSettings[4] = s;
+                launchSettings[4] = value;
                 break;
             case LOG:
-                launchSettings[5] = s;
+                launchSettings[5] = value;
                 break;
             case RESTART:
-                if (s.length() != 1) {
+                if (length != 1) {
                     throw new InvalidXMLException("Invalid hotkey tag length!");
                 }
-                hotkeys[0] = s;
+                hotkeys[0] = value;
                 break;
             case PAUSE:
-                if (s.length() != 1) {
+                if (length != 1) {
                     throw new InvalidXMLException("Invalid hotkey tag length!");
                 }
-                hotkeys[1] = s;
+                hotkeys[1] = value;
                 break;
             case NEWGAME:
-                if (s.length() != 1) {
+                if (length != 1) {
                     throw new InvalidXMLException("Invalid hotkey tag length!");
                 }
-                hotkeys[2] = s;
+                hotkeys[2] = value;
                 break;
             case HELP:
-                if (s.length() != 1) {
+                if (length != 1) {
                     throw new InvalidXMLException("Invalid hotkey tag length!");
                 }
-                hotkeys[3] = s;
+                hotkeys[3] = value;
                 break;
             case HIGHSCORES:
-                if (s.length() != 1) {
+                if (length != 1) {
                     throw new InvalidXMLException("Invalid hotkey tag length!");
                 }
-                hotkeys[4] = s;
+                hotkeys[4] = value;
                 break;
             case ABOUT:
-                if (s.length() != 1) {
+                if (length != 1) {
                     throw new InvalidXMLException("Invalid hotkey tag length!");
                 }
-                hotkeys[5] = s;
+                hotkeys[5] = value;
                 break;
             case TILESET:
-                settings[3] = s;
+                settings[0] = value;
                 break;
             case RANDO:
-                settings[3] = s;
+                settings[1] = value;
                 break;
             case NUMLOG:
-                settings[3] = s;
+                settings[2] = value;
                 break;
             case PATH:
-                settings[3] = s;
+                settings[3] = value;
                 break;
-            default:
-                throw new InvalidXMLException("Illegal data character in file!");
         }
     }
 

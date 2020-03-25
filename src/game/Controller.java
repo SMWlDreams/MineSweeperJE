@@ -1,12 +1,16 @@
 package game;
 
+import data.storage.LoadedSettings;
 import error.Logger;
+import factories.BoardFactory;
 import game.randomizers.SkipRandomizer;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import windows.HighScoreWindow;
 
 public class Controller {
     @FXML
@@ -18,10 +22,16 @@ public class Controller {
     @FXML
     private ImageView timeDisp;
 
+    private enum State {INITIALIZING, WAIT, PAUSE, WIN, LOSE}
+    private State state = State.INITIALIZING;
+
     private Board game;
 
     public void start() {
-         game = new Board(5, 5, 10, 3.0, this.board, new SkipRandomizer(123456789));
+        HighScoreWindow.initializeData();
+        LoadedSettings.loadAllSettings();
+        game = BoardFactory.generateInitialBoard();
+        game = new Board(10, 10, 10, 3.0, board, new SkipRandomizer(123456789));
     }
 
     @FXML
@@ -32,5 +42,8 @@ public class Controller {
     public static void cleanup() {
         Logger.close();
         Platform.exit();
+    }
+
+    public void parseHotkey(KeyEvent keyEvent) {
     }
 }

@@ -20,12 +20,12 @@ public class SkipRandomizer extends Randomizer {
      * Generates a board from the given arguments
      * @param columns   Number of columns to place on the board
      * @param rows      Number of rows to place on the board
-     * @param scale     The tile size multiplication scale
+     * @param scaleX    The vertical tile size multiplication scale
+     * @param scaleY    The horizontal tile size multiplication scale
      */
-    @Override
-    public void generateBoard(int columns, int rows, double scale) {
+    public void generateBoard(int columns, int rows, double scaleX, double scaleY) {
         random = new Random(seed);
-        super.generateBoard(columns, rows, scale);
+        super.generateBoard(columns, rows, scaleX, scaleY);
     }
 
     @Override

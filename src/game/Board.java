@@ -15,7 +15,8 @@ public class Board {
     private int columns;
     private int rows;
     private int mines;
-    private double scale;
+    private double scaleX;
+    private double scaleY;
     private List<List<Tile>> board;
     private List<Move> moves;
     private boolean firstClick;
@@ -26,16 +27,18 @@ public class Board {
      * @param columns       Number of columns to hold in the board
      * @param rows          Number of rows to hold in the board
      * @param mines         The number of mines to place in the board
-     * @param scale         The dimension multiplication scale for the tiles
+     * @param scaleX        The vertical dimension multiplication scale for the tiles
+     * @param scaleY        The horizontal dimension multiplication scale for the tiles
      * @param pane          The pane to draw the tiles to
      * @param randomizer    The randomizer used to place mines on the board
      */
-    public Board(int columns, int rows, int mines, double scale, Pane pane, Randomizer randomizer) {
+    public Board(int columns, int rows, int mines, double scaleX, double scaleY, Pane pane, Randomizer randomizer) {
         this.randomizer = randomizer;
         this.columns = columns;
         this.rows = rows;
         this.mines = mines;
-        this.scale = scale;
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
         firstClick = false;
         moves = new ArrayList<>();
         generateBoard(pane);
@@ -79,8 +82,8 @@ public class Board {
     }
 
     private void flagTile(MouseEvent mouseEvent) {
-        int x = (int)(mouseEvent.getX() / (scale * Tile.DEFAULT_TILE_SIZE));
-        int y = (int)(mouseEvent.getY() / (scale * Tile.DEFAULT_TILE_SIZE));
+        int x = (int)(mouseEvent.getX() / (scaleX * Tile.DEFAULT_TILE_SIZE));
+        int y = (int)(mouseEvent.getY() / (scaleY * Tile.DEFAULT_TILE_SIZE));
         if (!firstClick) {
             randomizer.placeMines(columns, rows, mines, board);
             firstClick = true;
@@ -93,8 +96,8 @@ public class Board {
     }
 
     private void clickTile(MouseEvent mouseEvent) {
-        int x = (int)(mouseEvent.getX() / (scale * Tile.DEFAULT_TILE_SIZE));
-        int y = (int)(mouseEvent.getY() / (scale * Tile.DEFAULT_TILE_SIZE));
+        int x = (int)(mouseEvent.getX() / (scaleX * Tile.DEFAULT_TILE_SIZE));
+        int y = (int)(mouseEvent.getY() / (scaleY * Tile.DEFAULT_TILE_SIZE));
         if (!firstClick) {
             randomizer.placeMines(columns, rows, mines, board, new int[] {x, y});
             firstClick = true;
@@ -138,7 +141,7 @@ public class Board {
     }
 
     private void generateBoard(Pane pane) {
-        randomizer.generateBoard(columns, rows, scale);
+        randomizer.generateBoard(columns, rows, scaleX, scaleY);
         board = randomizer.getBoard();
         for (List<Tile> tiles : board) {
             pane.getChildren().addAll(tiles);

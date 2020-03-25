@@ -21,14 +21,15 @@ public abstract class Randomizer {
      * Generates a board from the given arguments
      * @param columns   Number of columns to place on the board
      * @param rows      Number of rows to place on the board
-     * @param scale     The tile size multiplication scale
+     * @param scaleX    The vertical tile size multiplication scale
+     * @param scaleY    The horizontal tile size multiplication scale
      */
-    public void generateBoard(int columns, int rows, double scale) {
+    public void generateBoard(int columns, int rows, double scaleX, double scaleY) {
         board = new ArrayList<>();
         for (int i = 0; i < rows; i++) {
             List<Tile> tiles = new ArrayList<>();
             for (int j = 0; j < columns; j++) {
-                tiles.add(new Tile(j, i, scale));
+                tiles.add(new Tile(j, i, scaleX, scaleY));
             }
             board.add(tiles);
         }

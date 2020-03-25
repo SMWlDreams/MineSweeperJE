@@ -1,6 +1,5 @@
 package data.readers;
 
-import error.exceptions.InvalidCoordinateException;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.ErrorHandler;
@@ -17,7 +16,7 @@ public class HighScoreParser extends AbstractParser {
     private States states = States.INIT;
     private Locator locator;
     private String[] names = new String[5];
-    private int[] scores = new int[5];
+    private String[] scores = new String[5];
     private int index = 0;
 
     /**
@@ -285,14 +284,14 @@ public class HighScoreParser extends AbstractParser {
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         String s = new String(ch);
+        String num = s.substring(start, start + length);
         try {
             switch (states) {
                 case NAME:
-                    names[index] = s;
+                    names[index] = num;
                     break;
                 case SCORE:
-                    int i = Integer.parseInt(s);
-                    scores[index] = i;
+                    scores[index] = num;
                     break;
             }
         } catch (NumberFormatException e) {
@@ -405,7 +404,7 @@ public class HighScoreParser extends AbstractParser {
         System.out.println("Comment Found! " + s);
     }
 
-    public int[] getScores() {
+    public String[] getScores() {
         return scores;
     }
 

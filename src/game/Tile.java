@@ -29,11 +29,11 @@ public class Tile extends Rectangle {
     private boolean clicked = false;
     private boolean flagged = false;
 
-    public Tile(double x, double y, double scale) {
-        setX(x * scale * DEFAULT_TILE_SIZE);
-        setY(y * scale * DEFAULT_TILE_SIZE);
-        setHeight(scale * DEFAULT_TILE_SIZE);
-        setWidth(scale * DEFAULT_TILE_SIZE);
+    public Tile(double x, double y, double scaleX, double scaleY) {
+        setX(x * scaleX * DEFAULT_TILE_SIZE);
+        setY(y * scaleY * DEFAULT_TILE_SIZE);
+        setHeight(scaleX * DEFAULT_TILE_SIZE);
+        setWidth(scaleY * DEFAULT_TILE_SIZE);
         setFill(new ImagePattern(images[DEFAULT_IMAGE_INDEX]));
     }
 
@@ -75,7 +75,7 @@ public class Tile extends Rectangle {
     public boolean onClick() {
         setFill(new ImagePattern(onClick));
         clicked = true;
-        return neighborMines == 0;
+        return !mine && neighborMines == 0;
     }
 
     public void flag() {
