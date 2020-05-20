@@ -33,7 +33,7 @@ public class Logger {
         return LOGGER;
     }
 
-    public void log(Exception e) {
+    public synchronized void log(Exception e) {
         try {
             LocalDateTime time = LocalDateTime.now();
             writer.append(time.toString().substring(0, 19))

@@ -1,9 +1,6 @@
 package factories;
 
 import data.storage.LoadedSettings;
-import data.writers.SettingsWriter;
-import error.ErrorHandler;
-import error.exceptions.InvalidDimensionException;
 import game.Board;
 import game.Tile;
 import game.randomizers.Randomizer;
@@ -15,21 +12,14 @@ public class BoardFactory {
     private BoardFactory() {}
 
     public static Board generateInitialBoard(Pane pane) {
-        String[] settings = LoadedSettings.getLaunchSettings();
-        String[] otherSettings = LoadedSettings.getOtherSettings();
+        var settings = LoadedSettings.getLaunchSettings();
+        var otherSettings = LoadedSettings.getOtherSettings();
         long seed;
-        int width = Integer.parseInt(settings[2]);
-        int height = Integer.parseInt(settings[3]);
-        int mines = Integer.parseInt(settings[4]);
-        if (!verifyDimensions(width, height, mines)) {
-            ErrorHandler.newExpectedExceptionAlert(new InvalidDimensionException("Inavlid " +
-                    "Dimensions for Starting Board!"), "Settings Error", true);
-            SettingsWriter.writeDefaultSettings();
-            LoadedSettings.loadAllSettings();
-            generateInitialBoard(pane);
-        }
-        if (!settings[0].equalsIgnoreCase("False")) {
-            seed = Long.parseLong(settings[1]);
+        int width = (Integer)settings.get("width");
+        int height = (Integer)settings.get("height");
+        int mines = (Integer)settings.get("mines");
+        if ((Boolean)settings.get("setseed")) {
+            seed = (Long)settings.get("seed");
             DIFFICULTY = "Custom";
         } else {
             seed = System.nanoTime();
@@ -44,10 +34,10 @@ public class BoardFactory {
             }
         }
         double[] scale = determineScale(width, height, pane);
-        Tile.loadImages("\\tilesets\\" + settings[0] + "set\\");
-        Randomizer randomizer = RandomizerFactory.getRandomizer(otherSettings[1], seed);
+        Randomizer randomizer = RandomizerFactory.getRandomizer((String)otherSettings.get(
+                "randomizer"), seed);
         Board board = new Board(width, height, mines, scale[1], scale[0], pane, randomizer);
-
+        return board;
     }
 
     private static double[] determineScale(int width, int height, Pane pane) {
@@ -55,16 +45,6 @@ public class BoardFactory {
         double relativeWidth = boardDimension/(width * Tile.DEFAULT_TILE_SIZE);
         double relativeHeight = boardDimension/(height * Tile.DEFAULT_TILE_SIZE);
         return new double[] {relativeWidth, relativeHeight};
-    }
-
-    private static boolean verifyDimensions(int width, int height, int mines) {
-        if (width >= 31 || width <= 5) {
-            return false;
-        }
-        if (height >= 25 || height <= 5) {
-            return false;
-        }
-        return mines > 0 && mines < height * width;
     }
 
     public static String getDifficulty() {

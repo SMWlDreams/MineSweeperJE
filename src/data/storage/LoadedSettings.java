@@ -1,50 +1,51 @@
 package data.storage;
 
-import data.readers.ParserHandler;
-import data.readers.SettingsParser;
+import data.readers.SettingsReader;
 import data.writers.SettingsWriter;
 import error.ErrorHandler;
 import error.exceptions.InvalidXMLException;
 
-import java.io.FileNotFoundException;
+import java.io.File;
+import java.util.Map;
 
-public class LoadedSettings {
-    private static String[] LOADED_HOTKEYS;
-    private static String[] LAUNCH_SETTINGS;
-    private static String[] OTHER_SETTINGS;
+public class LoadedSettings extends Thread {
+    private static Map<String, String> LOADED_HOTKEYS;
+    private static Map<String, Object> LAUNCH_SETTINGS;
+    private static Map<String, Object> OTHER_SETTINGS;
 
-    private LoadedSettings() {}
+    public LoadedSettings() {}
+
+    @Override
+    public void run() {
+        loadAllSettings();
+    }
 
     public static void loadAllSettings() {
-        SettingsParser settingsParser = new SettingsParser();
-        ParserHandler handler = new ParserHandler();
+        var reader = new SettingsReader(new File(System.getProperty("user.home") +
+                "\\AppData\\Roaming\\Minesweeper\\Settings.cfg"));
         try {
-            handler.parse(settingsParser, System.getProperty("user.home") + "\\AppData\\Roaming" +
-                    "\\Minesweeper\\Settings.cfg");
-            LOADED_HOTKEYS = settingsParser.getHotkeys();
-            LAUNCH_SETTINGS = settingsParser.getLaunchSettings();
-            OTHER_SETTINGS = settingsParser.getSettings();
-        } catch (FileNotFoundException e) {
-            ErrorHandler.newExpectedExceptionAlert(e, "Critical Error!", true);
-            ErrorHandler.forceExit();
+            reader.parseFile();
+            LOADED_HOTKEYS = reader.getHotkeys();
+            LAUNCH_SETTINGS = reader.getLaunchValues();
+            OTHER_SETTINGS = reader.getGameSettings();
         } catch (InvalidXMLException e) {
             ErrorHandler.newExpectedExceptionAlert(e, "Invalid File Format", true);
-            SettingsWriter.writeDefaultSettings();
+//            SettingsWriter.writeDefaultSettings();
         } catch (Exception e) {
             ErrorHandler.newUnexpectedExceptionAlert(e, true);
             ErrorHandler.forceExit();
         }
     }
 
-    public static String[] getLoadedHotkeys() {
+    public static Map<String, String> getLoadedHotkeys() {
         return LOADED_HOTKEYS;
     }
 
-    public static String[] getLaunchSettings() {
+    public static Map<String, Object> getLaunchSettings() {
         return LAUNCH_SETTINGS;
     }
 
-    public static String[] getOtherSettings() {
+    public static Map<String, Object> getOtherSettings() {
         return OTHER_SETTINGS;
     }
 }

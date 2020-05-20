@@ -73,9 +73,13 @@ public class Tile extends Rectangle {
     }
 
     public boolean onClick() {
-        setFill(new ImagePattern(onClick));
-        clicked = true;
-        return !mine && neighborMines == 0;
+        if (!clicked) {
+            setFill(new ImagePattern(onClick));
+            clicked = true;
+            return !mine && neighborMines == 0;
+        } else {
+            return false;
+        }
     }
 
     public void flag() {

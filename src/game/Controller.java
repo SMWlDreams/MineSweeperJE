@@ -15,12 +15,6 @@ import windows.HighScoreWindow;
 public class Controller {
     @FXML
     private Pane board;
-    @FXML
-    private ImageView mineDisp;
-    @FXML
-    private ImageView flagDisp;
-    @FXML
-    private ImageView timeDisp;
 
     private enum State {INITIALIZING, WAIT, PAUSE, WIN, LOSE}
     private State state = State.INITIALIZING;
@@ -28,10 +22,8 @@ public class Controller {
     private Board game;
 
     public void start() {
-        HighScoreWindow.initializeData();
-        LoadedSettings.loadAllSettings();
-        game = BoardFactory.generateInitialBoard();
-        game = new Board(10, 10, 10, 3.0, board, new SkipRandomizer(123456789));
+        game = BoardFactory.generateInitialBoard(board);
+//        game = new Board(10, 10, 10, 3.0, 3.0, board, new SkipRandomizer(123456789));
     }
 
     @FXML

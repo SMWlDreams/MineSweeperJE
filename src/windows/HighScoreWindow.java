@@ -1,26 +1,30 @@
 package windows;
 
-import data.readers.HighScoreParser;
-import data.readers.ParserHandler;
+import data.readers.HighScoreReader;
 import error.ErrorHandler;
 
-public class HighScoreWindow implements WindowHandler {
+import java.nio.file.Paths;
+import java.util.Map;
+
+public class HighScoreWindow extends Thread implements WindowHandler {
     private static final String FILEPATH = System.getProperty("user.home") + "\\AppData\\Roaming" +
             "\\Minesweeper\\";
-    private static String[][] EASY_DATA;
-    private static String[][] INTERMEDIATE_DATA;
-    private static String[][] EXPERT_DATA;
+    private static Map<String, Map<String, Object>> EASY_DATA;
+    private static Map<String, Map<String, Object>> INTERMEDIATE_DATA;
+    private static Map<String, Map<String, Object>> EXPERT_DATA;
+
+    @Override
+    public void run() {
+        initializeData();
+    }
 
     public static void initializeData() {
         try {
-            ParserHandler handler = new ParserHandler();
-            HighScoreParser parser = new HighScoreParser();
-            handler.parse(parser, FILEPATH + "Easy.mhs");
-            EASY_DATA = new String[][]{parser.getNames(), parser.getScores()};
-            handler.parse(parser, FILEPATH + "Intermediate.mhs");
-            INTERMEDIATE_DATA = new String[][]{parser.getNames(), parser.getScores()};
-            handler.parse(parser, FILEPATH + "Expert.mhs");
-            EXPERT_DATA = new String[][]{parser.getNames(), parser.getScores()};
+            var handler = new HighScoreReader(Paths.get(FILEPATH));
+            handler.parseScoreFiles();
+            EASY_DATA = handler.getEasy();
+            INTERMEDIATE_DATA = handler.getIntermediate();
+            EXPERT_DATA = handler.getExpert();
         } catch (Exception e) {
             ErrorHandler.newUnexpectedExceptionAlert(e, true);
         }

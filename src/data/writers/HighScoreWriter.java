@@ -1,96 +1,70 @@
 package data.writers;
 
-import error.ErrorHandler;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.Map;
 
 public class HighScoreWriter {
-    private static final String[] DEFAULT_NAMES = {"Player 1", "Player 2", "Player 3",
-            "Player 4", "Player 5"};
+    private static final String PATH = System.getProperty("user.home") + "\\appdata\\roaming" +
+            "\\minesweeper\\";
+    private static final String[] DEFAULT_NAMES = {"Player 1", "Player 2", "Player 3", "Player 4",
+            "Player 5"};
     private static final int[] DEFAULT_SCORES = {500, 400, 300, 200, 100};
-    private static final String FOLDER_PATH = System.getProperty("user.home") + "\\appdata" +
-            "\\roaming\\minesweeper\\";
-    private static final String HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-    private static final String[] START_TAGS = {"<HighScores difficulty=\"", "<Player>", "<Name>",
-            "<Score>"};
-    private static final String[] END_TAGS = {"</HighScores>", "</Player>", "</Name>", "</Score>"};
 
-    private HighScoreWriter() {}
-
-    public static void writeDefaultScores() throws Exception {
-        writeEasy(DEFAULT_NAMES, DEFAULT_SCORES);
-        writeIntermediate(DEFAULT_NAMES, DEFAULT_SCORES);
-        writeExpert(DEFAULT_NAMES, DEFAULT_SCORES);
+    public static void writeDefaults() {
+        writeArray("Easy", DEFAULT_NAMES, DEFAULT_SCORES);
+        writeArray("Intermediate", DEFAULT_NAMES, DEFAULT_SCORES);
+        writeArray("Expert", DEFAULT_NAMES, DEFAULT_SCORES);
     }
 
-    public static void writeEasy(String[] names, int[] scores) throws Exception {
-        if (names.length != 5 || scores.length != 5) {
-            ErrorHandler.newExpectedExceptionAlert(
-                    new IllegalArgumentException("Invalid length for array!"),
-                    "High Score Error", true);
-            return;
-        }
-        try (PrintWriter writer = new PrintWriter(new File(FOLDER_PATH + "Easy.mhs"))) {
-            writer.println(HEADER);
-            writer.println(START_TAGS[0] + "Easy\">");
-            for (int i = 0; i < names.length; i++) {
-                writer.println(START_TAGS[1]);
-                writer.println(START_TAGS[2] + names[i] + END_TAGS[2]);
-                writer.println(START_TAGS[3] + scores[i] + END_TAGS[3]);
-                writer.println(END_TAGS[1]);
-            }
-            writer.println(END_TAGS[0]);
-        } catch (IOException e) {
-            ErrorHandler.newUnexpectedExceptionAlert(e, true);
-            throw e;
-        }
+    public static boolean writeScores(String difficulty, Map<String, Map<String, Object>> players) {
+        writeMap(difficulty, players);
+        return true;
     }
 
-    public static void writeIntermediate(String[] names, int[] scores) throws Exception {
-        if (names.length != 5 || scores.length != 5) {
-            ErrorHandler.newExpectedExceptionAlert(
-                    new IllegalArgumentException("Invalid length for array!"),
-                    "High Score Error", true);
-            return;
+    public static boolean writeScores(String difficulty, String[] names, int[] scores) {
+        switch (difficulty.toLowerCase()) {
+            case "easy":
+                writeArray("Easy", names, scores);
+                break;
+            case "intermediate":
+                writeArray("Intermediate", names, scores);
+                break;
+            case "expert":
+                writeArray("Expert", names, scores);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid difficulty argument!");
         }
-        try (PrintWriter writer = new PrintWriter(new File(FOLDER_PATH + "Intermediate.mhs"))) {
-            writer.println(HEADER);
-            writer.println(START_TAGS[0] + "Intermediate\">");
-            for (int i = 0; i < names.length; i++) {
-                writer.println(START_TAGS[1]);
-                writer.println(START_TAGS[2] + names[i] + END_TAGS[2]);
-                writer.println(START_TAGS[3] + scores[i] + END_TAGS[3]);
-                writer.println(END_TAGS[1]);
-            }
-            writer.println(END_TAGS[0]);
+        return true;
+    }
+
+    private static void writeArray(String difficulty, String[] names, int[] scores) {
+        var array = new JSONArray();
+        for (int i = 0; i < 5; i++) {
+            var person = new JSONObject();
+            person.put("id", names[i]);
+            person.put("score", scores[i]);
+            array.put(person);
+        }
+        var arrayWrapper = new JSONObject();
+        arrayWrapper.put("players", array);
+        arrayWrapper.put("difficulty", difficulty);
+        var ending = new JSONObject();
+        ending.put("highscores", arrayWrapper);
+        try (FileWriter writer = new FileWriter(PATH + difficulty + ".mhs")) {
+            writer.write(ending.toString());
+            writer.flush();
         } catch (IOException e) {
-            ErrorHandler.newUnexpectedExceptionAlert(e, true);
-            throw e;
+            e.printStackTrace();
         }
     }
 
-    public static void writeExpert(String[] names, int[] scores) throws Exception {
-        if (names.length != 5 || scores.length != 5) {
-            ErrorHandler.newExpectedExceptionAlert(
-                    new IllegalArgumentException("Invalid length for array!"),
-                    "High Score Error", true);
-            return;
-        }
-        try (PrintWriter writer = new PrintWriter(new File(FOLDER_PATH + "Expert.mhs"))) {
-            writer.println(HEADER);
-            writer.println(START_TAGS[0] + "Expert\">");
-            for (int i = 0; i < names.length; i++) {
-                writer.println(START_TAGS[1]);
-                writer.println(START_TAGS[2] + names[i] + END_TAGS[2]);
-                writer.println(START_TAGS[3] + scores[i] + END_TAGS[3]);
-                writer.println(END_TAGS[1]);
-            }
-            writer.println(END_TAGS[0]);
-        } catch (IOException e) {
-            ErrorHandler.newUnexpectedExceptionAlert(e, true);
-            throw e;
-        }
+    private static void writeMap(String difficulty, Map<String, Map<String, Object>> players) {
+        var array = new JSONArray();
+//        for (var i = 0; i < 5)
     }
 }
