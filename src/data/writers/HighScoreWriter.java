@@ -1,5 +1,6 @@
 package data.writers;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -25,7 +26,7 @@ public class HighScoreWriter {
         return true;
     }
 
-    public static boolean writeScores(String difficulty, String[] names, int[] scores) {
+    public static boolean writeScores(@NotNull String difficulty, String[] names, int[] scores) {
         switch (difficulty.toLowerCase()) {
             case "easy":
                 writeArray("Easy", names, scores);
