@@ -1,6 +1,8 @@
 # MineSweeper Java Edition
 
-## Authors: Joseph Hable
+## Author: Hailey Hable
+
+### This version has many issues, I recommend not using it
 
 ### Created in Java 11.0.2 using JavaFX 11.0.1
 
